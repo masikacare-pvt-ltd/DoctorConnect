@@ -1,0 +1,242 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ===================== AUTH (Better Auth managed) =====================
+
+model User {
+  id            String    @id @default(uuid())
+  name          String
+  email         String    @unique
+  emailVerified Boolean   @default(false)
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  sessions     Session[]
+  accounts     Account[]
+  profile      Profile?
+  cases        ClinicalCase[]
+  comments     Comment[]
+  bookmarks    Bookmark[]
+  likes        Like[]
+  notifications Notification[]
+  activityLogs ActivityLog[]
+}
+
+model Session {
+  id        String   @id @default(uuid())
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Account {
+  id                    String    @id @default(uuid())
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+}
+
+model Verification {
+  id         String   @id @default(uuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+// ===================== PROFILE =====================
+
+model Profile {
+  id             String   @id @default(uuid())
+  userId         String   @unique
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  firstName      String
+  lastName       String
+  displayName    String
+  avatarUrl      String?
+  avatarData     String?
+  gender         String   @default("other")
+  designation    String?
+  specialization String?
+  hospital       String?
+  mobile         String?
+  bio            String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+// ===================== CLINICAL CASES =====================
+
+model ClinicalCase {
+  id             String   @id @default(uuid())
+  caseNumber     String   @unique
+  title          String
+  description    String
+  authorId       String
+  author         User     @relation(fields: [authorId], references: [id])
+  specialization String   @default("General Medicine")
+  urgent         Boolean  @default(false)
+  diseaseTags    String[] @default([])
+  status         String   @default("open")
+  viewsCount     Int      @default(0)
+  commentsCount  Int      @default(0)
+  coverImage     String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  deletedAt      DateTime?
+
+  images    CaseImage[]
+  comments  Comment[]
+  bookmarks Bookmark[]
+  likes     Like[]
+  aiReport  AIReport?
+
+  @@index([authorId, createdAt])
+  @@index([specialization])
+  @@index([createdAt])
+  @@index([status])
+}
+
+// ===================== CASE IMAGES =====================
+
+model CaseImage {
+  id          String   @id @default(uuid())
+  caseId      String
+  case        ClinicalCase @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  uploadedBy  String
+  providerId  String   @default("db")
+  publicUrl   String
+  secureUrl   String
+  imageData   String?
+  width       Int      @default(0)
+  height      Int      @default(0)
+  mimeType    String
+  size        Int      @default(0)
+  createdAt   DateTime @default(now())
+
+  @@index([caseId])
+}
+
+// ===================== COMMENTS =====================
+
+model Comment {
+  id         String   @id @default(uuid())
+  content    String
+  caseId     String
+  case       ClinicalCase @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  authorId   String
+  author     User     @relation(fields: [authorId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  deletedAt  DateTime?
+
+  @@index([caseId, createdAt])
+}
+
+// ===================== BOOKMARKS =====================
+
+model Bookmark {
+  id        String   @id @default(uuid())
+  caseId    String
+  case      ClinicalCase @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, caseId])
+  @@index([userId])
+  @@index([caseId])
+}
+
+// ===================== LIKES =====================
+
+model Like {
+  id        String   @id @default(uuid())
+  caseId    String
+  case      ClinicalCase @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, caseId])
+  @@index([caseId])
+  @@index([userId])
+}
+
+// ===================== NOTIFICATIONS =====================
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String
+  text      String
+  caseId    String?
+  fromName  String?
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([userId, read])
+}
+
+// ===================== AI REPORTS =====================
+
+model AIReport {
+  id                   String   @id @default(uuid())
+  caseId               String   @unique
+  case                 ClinicalCase @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  model                String
+  status               String   @default("completed")
+  confidence           Float
+  findings             Json
+  differentialDiagnosis String[]
+  recommendations      String[]
+  redFlags             String[]
+  questionsToClinician String[]
+  summary              String   @default("")
+  isMedical            Boolean  @default(true)
+  nonMedicalReason     String   @default("")
+  aiResponse           String   @default("")
+  severity             String
+  disclaimer           String
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+}
+
+// ===================== ACTIVITY LOG =====================
+
+model ActivityLog {
+  id         String   @id @default(uuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  action     String
+  entityType String
+  entityId   String?
+  meta       Json     @default("{}")
+  createdAt  DateTime @default(now())
+
+  @@index([userId, createdAt])
+}

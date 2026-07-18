@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MedConnect</title>
+    <script>
+      (function() {
+        try {
+          let target = window;
+          let desc = Object.getOwnPropertyDescriptor(window, 'fetch');
+          if (!desc) {
+            target = Window.prototype;
+            desc = Object.getOwnPropertyDescriptor(Window.prototype, 'fetch');
+          }
+          if (!desc) {
+            target = globalThis;
+            desc = Object.getOwnPropertyDescriptor(globalThis, 'fetch');
+          }
+          
+          if (desc && (!desc.writable || !desc.set)) {
+            const originalFetch = desc.get ? desc.get.call(window) : target.fetch;
+            let customFetch = originalFetch;
+            Object.defineProperty(target, 'fetch', {
+              get() {
+                return customFetch;
+              },
+              set(val) {
+                customFetch = val;
+              },
+              configurable: true,
+              enumerable: true
+            });
+          }
+        } catch (err) {
+          console.warn('Bypass fetch getter warning:', err);
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+

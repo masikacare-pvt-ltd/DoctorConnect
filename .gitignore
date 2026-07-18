@@ -1,0 +1,19 @@
+node_modules/
+build/
+dist/
+coverage/
+.DS_Store
+*.log
+dev.err
+dev.log
+.env*
+!.env.example
+
+# AI Studio / generated artifacts
+metadata.json
+firebase-applet-config.json
+firebase-blueprint.json
+assets/.aistudio/
+
+# TypeScript build cache
+tsconfig.tsbuildinfo

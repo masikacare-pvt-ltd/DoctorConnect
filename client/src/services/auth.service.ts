@@ -31,12 +31,11 @@ export async function register(input: SignupInput): Promise<void> {
 }
 
 export async function login(input: LoginInput): Promise<void> {
-  const { error, data } = await authClient.signIn.email({
+  const { error } = await authClient.signIn.email({
     email: input.email,
     password: input.password,
   });
   if (error) throw new Error(error.message);
-  if (!data?.session) throw new Error('Login succeeded but no session returned.');
 }
 
 export async function loginWithGoogle(): Promise<void> {

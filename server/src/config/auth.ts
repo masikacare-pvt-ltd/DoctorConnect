@@ -39,5 +39,7 @@ export const auth = betterAuth({
     process.env.RENDER_EXTERNAL_URL || 'http://localhost:5000',
     'http://localhost:5000',
     'http://localhost:3000',
+    'http://localhost:3001',
+    'http://localhost:5173',
   ],
 });

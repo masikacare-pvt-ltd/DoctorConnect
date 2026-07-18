@@ -16,15 +16,28 @@ export default function LoginScreen() {
   const [isLoading, setIsLoading] = useState(false);
   const [loginDone, setLoginDone] = useState(false);
 
-  // Wait for session to update after login, then navigate
+  // Wait for session to update after login, then navigate.
+  // Use a timeout fallback in case the session takes too long (cross-domain cookie delay).
   useEffect(() => {
-    if (loginDone && !loading) {
-      if (isAuthenticated && isProfileComplete) {
-        navigate('/dashboard', { replace: true });
-      } else if (isAuthenticated && !isProfileComplete) {
-        navigate('/complete-profile', { replace: true });
-      }
+    if (!loginDone) return;
+
+    // Navigate immediately if already authenticated
+    if (!loading && isAuthenticated) {
+      navigate(isProfileComplete ? '/dashboard' : '/complete-profile', { replace: true });
+      return;
     }
+
+    // Fallback: if loading takes more than 3s after login, force navigate anyway
+    const timer = setTimeout(() => {
+      if (isAuthenticated) {
+        navigate(isProfileComplete ? '/dashboard' : '/complete-profile', { replace: true });
+      } else {
+        // Session didn't load — cross-domain cookie issue, reload the page
+        window.location.href = '/dashboard';
+      }
+    }, 3000);
+
+    return () => clearTimeout(timer);
   }, [loginDone, loading, isAuthenticated, isProfileComplete, navigate]);
 
   const handleLocalSubmit = async (e: React.FormEvent) => {

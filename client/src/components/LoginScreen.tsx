@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock, Shield, AlertCircle } from 'lucide-react';
 
@@ -7,13 +7,25 @@ import { useToast } from '../contexts/ToastContext';
 
 export default function LoginScreen() {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, isAuthenticated, isProfileComplete, loading } = useAuth();
   const { toast } = useToast();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
   const [isLoading, setIsLoading] = useState(false);
+  const [loginDone, setLoginDone] = useState(false);
+
+  // Wait for session to update after login, then navigate
+  useEffect(() => {
+    if (loginDone && !loading) {
+      if (isAuthenticated && isProfileComplete) {
+        navigate('/dashboard', { replace: true });
+      } else if (isAuthenticated && !isProfileComplete) {
+        navigate('/complete-profile', { replace: true });
+      }
+    }
+  }, [loginDone, loading, isAuthenticated, isProfileComplete, navigate]);
 
   const handleLocalSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,7 +43,7 @@ export default function LoginScreen() {
     try {
       await login({ email: email.trim(), password });
       toast('Logged in successfully!', 'success');
-      navigate('/dashboard');
+      setLoginDone(true);
     } catch (error: any) {
       const code = error?.code;
       let errMsg = 'Failed to sign in. Please verify your credentials.';

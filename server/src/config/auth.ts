@@ -24,6 +24,16 @@ export const auth = betterAuth({
       maxAge: 60 * 5,
     },
   },
+  advanced: {
+    useSecureCookies: process.env.NODE_ENV === 'production',
+    crossSubdomainCookies: {
+      enabled: false,
+    },
+    defaultCookieAttributes: {
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      secure: process.env.NODE_ENV === 'production',
+    },
+  },
   trustedOrigins: [
     process.env.CLIENT_URL || 'http://localhost:3000',
     process.env.RENDER_EXTERNAL_URL || 'http://localhost:5000',

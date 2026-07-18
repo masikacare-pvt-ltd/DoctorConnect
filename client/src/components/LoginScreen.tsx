@@ -31,7 +31,7 @@ export default function LoginScreen() {
     try {
       await login({ email: email.trim(), password });
       toast('Logged in successfully!', 'success');
-      // Navigation is handled by PublicRoute once session is confirmed
+      navigate('/dashboard');
     } catch (error: any) {
       const code = error?.code;
       let errMsg = 'Failed to sign in. Please verify your credentials.';

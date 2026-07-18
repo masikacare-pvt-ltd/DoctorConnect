@@ -17,6 +17,10 @@ export { prisma };
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Render (and most cloud platforms) sit behind a reverse proxy.
+// Trust the first proxy so express-rate-limit can read the real client IP.
+app.set('trust proxy', 1);
+
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {

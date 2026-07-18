@@ -107,7 +107,7 @@ export default function LoginScreen() {
                 <path d="M425 230L440 270L455 230H425Z" fill="#0284C7" />
                 <path d="M440 270V380" stroke="#E2E8F0" strokeWidth="1.5" />
                 <circle cx="440" cy="180" r="32" fill="#F3F4F6" stroke="#CBD5E1" strokeWidth="1.5" />
-                <path d="M408 180C408 145 472 145 472 180F" fill="#334155" />
+                <path d="M408 180C408 145 472 145 472 180" fill="#334155" />
                 <path d="M408 175C415 152 465 152 472 175C460 165 420 165 408 175Z" fill="#1E293B" />
                 <path d="M400 270C385 265 350 255 330 255C325 255 325 260 330 263C345 270 375 285 390 290" stroke="#F3F4F6" strokeWidth="10" strokeLinecap="round" />
               </g>

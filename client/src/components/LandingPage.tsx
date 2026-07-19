@@ -40,13 +40,13 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col" id="landing-container">
       {/* Top Header/Navigation */}
-      <nav className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-slate-200/80 px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-black flex items-center justify-center shadow-sm">
+      <nav className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-slate-200/80 px-4 sm:px-6 py-3 flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2 min-w-0">
+          <div className="w-8 h-8 shrink-0 rounded-lg bg-black flex items-center justify-center shadow-sm">
             <span className="text-white text-xl font-bold">+</span>
           </div>
-          <span className="text-xl font-extrabold tracking-tight font-display text-slate-900">MedConnect</span>
-          <span className="text-xs bg-slate-100 text-slate-500 border border-slate-200 rounded px-1.5 py-0.5 ml-1.5 font-mono">PORTAL</span>
+          <span className="text-base sm:text-xl font-extrabold tracking-tight font-display text-slate-900 truncate">MedConnect</span>
+          <span className="hidden sm:inline text-xs bg-slate-100 text-slate-500 border border-slate-200 rounded px-1.5 py-0.5 font-mono shrink-0">PORTAL</span>
         </div>
 
         <div className="hidden md:flex items-center gap-8">
@@ -55,20 +55,21 @@ export default function LandingPage() {
           <a href="#stats" className="text-sm font-medium text-slate-500 hover:text-slate-900 transition-colors">Global Network</a>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 shrink-0">
           <button
             onClick={onLogin}
-            className="px-4 py-2 text-sm font-semibold text-slate-600 hover:text-slate-900 transition-all"
+            className="px-3 sm:px-4 py-2 text-sm font-semibold text-slate-600 hover:text-slate-900 transition-all"
             id="nav-login-btn"
           >
             Login
           </button>
           <button
             onClick={onGetStarted}
-            className="px-4 py-2 bg-black text-white hover:bg-slate-800 rounded-lg text-sm font-bold shadow-md shadow-slate-950/10 active:scale-95 transition-all"
+            className="px-3 sm:px-4 py-2 bg-black text-white hover:bg-slate-800 rounded-lg text-sm font-bold shadow-md shadow-slate-950/10 active:scale-95 transition-all whitespace-nowrap"
             id="nav-getstarted-btn"
           >
-            Get Started
+            <span className="hidden sm:inline">Get Started</span>
+            <span className="sm:hidden">Sign Up</span>
           </button>
         </div>
       </nav>

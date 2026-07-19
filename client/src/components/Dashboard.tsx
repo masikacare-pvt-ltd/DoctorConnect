@@ -180,18 +180,18 @@ export default function Dashboard() {
 
   return (
     <AppShell>
-        <header className="bg-white dark:bg-slate-900 border-b border-slate-200/80 dark:border-slate-800 px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="relative w-full max-w-md">
+        <header className="bg-white dark:bg-slate-900 border-b border-slate-200/80 dark:border-slate-800 px-4 sm:px-6 py-3 flex flex-row items-center justify-between gap-3">
+          <div className="relative flex-1 min-w-0">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 dark:text-slate-500"><Search className="w-4 h-4" /></div>
             <input
               type="text" value={searchInput} onChange={(e) => setSearchInput(e.target.value)}
-              placeholder="Search by Patient ID (e.g. MC-49202) or symptom tags..."
+              placeholder="Search cases..."
               className="w-full pl-9 pr-8 py-2 bg-slate-50 hover:bg-slate-100/70 dark:bg-slate-800 dark:hover:bg-slate-700/70 border border-slate-200 dark:border-slate-700 rounded-full text-xs text-slate-900 dark:text-slate-100 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-100 dark:focus:ring-slate-800 transition-all"
               id="header-search-input"
             />
             {(searchQuery || searchInput) && <button onClick={() => { setSearchInput(''); setSearchQuery(''); }} className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"><X className="w-3.5 h-3.5" /></button>}
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 shrink-0">
             <button
               onClick={() => { if (unreadCount) { notifications.filter((n) => !n.read).forEach((n) => markRead(n.id)); } toast(unreadCount ? 'Marked notifications as read.' : 'Your notifications are up-to-date.', 'info'); }}
               className="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-50 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800 rounded-xl transition-all relative"
@@ -199,11 +199,9 @@ export default function Dashboard() {
               <Bell className="w-5 h-5" />
               {unreadCount > 0 && <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full border border-white dark:border-slate-900" />}
             </button>
-            <div onClick={() => navigate('/profile')} className="flex items-center gap-2.5 cursor-pointer pl-4 border-l border-slate-200 dark:border-slate-800 group">
+            <div onClick={() => navigate('/profile')} className="flex items-center gap-2 cursor-pointer pl-2 border-l border-slate-200 dark:border-slate-800 group">
               <div className="text-right hidden sm:block">
-                <div className="flex items-center justify-end gap-1">
-                  <span className="block text-xs font-bold text-slate-900 dark:text-slate-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{doctorFullName}</span>
-                </div>
+                <span className="block text-xs font-bold text-slate-900 dark:text-slate-100 group-hover:text-indigo-600 transition-colors">{doctorFullName}</span>
                 <span className="block text-[10px] text-slate-400 dark:text-slate-500 font-medium">{activeUser.designation}</span>
               </div>
               <img src={getAvatarUrl(activeUser)} alt="My Profile Avatar" referrerPolicy="no-referrer" className="w-8 h-8 rounded-full border border-slate-200 dark:border-slate-800 shadow-sm" />

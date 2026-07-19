@@ -5,6 +5,8 @@ import { useAuth } from '../hooks/useAuth';
 import { useToast } from '../contexts/ToastContext';
 import { useSpecializations } from '../hooks/useSpecializations';
 
+import { DESIGNATIONS } from '../utils/constants';
+
 export default function ProfileComplete() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -27,10 +29,7 @@ export default function ProfileComplete() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
 
-  const designations = [
-    'Chief Resident', 'Specialist Physician', 'Attending Physician', 'Consultant',
-    'Fellow Specialist', 'Radiologist', 'Dermatologist', 'Cardiologist', 'Neurologist',
-  ];
+  const designations = DESIGNATIONS;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

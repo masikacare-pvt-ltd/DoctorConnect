@@ -31,10 +31,8 @@ export default function LoginScreen() {
     const timer = setTimeout(() => {
       if (isAuthenticated) {
         navigate(isProfileComplete ? '/dashboard' : '/complete-profile', { replace: true });
-      } else {
-        // Session didn't load — cross-domain cookie issue, reload the page
-        window.location.href = '/dashboard';
       }
+      // Do NOT do window.location.href — causes redirect loops
     }, 3000);
 
     return () => clearTimeout(timer);

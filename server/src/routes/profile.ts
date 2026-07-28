@@ -25,7 +25,7 @@ router.get('/me', requireAuth, async (req: Request, res: Response) => {
 router.post('/complete', requireAuth, validate(completeProfileSchema), async (req: Request, res: Response) => {
   const user = (req as AuthenticatedRequest).user;
   try {
-    let { firstName, lastName, designation, specializationId, hospital, mobile, bio, gender } = req.body;
+    let { firstName, lastName, designation, specializationId, hospital, countryCode, countryIso, mobile, bio, gender } = req.body;
     if (!firstName || !lastName) {
       const nameParts = (user.name || '').split(' ');
       firstName = firstName || nameParts[0] || '';
@@ -33,7 +33,7 @@ router.post('/complete', requireAuth, validate(completeProfileSchema), async (re
     }
     const profile = await prisma.profile.upsert({
       where: { userId: user.id },
-      update: { firstName, lastName, displayName: `Dr. ${firstName} ${lastName}`, designation, specialization: specializationId, hospital, mobile, bio, gender: gender || 'male' },
+      update: { firstName, lastName, displayName: `Dr. ${firstName} ${lastName}`, designation, specialization: specializationId, hospital, countryCode, countryIso, mobile, bio, gender: gender || 'male' },
       create: {
         userId: user.id,
         firstName,
@@ -42,6 +42,8 @@ router.post('/complete', requireAuth, validate(completeProfileSchema), async (re
         designation,
         specialization: specializationId,
         hospital,
+        countryCode,
+        countryIso,
         mobile,
         bio,
         gender: gender || 'male',
@@ -59,7 +61,7 @@ router.post('/complete', requireAuth, validate(completeProfileSchema), async (re
 router.patch('/', requireAuth, async (req: Request, res: Response) => {
   const user = (req as AuthenticatedRequest).user;
   try {
-    const { firstName, lastName, designation, specializationId, hospital, mobile, bio, gender } = req.body;
+    const { firstName, lastName, designation, specializationId, hospital, countryCode, countryIso, mobile, bio, gender } = req.body;
     const profile = await prisma.profile.update({
       where: { userId: user.id },
       data: {
@@ -69,6 +71,8 @@ router.patch('/', requireAuth, async (req: Request, res: Response) => {
         ...(designation !== undefined && { designation }),
         ...(specializationId !== undefined && { specialization: specializationId }),
         ...(hospital !== undefined && { hospital }),
+        ...(countryCode !== undefined && { countryCode }),
+        ...(countryIso !== undefined && { countryIso }),
         ...(mobile !== undefined && { mobile }),
         ...(bio !== undefined && { bio }),
         ...(gender !== undefined && { gender }),

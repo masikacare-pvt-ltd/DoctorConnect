@@ -132,6 +132,8 @@ app.use('/api/notifications', express.json());
 app.use('/api/profile', express.json());
 app.use('/api/uploads', express.json());
 app.use('/api/ai', express.json());
+app.use('/api/designations', express.json());
+app.use('/api/hospitals', express.json());
 
 import casesRouter from './routes/cases';
 import commentsRouter from './routes/comments';
@@ -141,6 +143,8 @@ import profileRouter from './routes/profile';
 import uploadsRouter from './routes/uploads';
 import aiRouter from './routes/ai';
 import specializationsRouter from './routes/specializations';
+import designationsRouter from './routes/designations';
+import hospitalsRouter from './routes/hospitals';
 
 app.use('/api/cases', casesRouter);
 app.use('/api/comments', commentsRouter);
@@ -150,6 +154,8 @@ app.use('/api/profile', profileRouter);
 app.use('/api/uploads', uploadsRouter);
 app.use('/api/ai', aiRouter);
 app.use('/api/specializations', specializationsRouter);
+app.use('/api/designations', designationsRouter);
+app.use('/api/hospitals', hospitalsRouter);
 
 app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date() });

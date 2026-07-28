@@ -81,10 +81,32 @@ model Profile {
   designation    String?
   specialization String?
   hospital       String?
+  countryCode    String?
+  countryIso     String?
   mobile         String?
   bio            String?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
+}
+
+// ===================== DESIGNATIONS =====================
+
+model Designation {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+
+  @@index([name])
+}
+
+// ===================== HOSPITALS =====================
+
+model Hospital {
+  id           String   @id @default(uuid())
+  hospitalName String   @unique
+  createdAt    DateTime @default(now())
+
+  @@index([hospitalName])
 }
 
 // ===================== CLINICAL CASES =====================

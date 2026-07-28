@@ -20,7 +20,9 @@ export const completeProfileSchema = z.object({
   designation: z.string().max(200).optional(),
   specializationId: z.string().min(1, 'Specialization is required'),
   hospital: z.string().max(200).optional(),
-  mobile: z.string().max(20).optional(),
+  countryCode: z.string().max(10).optional(),
+  countryIso: z.string().max(10).optional(),
+  mobile: z.string().max(30).optional(),
   bio: z.string().max(1000).optional(),
   gender: z.enum(['male', 'female', 'other']).optional(),
 });

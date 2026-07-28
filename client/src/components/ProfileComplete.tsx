@@ -1,57 +1,63 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { ArrowRight, ShieldCheck, Building, Award } from 'lucide-react';
+import { ArrowRight, ShieldCheck } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { useToast } from '../contexts/ToastContext';
-import { useSpecializations } from '../hooks/useSpecializations';
-
-import { DESIGNATIONS } from '../utils/constants';
+import DesignationSelect from './DesignationSelect';
+import HospitalAutocomplete from './HospitalAutocomplete';
 
 export default function ProfileComplete() {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, completeProfile } = useAuth();
   const { toast } = useToast();
-  const { specializations } = useSpecializations();
 
-  const initial = (location.state as { firstName?: string; lastName?: string }) || {};
+  const initial = (location.state as {
+    firstName?: string;
+    lastName?: string;
+    countryCode?: string;
+    countryIso?: string;
+    mobile?: string;
+  }) || {};
 
   const sessionName = user?.name || '';
   const spaceIdx = sessionName.indexOf(' ');
   const initialFirstName = initial.firstName || (spaceIdx > -1 ? sessionName.slice(0, spaceIdx) : sessionName);
   const initialLastName = initial.lastName || (spaceIdx > -1 ? sessionName.slice(spaceIdx + 1) : sessionName);
 
-  const [designation, setDesignation] = useState('Select Designation');
-  const [specializationId, setSpecializationId] = useState('');
+  const [designation, setDesignation] = useState('');
+  const [specialization, setSpecialization] = useState('');
   const [hospital, setHospital] = useState('');
   const [bio, setBio] = useState('');
-  const [mobile, setMobile] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
-
-  const designations = DESIGNATIONS;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (isLoading) return;
     const newErrors: Record<string, string> = {};
-    if (designation === 'Select Designation') newErrors.designation = 'Please select your rank';
-    if (!specializationId) newErrors.specializationId = 'Please select your field';
+
+    if (!designation.trim()) newErrors.designation = 'Please select or enter your designation';
+    if (!specialization.trim()) newErrors.specialization = 'Specialization is required';
     if (!hospital.trim()) newErrors.hospital = 'Hospital is required';
+
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
-      toast('Please complete your profile.', 'error');
+      toast('Please complete all required fields.', 'error');
       return;
     }
+
     setIsLoading(true);
     try {
       await completeProfile({
         firstName: initialFirstName,
         lastName: initialLastName,
-        designation,
-        specializationId,
+        designation: designation.trim(),
+        specializationId: specialization.trim(),
         hospital: hospital.trim(),
-        mobile: mobile.trim(),
+        countryCode: initial.countryCode || '+1',
+        countryIso: initial.countryIso || 'US',
+        mobile: (initial.mobile || '').trim(),
         bio: bio.trim(),
         gender: 'male',
       });
@@ -74,41 +80,77 @@ export default function ProfileComplete() {
         <p className="text-slate-400 text-xs mt-1">This helps peers find and trust your clinical input.</p>
 
         <form onSubmit={handleSubmit} className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {/* Enhanced Designation selector with search, alphabetical sorting, and custom creation */}
           <div>
             <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-1">Designation</label>
-            <div className="relative">
-              <Award className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-              <select value={designation} onChange={(e) => { setDesignation(e.target.value); if (errors.designation) setErrors({ ...errors, designation: '' }); }} className={`w-full pl-9 pr-4 py-2.5 bg-white border ${errors.designation ? 'border-rose-400' : 'border-slate-200'} rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-100 transition-all`} id="complete-designation">
-                <option disabled>Select Designation</option>
-                {designations.map((d) => (<option key={d} value={d}>{d}</option>))}
-              </select>
-            </div>
+            <DesignationSelect
+              id="complete-designation"
+              value={designation}
+              onChange={(val) => {
+                setDesignation(val);
+                if (errors.designation) setErrors({ ...errors, designation: '' });
+              }}
+              error={errors.designation}
+            />
           </div>
+
+          {/* Mandatory Specialization text input for doctors */}
           <div>
-            <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-1">Specialization</label>
-            <select value={specializationId} onChange={(e) => { setSpecializationId(e.target.value); if (errors.specializationId) setErrors({ ...errors, specializationId: '' }); }} className={`w-full px-4 py-2.5 bg-white border ${errors.specializationId ? 'border-rose-400' : 'border-slate-200'} rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-100 transition-all`} id="complete-specialization">
-              <option disabled value="">Select Specialization</option>
-              {specializations.map((s) => (<option key={s.id} value={s.id}>{s.name}</option>))}
-            </select>
+            <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-1">
+              Specialization <span className="text-rose-500">*</span>
+            </label>
+            <input
+              type="text"
+              id="complete-specialization"
+              value={specialization}
+              onChange={(e) => {
+                setSpecialization(e.target.value);
+                if (errors.specialization) setErrors({ ...errors, specialization: '' });
+              }}
+              placeholder="Enter your specialization"
+              className={`w-full px-4 py-2.5 bg-white border ${
+                errors.specialization ? 'border-rose-400' : 'border-slate-200'
+              } rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-100 transition-all`}
+            />
+            {errors.specialization && <p className="text-[10px] text-rose-500 mt-1">{errors.specialization}</p>}
           </div>
-          <div>
+
+          {/* Hospital Autocomplete with DB persistence */}
+          <div className="sm:col-span-2">
             <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-1">Hospital / Institution</label>
-            <div className="relative">
-              <Building className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-              <input value={hospital} onChange={(e) => { setHospital(e.target.value); if (errors.hospital) setErrors({ ...errors, hospital: '' }); }} placeholder="Saint Mary Medical Center" className={`w-full pl-9 pr-4 py-2.5 bg-white border ${errors.hospital ? 'border-rose-400' : 'border-slate-200'} rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-100 transition-all`} id="complete-hospital" />
-            </div>
+            <HospitalAutocomplete
+              id="complete-hospital"
+              value={hospital}
+              onChange={(val) => {
+                setHospital(val);
+                if (errors.hospital) setErrors({ ...errors, hospital: '' });
+              }}
+              error={errors.hospital}
+            />
           </div>
-          <div>
-            <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-1">Mobile</label>
-            <input value={mobile} onChange={(e) => setMobile(e.target.value)} placeholder="+1 (555) 000-0000" className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-100 transition-all" id="complete-mobile" />
-          </div>
+
+          {/* Short Bio */}
           <div className="sm:col-span-2">
             <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-1">Short Bio</label>
-            <textarea value={bio} onChange={(e) => setBio(e.target.value)} rows={3} placeholder="Accredited specialist focused on collaborative diagnostics." className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-100 transition-all" id="complete-bio" />
+            <textarea
+              value={bio}
+              onChange={(e) => setBio(e.target.value)}
+              rows={3}
+              placeholder="Accredited specialist focused on collaborative diagnostics."
+              className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-100 transition-all"
+              id="complete-bio"
+            />
           </div>
 
           <div className="sm:col-span-2">
-            <button type="submit" disabled={isLoading} className={`w-full py-3 rounded-xl text-sm font-bold shadow-lg shadow-slate-950/10 active:scale-[0.98] transition-all flex items-center justify-center gap-1.5 ${isLoading ? 'bg-slate-400 text-slate-100' : 'bg-black text-white hover:bg-slate-900'}`} id="complete-submit-btn">
+            <button
+              type="submit"
+              disabled={isLoading}
+              className={`w-full py-3 rounded-xl text-sm font-bold shadow-lg shadow-slate-950/10 active:scale-[0.98] transition-all flex items-center justify-center gap-1.5 ${
+                isLoading ? 'bg-slate-400 text-slate-100' : 'bg-black text-white hover:bg-slate-900'
+              }`}
+              id="complete-submit-btn"
+            >
               {isLoading ? 'Saving…' : 'Save & Enter Portal'} <ArrowRight className="w-4 h-4" />
             </button>
           </div>

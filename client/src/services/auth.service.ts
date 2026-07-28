@@ -14,6 +14,8 @@ interface RawProfile {
   designation?: string;
   specialization?: string;
   hospital?: string;
+  countryCode?: string;
+  countryIso?: string;
   mobile?: string;
   bio?: string;
   credentials?: string[];
@@ -64,6 +66,8 @@ async function mapProfile(raw: RawProfile): Promise<Profile> {
     designation: raw.designation || '',
     specializationId: raw.specialization || '',
     hospital: raw.hospital || '',
+    countryCode: raw.countryCode || '+1',
+    countryIso: raw.countryIso || 'US',
     mobile: raw.mobile || '',
     bio: raw.bio || '',
     credentials: raw.credentials || [],
@@ -79,6 +83,8 @@ export async function completeProfile(input: ProfileInput & { gender?: string })
     designation: input.designation,
     specializationId: input.specializationId,
     hospital: input.hospital,
+    countryCode: input.countryCode,
+    countryIso: input.countryIso,
     mobile: input.mobile,
     bio: input.bio,
     gender: input.gender || 'male',
@@ -93,6 +99,8 @@ export async function updateProfile(input: ProfileInput & { gender?: string }): 
     designation: input.designation,
     specializationId: input.specializationId,
     hospital: input.hospital,
+    countryCode: input.countryCode,
+    countryIso: input.countryIso,
     mobile: input.mobile,
     bio: input.bio,
     gender: input.gender,

@@ -23,6 +23,8 @@ export interface Profile {
   designation: string;
   specializationId: string;
   hospital: string;
+  countryCode?: string;
+  countryIso?: string;
   mobile: string;
   bio: string;
   credentials: string[];

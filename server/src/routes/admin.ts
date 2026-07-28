@@ -81,8 +81,9 @@ router.get('/doctors', async (req: Request, res: Response) => {
 // GET /api/admin/doctors/:id - get single doctor details
 router.get('/doctors/:id', async (req: Request, res: Response) => {
   try {
+    const id = req.params.id as string;
     const doctor = await prisma.user.findFirst({
-      where: { id: req.params.id, role: 'doctor' },
+      where: { id, role: 'doctor' },
       include: { profile: true },
     });
     if (!doctor) return res.status(404).json({ status: 'error', message: 'Doctor not found' });
@@ -95,11 +96,12 @@ router.get('/doctors/:id', async (req: Request, res: Response) => {
 // PATCH /api/admin/doctors/:id/approve - approve a doctor
 router.patch('/doctors/:id/approve', async (req: Request, res: Response) => {
   try {
+    const id = req.params.id as string;
     const doctor = await prisma.user.findFirst({
-      where: { id: req.params.id, role: 'doctor' },
+      where: { id, role: 'doctor' },
     });
     if (!doctor) return res.status(404).json({ status: 'error', message: 'Doctor not found' });
-    await prisma.user.update({ where: { id: req.params.id }, data: { approvalStatus: 'approved' } });
+    await prisma.user.update({ where: { id }, data: { approvalStatus: 'approved' } });
     res.json({ status: 'success', message: 'Doctor approved successfully' });
   } catch (e: any) {
     res.status(500).json({ status: 'error', message: e.message });
@@ -109,11 +111,12 @@ router.patch('/doctors/:id/approve', async (req: Request, res: Response) => {
 // PATCH /api/admin/doctors/:id/reject - reject a doctor
 router.patch('/doctors/:id/reject', async (req: Request, res: Response) => {
   try {
+    const id = req.params.id as string;
     const doctor = await prisma.user.findFirst({
-      where: { id: req.params.id, role: 'doctor' },
+      where: { id, role: 'doctor' },
     });
     if (!doctor) return res.status(404).json({ status: 'error', message: 'Doctor not found' });
-    await prisma.user.update({ where: { id: req.params.id }, data: { approvalStatus: 'rejected' } });
+    await prisma.user.update({ where: { id }, data: { approvalStatus: 'rejected' } });
     res.json({ status: 'success', message: 'Doctor rejected' });
   } catch (e: any) {
     res.status(500).json({ status: 'error', message: e.message });
@@ -125,20 +128,13 @@ router.patch('/doctors/:id/reject', async (req: Request, res: Response) => {
 // GET /api/admin/stats - dashboard statistics
 router.get('/stats', async (_req: Request, res: Response) => {
   try {
-    const [totalDoctors, pendingApprovals, approvedDoctors, totalCases, totalReports] = await Promise.all([
+    const [totalDoctors, pendingApprovals, approvedDoctors, totalCases, recycleBinCount] = await Promise.all([
       prisma.user.count({ where: { role: 'doctor' } }),
       prisma.user.count({ where: { role: 'doctor', approvalStatus: 'pending' } }),
       prisma.user.count({ where: { role: 'doctor', approvalStatus: 'approved' } }),
-      prisma.clinicalCase.count(),
-      prisma.aIReport.count(),
+      prisma.clinicalCase.count({ where: { deletedAt: null } }),
+      prisma.clinicalCase.count({ where: { deletedAt: { not: null } } }),
     ]);
-
-    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-    const activeDoctors = await prisma.clinicalCase.groupBy({
-      by: ['authorId'],
-      where: { createdAt: { gte: thirtyDaysAgo } },
-      _count: { authorId: true },
-    });
 
     res.json({
       status: 'success',
@@ -147,8 +143,7 @@ router.get('/stats', async (_req: Request, res: Response) => {
         pendingApprovals,
         approvedDoctors,
         totalCases,
-        totalReports,
-        activeDoctors: activeDoctors.length,
+        recycleBinCount,
       },
     });
   } catch (e: any) {
@@ -218,8 +213,9 @@ router.get('/cases', async (req: Request, res: Response) => {
 // GET /api/admin/cases/:id - single case with comments
 router.get('/cases/:id', async (req: Request, res: Response) => {
   try {
+    const id = req.params.id as string;
     const c = await prisma.clinicalCase.findFirst({
-      where: { id: req.params.id, deletedAt: null },
+      where: { id, deletedAt: null },
       include: {
         author: { include: { profile: true } },
         images: { orderBy: { createdAt: 'asc' } },
@@ -256,7 +252,6 @@ router.get('/cases/:id', async (req: Request, res: Response) => {
         images: c.images.map((i) => ({
           id: i.id,
           downloadURL: i.imageData || i.secureUrl || '',
-          thumbnailURL: i.thumbnailURL || i.imageData || i.secureUrl || '',
         })),
         aiReport: c.aiReport ? {
           id: c.aiReport.id,
@@ -286,14 +281,79 @@ router.get('/cases/:id', async (req: Request, res: Response) => {
 
 // ==================== REPORTS ====================
 
+// ==================== RECYCLE BIN ====================
+
+// GET /api/admin/recycle-bin - list soft-deleted cases
+router.get('/recycle-bin', async (req: Request, res: Response) => {
+  try {
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 20;
+
+    const where = { deletedAt: { not: null } };
+
+    const [cases, total] = await Promise.all([
+      prisma.clinicalCase.findMany({
+        where,
+        include: {
+          author: { include: { profile: true } },
+          images: { take: 1, orderBy: { createdAt: 'asc' } },
+          _count: { select: { comments: true, likes: true } },
+        },
+        orderBy: { deletedAt: 'desc' },
+        skip: (page - 1) * limit,
+        take: limit,
+      }),
+      prisma.clinicalCase.count({ where }),
+    ]);
+
+    const formatted = cases.map((c) => ({
+      id: c.id,
+      caseNumber: c.caseNumber,
+      title: c.title,
+      description: c.description,
+      authorId: c.authorId,
+      authorName: c.author.profile?.displayName || c.author.name,
+      authorAvatar: c.author.profile?.avatarData || c.author.image || '',
+      specialization: c.specialization,
+      urgent: c.urgent,
+      status: c.status,
+      coverImage: c.images[0]?.imageData || c.images[0]?.secureUrl || null,
+      viewsCount: c.viewsCount,
+      commentsCount: c._count.comments,
+      likesCount: c._count.likes,
+      createdAt: c.createdAt,
+      deletedAt: c.deletedAt,
+    }));
+
+    res.json({ status: 'success', data: formatted, total, page, limit });
+  } catch (e: any) {
+    res.status(500).json({ status: 'error', message: e.message });
+  }
+});
+
+// POST /api/admin/cases/:id/restore - restore a soft-deleted case
+router.post('/cases/:id/restore', async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id as string;
+    const c = await prisma.clinicalCase.findUnique({ where: { id } });
+    if (!c) return res.status(404).json({ status: 'error', message: 'Case not found' });
+    if (!c.deletedAt) return res.status(400).json({ status: 'error', message: 'Case is not deleted' });
+    await prisma.clinicalCase.update({ where: { id }, data: { deletedAt: null } });
+    res.json({ status: 'success', message: 'Case restored' });
+  } catch (e: any) {
+    res.status(500).json({ status: 'error', message: e.message });
+  }
+});
+
 // ==================== DELETE ====================
 
 // DELETE /api/admin/users/:id - delete any user (with cascade)
 router.delete('/users/:id', async (req: Request, res: Response) => {
   try {
-    const user = await prisma.user.findUnique({ where: { id: req.params.id } });
+    const id = req.params.id as string;
+    const user = await prisma.user.findUnique({ where: { id } });
     if (!user) return res.status(404).json({ status: 'error', message: 'User not found' });
-    await prisma.user.delete({ where: { id: req.params.id } });
+    await prisma.user.delete({ where: { id } });
     res.json({ status: 'success', message: 'User deleted' });
   } catch (e: any) {
     res.status(500).json({ status: 'error', message: e.message });
@@ -303,9 +363,10 @@ router.delete('/users/:id', async (req: Request, res: Response) => {
 // DELETE /api/admin/cases/:id - hard delete any case
 router.delete('/cases/:id', async (req: Request, res: Response) => {
   try {
-    const c = await prisma.clinicalCase.findUnique({ where: { id: req.params.id } });
+    const id = req.params.id as string;
+    const c = await prisma.clinicalCase.findUnique({ where: { id } });
     if (!c) return res.status(404).json({ status: 'error', message: 'Case not found' });
-    await prisma.clinicalCase.delete({ where: { id: req.params.id } });
+    await prisma.clinicalCase.delete({ where: { id } });
     res.json({ status: 'success', message: 'Case deleted' });
   } catch (e: any) {
     res.status(500).json({ status: 'error', message: e.message });
@@ -315,9 +376,10 @@ router.delete('/cases/:id', async (req: Request, res: Response) => {
 // DELETE /api/admin/reports/:id - hard delete any AI report
 router.delete('/reports/:id', async (req: Request, res: Response) => {
   try {
-    const report = await prisma.aIReport.findUnique({ where: { id: req.params.id } });
+    const id = req.params.id as string;
+    const report = await prisma.aIReport.findUnique({ where: { id } });
     if (!report) return res.status(404).json({ status: 'error', message: 'Report not found' });
-    await prisma.aIReport.delete({ where: { id: req.params.id } });
+    await prisma.aIReport.delete({ where: { id } });
     res.json({ status: 'success', message: 'Report deleted' });
   } catch (e: any) {
     res.status(500).json({ status: 'error', message: e.message });

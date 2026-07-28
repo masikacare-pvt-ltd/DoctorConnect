@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { prisma } from '../config/prisma';
-import { requireAuth, AuthenticatedRequest } from '../middlewares/auth';
+import { requireAuth, requireApproved, AuthenticatedRequest } from '../middlewares/auth';
 import { validate } from '../middlewares/validate';
 import { getDefaultAvatar } from '../utils/avatar';
 import { asString } from '../utils/query';
@@ -49,6 +49,8 @@ router.get('/', async (req: Request, res: Response) => {
     const specialization = asString(req.query.specialization);
 
     const where: any = { deletedAt: null };
+    const authorId = asString(req.query.authorId);
+    if (authorId) where.authorId = authorId;
     if (specialization) where.specialization = specialization;
     if (search) {
       where.OR = [
@@ -168,7 +170,7 @@ router.get('/:id', async (req: Request, res: Response) => {
 });
 
 // POST /api/cases - create case (auth required)
-router.post('/', requireAuth, validate(createCaseSchema), async (req: Request, res: Response) => {
+router.post('/', requireAuth, requireApproved, validate(createCaseSchema), async (req: Request, res: Response) => {
   const user = (req as AuthenticatedRequest).user;
   try {
     const { title, description, specialization, urgent, diseaseTags } = req.body;
@@ -223,11 +225,11 @@ async function updateCase(req: Request, res: Response) {
   }
 }
 
-router.patch('/:id', requireAuth, updateCase);
-router.put('/:id', requireAuth, updateCase);
+router.patch('/:id', requireAuth, requireApproved, updateCase);
+router.put('/:id', requireAuth, requireApproved, updateCase);
 
 // PATCH /api/cases/:id/cover - update cover image
-router.patch('/:id/cover', requireAuth, async (req: Request, res: Response) => {
+router.patch('/:id/cover', requireAuth, requireApproved, async (req: Request, res: Response) => {
   try {
     const { coverImage } = req.body;
     await prisma.clinicalCase.update({ where: { id: req.params.id as string }, data: { coverImage } });
@@ -238,7 +240,7 @@ router.patch('/:id/cover', requireAuth, async (req: Request, res: Response) => {
 });
 
 // DELETE /api/cases/:id - soft delete (author only)
-router.delete('/:id', requireAuth, async (req: Request, res: Response) => {
+router.delete('/:id', requireAuth, requireApproved, async (req: Request, res: Response) => {
   const user = (req as AuthenticatedRequest).user;
   try {
     const c = await prisma.clinicalCase.findUnique({ where: { id: req.params.id as string } });
@@ -252,7 +254,7 @@ router.delete('/:id', requireAuth, async (req: Request, res: Response) => {
 });
 
 // POST /api/cases/:id/like - like/unlike a case
-router.post('/:id/like', requireAuth, async (req: Request, res: Response) => {
+router.post('/:id/like', requireAuth, requireApproved, async (req: Request, res: Response) => {
   const user = (req as AuthenticatedRequest).user;
   try {
     const existing = await prisma.like.findUnique({
@@ -272,7 +274,7 @@ router.post('/:id/like', requireAuth, async (req: Request, res: Response) => {
 });
 
 // GET /api/cases/:id/likes - who liked this case
-router.get('/:id/likes', requireAuth, async (req: Request, res: Response) => {
+router.get('/:id/likes', requireAuth, requireApproved, async (req: Request, res: Response) => {
   try {
     const likes = await prisma.like.findMany({
       where: { caseId: req.params.id as string },

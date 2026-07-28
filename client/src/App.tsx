@@ -20,7 +20,8 @@ const ProfileScreenLazy = lazy(() => import('./components/ProfileScreen'));
 const AdminDashboardLazy = lazy(() => import('./components/AdminDashboard'));
 const AdminCasesPageLazy = lazy(() => import('./components/AdminCasesPage'));
 const AdminCaseDetailPageLazy = lazy(() => import('./components/AdminCaseDetailPage'));
-const AdminReportsPageLazy = lazy(() => import('./components/AdminReportsPage'));
+const AdminDoctorsPageLazy = lazy(() => import('./components/AdminDoctorsPage'));
+const AdminRecycleBinLazy = lazy(() => import('./components/AdminRecycleBin'));
 
 export default function App() {
   return (
@@ -99,7 +100,7 @@ export default function App() {
                 path="/admin/doctors"
                 element={
                   <AdminRoute>
-                    <AdminDashboardLazy />
+                    <AdminDoctorsPageLazy />
                   </AdminRoute>
                 }
               />
@@ -120,10 +121,10 @@ export default function App() {
                 }
               />
               <Route
-                path="/admin/reports"
+                path="/admin/recycle-bin"
                 element={
                   <AdminRoute>
-                    <AdminReportsPageLazy />
+                    <AdminRecycleBinLazy />
                   </AdminRoute>
                 }
               />

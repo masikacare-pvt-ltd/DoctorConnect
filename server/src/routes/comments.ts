@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { prisma } from '../config/prisma';
-import { requireAuth, AuthenticatedRequest } from '../middlewares/auth';
+import { requireAuth, requireApproved, AuthenticatedRequest } from '../middlewares/auth';
 import { validate } from '../middlewares/validate';
 import { addCommentSchema } from '../validation/schemas';
 
@@ -63,7 +63,7 @@ router.get('/', async (req: Request, res: Response) => {
 });
 
 // POST /api/comments
-router.post('/', requireAuth, validate(addCommentSchema), async (req: Request, res: Response) => {
+router.post('/', requireAuth, requireApproved, validate(addCommentSchema), async (req: Request, res: Response) => {
   const user = (req as AuthenticatedRequest).user;
   try {
     const { caseId, content } = req.body;
@@ -136,7 +136,7 @@ router.post('/', requireAuth, validate(addCommentSchema), async (req: Request, r
 });
 
 // DELETE /api/comments/:id
-router.delete('/:id', requireAuth, async (req: Request, res: Response) => {
+router.delete('/:id', requireAuth, requireApproved, async (req: Request, res: Response) => {
   const user = (req as AuthenticatedRequest).user;
   try {
     const comment = await prisma.comment.findUnique({ where: { id: req.params.id as string } });

@@ -124,11 +124,13 @@ export async function saveSubCategory(name: string): Promise<void> {
   }
 }
 
-export async function fetchCases(params?: { specialization?: string; search?: string; page?: number }): Promise<{ cases: ClinicalCase[]; total: number; page: number; limit: number }> {
+export async function fetchCases(params?: { specialization?: string; search?: string; page?: number; limit?: number; authorId?: string }): Promise<{ cases: ClinicalCase[]; total: number; page: number; limit: number }> {
   const q = new URLSearchParams();
   if (params?.specialization) q.set('specialization', params.specialization);
   if (params?.search) q.set('search', params.search);
   if (params?.page) q.set('page', String(params.page));
+  if (params?.authorId) q.set('authorId', params.authorId);
+  if (params?.limit) q.set('limit', String(params.limit));
   const { data, total, page, limit } = await apiGet(`/api/cases?${q}`);
   return { cases: (data || []).map(casesToClient), total: total || 0, page: page || 1, limit: limit || 20 };
 }

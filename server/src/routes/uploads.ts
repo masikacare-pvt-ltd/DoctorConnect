@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
 import multer from 'multer';
 import { prisma } from '../config/prisma';
-import { requireAuth, AuthenticatedRequest } from '../middlewares/auth';
+import { requireAuth, requireApproved, AuthenticatedRequest } from '../middlewares/auth';
 
 const router = Router();
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 15 * 1024 * 1024 } });
@@ -11,7 +11,7 @@ function dataUri(buffer: Buffer, mimetype: string): string {
 }
 
 // POST /api/uploads/case/:caseId - upload images for a case (stored in DB)
-router.post('/case/:caseId', requireAuth, upload.array('images', 12), async (req: Request, res: Response) => {
+router.post('/case/:caseId', requireAuth, requireApproved, upload.array('images', 12), async (req: Request, res: Response) => {
   const user = (req as AuthenticatedRequest).user;
   try {
     const caseId = req.params.caseId as string;

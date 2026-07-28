@@ -1,10 +1,10 @@
 import { Router, Request, Response } from 'express';
 import { prisma } from '../config/prisma';
-import { requireAuth, AuthenticatedRequest } from '../middlewares/auth';
+import { requireAuth, requireApproved, AuthenticatedRequest } from '../middlewares/auth';
 
 const router = Router();
 
-router.get('/search', requireAuth, async (req: Request, res: Response) => {
+router.get('/search', requireAuth, requireApproved, async (req: Request, res: Response) => {
   try {
     const q = (req.query.q as string || '').trim();
     if (!q) return res.json({ status: 'success', data: [] });

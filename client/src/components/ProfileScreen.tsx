@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Bell, ShieldCheck, Mail, Save, Camera, Eye, EyeOff, Lock } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { useToast } from '../contexts/ToastContext';
-import { useCases } from '../hooks/useCases';
+import { fetchCases } from '../services/case.service';
 import { useBookmarks } from '../hooks/useBookmarks';
 import { useNotifications } from '../hooks/useNotifications';
 import { authClient } from '../lib/auth-client';
@@ -17,10 +17,10 @@ import VoiceInputButton from './VoiceInputButton';
 export default function ProfileScreen() {
   const { user, profile, updateProfile, uploadAvatar } = useAuth();
   const { toast } = useToast();
-  const { cases } = useCases();
   const { bookmarkIds } = useBookmarks();
   const { unreadCount } = useNotifications();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [myCaseCount, setMyCaseCount] = useState(0);
 
   const [form, setForm] = useState({
     firstName: '',
@@ -42,6 +42,12 @@ export default function ProfileScreen() {
   const [passwordLoading, setPasswordLoading] = useState(false);
 
   useEffect(() => {
+    if (user?.id) {
+      fetchCases({ authorId: user.id, page: 1, limit: 1 }).then(r => setMyCaseCount(r.total)).catch(() => {});
+    }
+  }, [user?.id]);
+
+  useEffect(() => {
     if (profile) {
       setForm({
         firstName: profile.firstName || '',
@@ -60,8 +66,6 @@ export default function ProfileScreen() {
 
   const activeUser = profile || { firstName: 'Doctor', lastName: '', designation: '', avatarUrl: '', avatarData: '', gender: 'male', email: '' };
   const doctorFullName = `Dr. ${activeUser.firstName} ${activeUser.lastName}`.trim();
-  const currentUserId = user?.id;
-  const myCases = cases.filter((c) => c.authorUid === currentUserId).length;
 
   const avatarSrc = getAvatarUrl(activeUser);
 
@@ -153,7 +157,7 @@ export default function ProfileScreen() {
               <ShieldCheck className="w-3 h-3" />Verified Physician
             </div>
             <div className="grid grid-cols-3 gap-2 mt-5">
-              <div className="bg-slate-50 rounded-xl p-3"><span className="block text-sm font-bold text-slate-900 font-mono">{myCases}</span><span className="block text-[9px] text-slate-400 uppercase">Cases</span></div>
+              <div className="bg-slate-50 rounded-xl p-3"><span className="block text-sm font-bold text-slate-900 font-mono">{myCaseCount}</span><span className="block text-[9px] text-slate-400 uppercase">Cases</span></div>
               <div className="bg-slate-50 rounded-xl p-3"><span className="block text-sm font-bold text-slate-900 font-mono">{bookmarkIds.size}</span><span className="block text-[9px] text-slate-400 uppercase">Saved</span></div>
               <div className="bg-slate-50 rounded-xl p-3"><span className="block text-sm font-bold text-slate-900 font-mono">{profile?.credentials?.length ?? 0}</span><span className="block text-[9px] text-slate-400 uppercase">Creds</span></div>
             </div>

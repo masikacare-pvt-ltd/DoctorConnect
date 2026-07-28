@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { prisma } from '../config/prisma';
-import { requireAuth, AuthenticatedRequest } from '../middlewares/auth';
+import { requireAuth, requireApproved, AuthenticatedRequest } from '../middlewares/auth';
 import { validate } from '../middlewares/validate';
 import { completeProfileSchema, avatarUploadSchema } from '../validation/schemas';
 import { getDefaultAvatar } from '../utils/avatar';
@@ -58,7 +58,7 @@ router.post('/complete', requireAuth, validate(completeProfileSchema), async (re
 });
 
 // PATCH /api/profile
-router.patch('/', requireAuth, async (req: Request, res: Response) => {
+router.patch('/', requireAuth, requireApproved, async (req: Request, res: Response) => {
   const user = (req as AuthenticatedRequest).user;
   try {
     const { firstName, lastName, designation, specializationId, hospital, countryCode, countryIso, mobile, bio, gender } = req.body;
@@ -86,7 +86,7 @@ router.patch('/', requireAuth, async (req: Request, res: Response) => {
 });
 
 // POST /api/profile/avatar - upload avatar (base64 stored in DB)
-router.post('/avatar', requireAuth, validate(avatarUploadSchema), async (req: Request, res: Response) => {
+router.post('/avatar', requireAuth, requireApproved, validate(avatarUploadSchema), async (req: Request, res: Response) => {
   const user = (req as AuthenticatedRequest).user;
   try {
     const { imageData } = req.body;

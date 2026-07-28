@@ -1,13 +1,13 @@
 import { Router, Request, Response } from 'express';
 import { prisma } from '../config/prisma';
-import { requireAuth, AuthenticatedRequest } from '../middlewares/auth';
+import { requireAuth, requireApproved, AuthenticatedRequest } from '../middlewares/auth';
 import { validate } from '../middlewares/validate';
 import { toggleBookmarkSchema } from '../validation/schemas';
 
 const router = Router();
 
 // GET /api/bookmarks - get my bookmarks
-router.get('/', requireAuth, async (req: Request, res: Response) => {
+router.get('/', requireAuth, requireApproved, async (req: Request, res: Response) => {
   const user = (req as AuthenticatedRequest).user;
   try {
     const bookmarks = await prisma.bookmark.findMany({
@@ -40,7 +40,7 @@ router.get('/', requireAuth, async (req: Request, res: Response) => {
 });
 
 // POST /api/bookmarks/toggle
-router.post('/toggle', requireAuth, validate(toggleBookmarkSchema), async (req: Request, res: Response) => {
+router.post('/toggle', requireAuth, requireApproved, validate(toggleBookmarkSchema), async (req: Request, res: Response) => {
   const user = (req as AuthenticatedRequest).user;
   try {
     const { caseId } = req.body;
@@ -62,7 +62,7 @@ router.post('/toggle', requireAuth, validate(toggleBookmarkSchema), async (req: 
 });
 
 // GET /api/bookmarks/ids - get just bookmark caseIds for current user
-router.get('/ids', requireAuth, async (req: Request, res: Response) => {
+router.get('/ids', requireAuth, requireApproved, async (req: Request, res: Response) => {
   const user = (req as AuthenticatedRequest).user;
   try {
     const bookmarks = await prisma.bookmark.findMany({

@@ -30,9 +30,10 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
 }
 
 export function PublicRoute({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated, isProfileComplete, loading } = useAuth();
+  const { isAuthenticated, isProfileComplete, isApproved, loading } = useAuth();
   if (loading) return <LoadingScreen />;
-  if (isAuthenticated && isProfileComplete) return <Navigate to="/dashboard" replace />;
+  if (isAuthenticated && isProfileComplete && !isApproved) return <Navigate to="/pending-approval" replace />;
+  if (isAuthenticated && isProfileComplete && isApproved) return <Navigate to="/dashboard" replace />;
   if (isAuthenticated && !isProfileComplete) return <Navigate to="/complete-profile" replace />;
   return <>{children}</>;
 }

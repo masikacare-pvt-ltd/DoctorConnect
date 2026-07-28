@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
 import Groq from 'groq-sdk';
 import { prisma } from '../config/prisma';
-import { requireAuth, AuthenticatedRequest } from '../middlewares/auth';
+import { requireAuth, requireApproved, AuthenticatedRequest } from '../middlewares/auth';
 
 const router = Router();
 let groq: Groq | null = null;
@@ -151,7 +151,7 @@ async function callGroqVision(textPrompt: string, images: { mimeType: string; da
 }
 
 // POST /api/ai/generate - generate AI analysis for a case
-router.post('/generate', requireAuth, async (req: Request, res: Response) => {
+router.post('/generate', requireAuth, requireApproved, async (req: Request, res: Response) => {
   const user = (req as AuthenticatedRequest).user;
   try {
     const { caseId } = req.body;
@@ -248,7 +248,7 @@ Analyze this clinical case. If medical images are attached with this message, ex
 });
 
 // GET /api/ai/report/:caseId - latest AI report for a case
-router.get('/report/:caseId', requireAuth, async (req: Request, res: Response) => {
+router.get('/report/:caseId', requireAuth, requireApproved, async (req: Request, res: Response) => {
   try {
     const report = await prisma.aIReport.findFirst({
       where: { caseId: req.params.caseId as string },
@@ -261,7 +261,7 @@ router.get('/report/:caseId', requireAuth, async (req: Request, res: Response) =
 });
 
 // DELETE /api/ai/report/:caseId - delete AI report for a case (before regenerating)
-router.delete('/report/:caseId', requireAuth, async (req: Request, res: Response) => {
+router.delete('/report/:caseId', requireAuth, requireApproved, async (req: Request, res: Response) => {
   try {
     await prisma.aIReport.deleteMany({ where: { caseId: req.params.caseId as string } });
     res.json({ status: 'success' });

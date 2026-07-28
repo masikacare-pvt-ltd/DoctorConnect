@@ -35,6 +35,7 @@ async function request<T>(method: string, path: string, body?: any): Promise<T> 
 }
 
 export function adminGet<T = any>(path: string) { return request<T>('GET', `/api/admin${path}`); }
+export function adminPost<T = any>(path: string, body?: any) { return request<T>('POST', `/api/admin${path}`, body); }
 export function adminPatch<T = any>(path: string, body?: any) { return request<T>('PATCH', `/api/admin${path}`, body); }
 export function adminDelete<T = any>(path: string) { return request<T>('DELETE', `/api/admin${path}`); }
 

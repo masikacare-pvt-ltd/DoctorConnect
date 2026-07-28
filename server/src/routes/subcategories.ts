@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { prisma } from '../config/prisma';
-import { requireAuth } from '../middlewares/auth';
+import { requireAuth, requireApproved } from '../middlewares/auth';
 import { z } from 'zod';
 
 const router = Router();
@@ -25,7 +25,7 @@ const createSchema = z.object({
   name: z.string().trim().min(1, 'Name is required').max(200),
 });
 
-router.post('/', requireAuth, async (req: Request, res: Response) => {
+router.post('/', requireAuth, requireApproved, async (req: Request, res: Response) => {
   try {
     const parse = createSchema.safeParse(req.body);
     if (!parse.success) {

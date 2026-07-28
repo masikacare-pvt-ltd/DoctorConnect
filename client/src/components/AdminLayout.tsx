@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Users, FileText, Activity, LogOut } from 'lucide-react';
+import { LayoutDashboard, Users, FileText, Trash2, LogOut } from 'lucide-react';
 import { useToast } from '../contexts/ToastContext';
 import { clearAdminToken } from '../lib/adminApi';
 
@@ -8,8 +8,9 @@ const navItems = [
   { label: 'Dashboard', icon: LayoutDashboard, path: '/admin' },
   { label: 'Doctors', icon: Users, path: '/admin/doctors' },
   { label: 'Cases', icon: FileText, path: '/admin/cases' },
-  { label: 'Reports', icon: Activity, path: '/admin/reports' },
 ];
+
+const recycleItem = { label: 'Recycle Bin', icon: Trash2, path: '/admin/recycle-bin' };
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
@@ -38,7 +39,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </div>
           <nav className="space-y-1">
             {navItems.map(({ label, icon: Icon, path }) => {
-              const active = location.pathname === path;
+              const active = path === '/admin' ? location.pathname === path : location.pathname.startsWith(path);
               return (
                 <button
                   key={path}
@@ -56,19 +57,32 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             })}
           </nav>
         </div>
-        <button
-          onClick={handleLogout}
-          className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-xs font-semibold text-rose-500 hover:text-rose-700 hover:bg-rose-50 transition-all mt-6"
-        >
-          <LogOut className="w-4 h-4" />
-          Logout
-        </button>
+        <div className="space-y-1">
+          <button
+            onClick={() => navigate(recycleItem.path)}
+            className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-xs font-semibold transition-all ${
+              recycleItem.path === '/admin' ? location.pathname === recycleItem.path : location.pathname.startsWith(recycleItem.path)
+                ? 'bg-red-100 text-red-700'
+                : 'text-red-500 hover:text-red-700 hover:bg-red-50'
+            }`}
+          >
+            <Trash2 className="w-4 h-4" />
+            {recycleItem.label}
+          </button>
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-xs font-semibold text-rose-500 hover:text-rose-700 hover:bg-rose-50 transition-all"
+          >
+            <LogOut className="w-4 h-4" />
+            Logout
+          </button>
+        </div>
       </aside>
 
       {/* Mobile bottom nav */}
       <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-slate-200 flex items-center justify-around py-2 px-2 md:hidden shadow-lg">
         {navItems.map(({ label, icon: Icon, path }) => {
-          const active = location.pathname === path;
+          const active = path === '/admin' ? location.pathname === path : location.pathname.startsWith(path);
           return (
             <button
               key={path}
@@ -82,6 +96,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </button>
           );
         })}
+        <button
+          onClick={() => navigate(recycleItem.path)}
+          className={`flex flex-col items-center gap-0.5 px-2 py-1 rounded-lg transition-colors ${
+            recycleItem.path === '/admin' ? location.pathname === recycleItem.path : location.pathname.startsWith(recycleItem.path)
+              ? 'text-red-600' : 'text-red-500'
+          }`}
+        >
+          <Trash2 className="w-5 h-5" />
+          <span className="text-[8px] font-semibold">{recycleItem.label}</span>
+        </button>
         <button onClick={handleLogout} className="flex flex-col items-center gap-0.5 px-2 py-1 rounded-lg text-rose-500">
           <LogOut className="w-5 h-5" />
           <span className="text-[8px] font-semibold">Logout</span>

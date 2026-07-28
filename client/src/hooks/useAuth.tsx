@@ -10,6 +10,8 @@ interface AuthUser {
   emailVerified: boolean;
   name: string;
   image?: string | null;
+  role: string;
+  approvalStatus: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -20,6 +22,10 @@ interface AuthContextValue {
   loading: boolean;
   isAuthenticated: boolean;
   isProfileComplete: boolean;
+  isAdmin: boolean;
+  isApproved: boolean;
+  userRole: string;
+  approvalStatus: string;
   register: (input: SignupInput) => Promise<void>;
   login: (input: LoginInput) => Promise<void>;
   loginWithGoogle: () => Promise<void>;
@@ -54,13 +60,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session?.user?.id, isPending]);
 
+  const userWithRole = useMemo(() => {
+    const u = session?.user as any;
+    if (!u) return null;
+    return {
+      ...u,
+      role: u.role || 'doctor',
+      approvalStatus: u.approvalStatus || 'pending',
+    } as AuthUser;
+  }, [session?.user]);
+
   const value = useMemo<AuthContextValue>(
     () => ({
-      user: session?.user || null,
+      user: userWithRole,
       profile,
       loading: isPending || !profileLoaded,
-      isAuthenticated: !!session?.user,
+      isAuthenticated: !!userWithRole,
       isProfileComplete: !!(profile?.firstName && profile?.specializationId),
+      isAdmin: userWithRole?.role === 'admin',
+      isApproved: userWithRole?.approvalStatus === 'approved',
+      userRole: userWithRole?.role || 'doctor',
+      approvalStatus: userWithRole?.approvalStatus || 'pending',
       register: (input) => authApi.register(input),
       login: (input) => authApi.login(input),
       loginWithGoogle: () => authApi.loginWithGoogle(),
@@ -70,7 +90,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       updateProfile: (input) => authApi.updateProfile(input).then(p => { setProfile(p); return p; }),
       uploadAvatar: (imageData) => authApi.uploadAvatar(imageData).then(p => { setProfile(p); return p; }),
     }),
-    [session, profile, isPending, profileLoaded],
+    [userWithRole, profile, isPending, profileLoaded],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

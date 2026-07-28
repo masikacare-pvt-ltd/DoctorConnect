@@ -218,6 +218,9 @@ export default function LoginScreen() {
           <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-center gap-1.5 text-[10px] text-slate-400">
             <Shield className="w-3 h-3 text-emerald-500" /> Secure login for verified doctors only.
           </div>
+          <div className="mt-3 text-center">
+            <button onClick={() => navigate('/admin/login')} className="text-[10px] font-semibold text-slate-400 hover:text-indigo-600 transition-colors">Admin Login</button>
+          </div>
         </div>
       </div>
     </div>

@@ -44,6 +44,7 @@ export default function PhoneInput({
       const match = COUNTRIES.find((c) => c.iso === countryIso);
       if (match) setSelectedCountry(match);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [countryIso]);
 
   // Click outside listener

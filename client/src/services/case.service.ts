@@ -107,6 +107,23 @@ export async function recordView(caseId: string): Promise<void> {
   await apiGet(`/api/cases/${caseId}`);
 }
 
+export async function fetchSubCategories(): Promise<string[]> {
+  try {
+    const { data } = await apiGet('/api/subcategories');
+    return data || [];
+  } catch {
+    return [];
+  }
+}
+
+export async function saveSubCategory(name: string): Promise<void> {
+  try {
+    await apiPost('/api/subcategories', { name });
+  } catch {
+    // subcategory save is best-effort
+  }
+}
+
 export async function fetchCases(params?: { specialization?: string; search?: string; page?: number }): Promise<{ cases: ClinicalCase[]; total: number; page: number; limit: number }> {
   const q = new URLSearchParams();
   if (params?.specialization) q.set('specialization', params.specialization);

@@ -1,10 +1,9 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Bell, UploadCloud, Plus, X, Heart, Eye, Clock, ThumbsUp, MessageSquare } from 'lucide-react';
+import { Search, Bell, UploadCloud, Plus, X, Heart, Eye, Clock, ThumbsUp, MessageSquare, ChevronDown, ChevronRight, Stethoscope, AlertTriangle, Activity, BookOpen } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { useToast } from '../contexts/ToastContext';
 import { useCases } from '../hooks/useCases';
-import { useRecentComments } from '../hooks/useRecentComments';
 import { useSpecializations } from '../hooks/useSpecializations';
 import { useBookmarks } from '../hooks/useBookmarks';
 import { useNotifications } from '../hooks/useNotifications';
@@ -20,7 +19,7 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const { user, profile } = useAuth();
   const { toast } = useToast();
-  const allComments = useRecentComments(12);
+
   const { specializations } = useSpecializations();
   const { bookmarkIds, toggle } = useBookmarks();
 
@@ -40,7 +39,23 @@ export default function Dashboard() {
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [feedFilter, setFeedFilter] = useState<'all' | 'personal'>('all');
+
+  const [mainCategory, setMainCategory] = useState('');
+  const [subCategory, setSubCategory] = useState('');
+  const [subCategorySuggestions, setSubCategorySuggestions] = useState<string[]>([]);
+  const [showSubSuggestions, setShowSubSuggestions] = useState(false);
+  const [normalFindings, setNormalFindings] = useState('');
+  const [abnormalFindings, setAbnormalFindings] = useState('');
+  const [specialObservations, setSpecialObservations] = useState('');
+  const [futureRecommendations, setFutureRecommendations] = useState('');
+  const [findingsOpen, setFindingsOpen] = useState(true);
+  const [patientInfoOpen, setPatientInfoOpen] = useState(false);
+  const [patientName, setPatientName] = useState('');
+  const [patientAge, setPatientAge] = useState<number | ''>('');
+  const [patientGender, setPatientGender] = useState('');
+  const [bloodGroup, setBloodGroup] = useState('');
+  const [chronicHistory, setChronicHistory] = useState('');
+  const [geneticDisorders, setGeneticDisorders] = useState('');
 
   useEffect(() => {
     if (specializations.length && !specializationId) setSpecializationId(specializations[0].id);
@@ -52,6 +67,25 @@ export default function Dashboard() {
   }, [searchInput]);
 
   useEffect(() => () => previews.forEach((p) => URL.revokeObjectURL(p)), [previews]);
+
+  useEffect(() => {
+    caseApi.fetchSubCategories().then((list) => {
+      if (list && list.length) setSubCategorySuggestions(list);
+    }).catch(() => {});
+  }, []);
+
+  const handleSubCategorySelect = (value: string) => {
+    setSubCategory(value);
+    setShowSubSuggestions(false);
+  };
+
+  const handleSubCategoryBlur = () => {
+    setTimeout(() => setShowSubSuggestions(false), 200);
+    if (subCategory.trim() && !subCategorySuggestions.includes(subCategory.trim())) {
+      caseApi.saveSubCategory(subCategory.trim()).catch(() => {});
+      setSubCategorySuggestions((prev) => [...prev, subCategory.trim()]);
+    }
+  };
 
   const handleAddTag = (e: React.FormEvent) => {
     e.preventDefault();
@@ -128,8 +162,7 @@ export default function Dashboard() {
 
   const activeUser = profile || { firstName: 'Doctor', lastName: '', designation: '', avatarUrl: '' };
   const doctorFullName = `Dr. ${activeUser.firstName} ${activeUser.lastName}`.trim();
-  const currentUserId = user?.id || '';
-  const myCases = cases.filter((c) => c.authorUid === currentUserId).length;
+
 
   const filteredCases = useMemo(() => {
     return cases.filter((c) => {
@@ -146,38 +179,7 @@ export default function Dashboard() {
     });
   }, [cases, searchQuery]);
 
-  interface ActivityItem {
-    id: string; type: 'case' | 'comment'; createdAt: string; title: string; subtitle: string;
-    authorName: string; authorAvatar: string; caseId: string; isPersonal: boolean;
-  }
-  const activities = useMemo<ActivityItem[]>(() => {
-    const result: ActivityItem[] = [];
-    cases.forEach((c: ClinicalCase) => {
-      const isMyCase = c.authorUid === currentUserId;
-      const createdAt = c.createdAt || new Date().toISOString();
-      result.push({
-        id: `activity-case-${c.id}`, type: 'case', createdAt,
-        title: isMyCase ? 'You shared a new clinical case' : `${c.authorName} shared a new case`,
-        subtitle: c.title, authorName: c.authorName, authorAvatar: c.authorAvatar, caseId: c.id, isPersonal: isMyCase,
-      });
-    });
-    allComments.forEach((com) => {
-      const caseItem = cases.find((c) => c.id === com.caseId);
-      const isMyComment = com.authorUid === currentUserId;
-      const isOnMyCase = caseItem?.authorUid === currentUserId;
-      let titleText = '';
-      if (isMyComment) titleText = `You reviewed '${caseItem?.title || 'Case'}'`;
-      else if (isOnMyCase) titleText = `${com.authorName} reviewed your case`;
-      else titleText = `${com.authorName} commented on '${caseItem?.title || 'Case'}'`;
-      result.push({
-        id: `activity-comment-${com.id}`, type: 'comment', createdAt: com.createdAt || new Date().toISOString(),
-        title: titleText, subtitle: com.text, authorName: com.authorName, authorAvatar: com.authorAvatar,
-        caseId: com.caseId, isPersonal: isMyComment || isOnMyCase,
-      });
-    });
-    return result.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-  }, [cases, allComments, currentUserId]);
-  const displayedActivities = feedFilter === 'all' ? activities : activities.filter((a) => a.isPersonal);
+
 
   return (
     <AppShell>
@@ -216,8 +218,7 @@ export default function Dashboard() {
             <p className="text-xs text-slate-400 mt-0.5">Share clinical cases with fellow doctors.</p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-100 p-6 shadow-sm flex flex-col justify-between">
+          <div className="bg-white rounded-2xl border border-slate-100 p-6 shadow-sm flex flex-col justify-between">
               <div>
                 <h3 className="text-sm font-bold text-slate-900 font-display mb-4">Upload New Case</h3>
                 <form onSubmit={handleUploadCaseSubmit} className="space-y-4">
@@ -271,15 +272,26 @@ export default function Dashboard() {
                         onTranscript={(text) => setDescription((prev) => (prev ? `${prev} ${text}`.trim() : text.trim()))}
                       />
                     </div>
-                    <textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Describe the clinical presentation, history, and findings..." rows={3} className="w-full p-4 bg-slate-50 border border-slate-200 focus:border-indigo-500 rounded-xl text-xs focus:bg-white focus:outline-none transition-all" />
+                    <textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Describe the medical findings clearly and accurately based on the uploaded report. Include only clinically relevant observations." rows={3} className="w-full p-4 bg-slate-50 border border-slate-200 focus:border-indigo-500 rounded-xl text-xs focus:bg-white focus:outline-none transition-all" />
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
                     <div>
-                      <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Specialization</label>
-                      <select value={specializationId} onChange={(e) => setSpecializationId(e.target.value)} className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-100">
-                        {specializations.map((s) => (<option key={s.id} value={s.id}>{s.name}</option>))}
-                      </select>
+                      <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Main Category</label>
+                      <input type="text" value={mainCategory} onChange={(e) => setMainCategory(e.target.value)} placeholder="e.g. Radiology, Cardiology, Neurology..." className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-100" />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Sub Category</label>
+                      <div className="relative">
+                        <input type="text" value={subCategory} onChange={(e) => { setSubCategory(e.target.value); setShowSubSuggestions(true); }} onFocus={() => setShowSubSuggestions(true)} onBlur={handleSubCategoryBlur} placeholder="e.g. Chest X-Ray, MRI Brain..." className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-100" />
+                        {showSubSuggestions && subCategorySuggestions.length > 0 && (
+                          <div className="absolute z-10 top-full left-0 right-0 mt-1 bg-white border border-slate-200 rounded-lg shadow-lg max-h-40 overflow-y-auto">
+                            {subCategorySuggestions.filter((s) => s.toLowerCase().includes(subCategory.toLowerCase())).map((s) => (
+                              <button key={s} type="button" onMouseDown={() => handleSubCategorySelect(s)} className="w-full text-left px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50 transition-colors">{s}</button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
                     </div>
                     <div>
                       <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Disease Tags</label>
@@ -298,8 +310,86 @@ export default function Dashboard() {
                   </div>
 
                   <div className="flex items-center gap-2 pt-1">
-                    <input type="checkbox" id="urgent-toggle" checked={urgent} onChange={(e) => setUrgent(e.target.checked)} className="rounded text-rose-600 focus:ring-rose-400" />
-                    <label htmlFor="urgent-toggle" className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Mark as Urgent</label>
+                    <input type="checkbox" id="urgent-toggle" checked={urgent} onChange={(e) => setUrgent(e.target.checked)} className="rounded text-amber-600 focus:ring-amber-400" />
+                    <label htmlFor="urgent-toggle" className="text-[10px] font-bold text-amber-600 uppercase tracking-wider">Doctor Feedback Required</label>
+                  </div>
+
+                  <div className="border-t border-slate-100 pt-4">
+                    <button type="button" onClick={() => setFindingsOpen(!findingsOpen)} className="flex items-center gap-2 w-full text-left">
+                      {findingsOpen ? <ChevronDown className="w-4 h-4 text-slate-400" /> : <ChevronRight className="w-4 h-4 text-slate-400" />}
+                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Structured Findings</span>
+                    </button>
+                    {findingsOpen && (
+                      <div className="mt-3 space-y-3">
+                        <div>
+                          <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 flex items-center gap-1.5"><Activity className="w-3 h-3 text-emerald-500" />Normal Findings</label>
+                          <textarea value={normalFindings} onChange={(e) => setNormalFindings(e.target.value)} placeholder="Document normal anatomical structures and physiological parameters..." rows={2} className="w-full p-3 bg-slate-50 border border-slate-200 focus:border-emerald-500 rounded-xl text-xs focus:bg-white focus:outline-none transition-all" />
+                        </div>
+                        <div>
+                          <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 flex items-center gap-1.5"><AlertTriangle className="w-3 h-3 text-rose-500" />Abnormal Findings</label>
+                          <textarea value={abnormalFindings} onChange={(e) => setAbnormalFindings(e.target.value)} placeholder="Describe any pathological findings, lesions, or deviations from normal..." rows={2} className="w-full p-3 bg-slate-50 border border-slate-200 focus:border-rose-500 rounded-xl text-xs focus:bg-white focus:outline-none transition-all" />
+                        </div>
+                        <div>
+                          <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 flex items-center gap-1.5"><Stethoscope className="w-3 h-3 text-amber-500" />Special Observations</label>
+                          <textarea value={specialObservations} onChange={(e) => setSpecialObservations(e.target.value)} placeholder="Note any unique or noteworthy clinical observations..." rows={2} className="w-full p-3 bg-slate-50 border border-slate-200 focus:border-amber-500 rounded-xl text-xs focus:bg-white focus:outline-none transition-all" />
+                        </div>
+                        <div>
+                          <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 flex items-center gap-1.5"><BookOpen className="w-3 h-3 text-blue-500" />Future Recommendations</label>
+                          <textarea value={futureRecommendations} onChange={(e) => setFutureRecommendations(e.target.value)} placeholder="Suggest follow-up tests, imaging modalities, or clinical monitoring plans..." rows={2} className="w-full p-3 bg-slate-50 border border-slate-200 focus:border-blue-500 rounded-xl text-xs focus:bg-white focus:outline-none transition-all" />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="border-t border-slate-100 pt-4">
+                    <button type="button" onClick={() => setPatientInfoOpen(!patientInfoOpen)} className="flex items-center gap-2 w-full text-left">
+                      {patientInfoOpen ? <ChevronDown className="w-4 h-4 text-slate-400" /> : <ChevronRight className="w-4 h-4 text-slate-400" />}
+                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Patient Information</span>
+                      <span className="text-[9px] text-slate-300 font-normal lowercase">(optional)</span>
+                    </button>
+                    {patientInfoOpen && (
+                      <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                          <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Name</label>
+                          <input type="text" value={patientName} onChange={(e) => setPatientName(e.target.value)} placeholder="Patient name" className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-100" />
+                        </div>
+                        <div>
+                          <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Age</label>
+                          <input type="number" value={patientAge} onChange={(e) => setPatientAge(e.target.value ? Number(e.target.value) : '')} placeholder="Age" min={0} max={150} className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-100" />
+                        </div>
+                        <div>
+                          <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Gender</label>
+                          <select value={patientGender} onChange={(e) => setPatientGender(e.target.value)} className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-100">
+                            <option value="">Select</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Blood Group</label>
+                          <select value={bloodGroup} onChange={(e) => setBloodGroup(e.target.value)} className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-100">
+                            <option value="">Select</option>
+                            <option value="A+">A+</option>
+                            <option value="A-">A-</option>
+                            <option value="B+">B+</option>
+                            <option value="B-">B-</option>
+                            <option value="AB+">AB+</option>
+                            <option value="AB-">AB-</option>
+                            <option value="O+">O+</option>
+                            <option value="O-">O-</option>
+                          </select>
+                        </div>
+                        <div className="sm:col-span-2">
+                          <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Chronic History</label>
+                          <textarea value={chronicHistory} onChange={(e) => setChronicHistory(e.target.value)} placeholder="Document any chronic conditions or ongoing treatments..." rows={2} className="w-full p-3 bg-slate-50 border border-slate-200 focus:border-indigo-500 rounded-xl text-xs focus:bg-white focus:outline-none transition-all" />
+                        </div>
+                        <div className="sm:col-span-2">
+                          <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Genetic Disorders</label>
+                          <textarea value={geneticDisorders} onChange={(e) => setGeneticDisorders(e.target.value)} placeholder="Note any known genetic conditions or family history..." rows={2} className="w-full p-3 bg-slate-50 border border-slate-200 focus:border-indigo-500 rounded-xl text-xs focus:bg-white focus:outline-none transition-all" />
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   <div className="pt-4 flex justify-end">
@@ -310,74 +400,6 @@ export default function Dashboard() {
                 </form>
               </div>
             </div>
-
-            <div className="space-y-6 flex flex-col justify-between">
-              <div className="bg-white rounded-2xl border border-slate-100 p-6 shadow-sm">
-                <h3 className="text-xs font-bold tracking-wider uppercase text-slate-400 mb-4">Peer Review Stats</h3>
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center py-2 border-b border-slate-50">
-                    <span className="text-xs font-medium text-slate-500">Cases Shared</span>
-                    <span className="text-sm font-bold text-slate-900 font-mono">{myCases}</span>
-                  </div>
-                  <div className="flex justify-between items-center py-2 border-b border-slate-50">
-                    <span className="text-xs font-medium text-slate-500">Discussions Joined</span>
-                    <span className="text-sm font-bold text-slate-900 font-mono">{allComments.length}</span>
-                  </div>
-                  <div className="flex justify-between items-center py-2">
-                    <span className="text-xs font-medium text-slate-500">Contribution Score</span>
-                    <span className="text-xs px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-md font-bold uppercase tracking-wider border border-emerald-100">Active</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-white rounded-2xl border border-slate-100 p-6 shadow-sm flex flex-col">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-xs font-bold tracking-wider uppercase text-slate-400">Clinical Activity</h3>
-                    <div className="flex bg-slate-100 p-0.5 rounded-lg text-[10px] font-semibold">
-                      <button type="button" onClick={() => setFeedFilter('all')} className={`px-3 py-1.5 rounded-md transition-all ${feedFilter === 'all' ? 'bg-white text-slate-950 shadow-sm ring-1 ring-slate-200/50' : 'text-slate-400 hover:text-slate-700'}`}>All Network</button>
-                      <button type="button" onClick={() => setFeedFilter('personal')} className={`px-3 py-1.5 rounded-md transition-all ${feedFilter === 'personal' ? 'bg-white text-slate-950 shadow-sm ring-1 ring-slate-200/50' : 'text-slate-400 hover:text-slate-700'}`}>Personal</button>
-                    </div>
-                  </div>
-                  <div className="max-h-[260px] overflow-y-auto space-y-3.5 pr-1" id="activity-feed-list">
-                    {displayedActivities.length === 0 ? (
-                      <div className="text-center py-8 text-slate-400">
-                        <p className="text-xs font-medium">{feedFilter === 'personal' ? 'No personal activity yet. Create a case or comment to see it here.' : 'No recent activities found'}</p>
-                      </div>
-                    ) : (
-                    displayedActivities.map((act) => (
-                      <div key={act.id} onClick={() => navigate(`/case/${act.caseId}`)} className="group flex gap-3 p-2 hover:bg-slate-50 rounded-xl transition-all cursor-pointer border border-transparent hover:border-slate-100 text-left">
-                        <img src={act.authorAvatar} alt="Activity Author" referrerPolicy="no-referrer" className="w-8 h-8 rounded-full border border-slate-100 shrink-0 object-cover mt-0.5" />
-                        <div className="flex-1 min-w-0">
-                          <div className="flex justify-between items-start gap-1">
-                            <span className="block text-[11px] font-semibold text-slate-800 leading-tight group-hover:text-indigo-600 transition-colors truncate">{act.title}</span>
-                            <span className="text-[9px] text-slate-400 shrink-0 font-mono mt-0.5">{formatRelativeTime(act.createdAt)}</span>
-                          </div>
-                          <p className="text-[10px] text-slate-500 line-clamp-2 mt-1 leading-normal font-normal">{act.subtitle}</p>
-                          {act.type === 'case' ? (
-                            <span className="inline-flex items-center gap-1 mt-1 px-1.5 py-0.5 bg-emerald-50 text-emerald-700 text-[8px] font-bold uppercase rounded border border-emerald-100/50">● New Case</span>
-                          ) : (
-                            <span className="inline-flex items-center gap-1 mt-1 px-1.5 py-0.5 bg-sky-50 text-sky-700 text-[8px] font-bold uppercase rounded border border-sky-100/50">● Peer Comment</span>
-                          )}
-                        </div>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </div>
-
-              <div className="bg-slate-950 text-white rounded-2xl p-6 relative overflow-hidden flex-1 flex flex-col justify-between border border-slate-800">
-                <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-indigo-500/20 to-sky-500/10 blur-xl" />
-                <div className="relative z-10 space-y-3">
-                  <div className="w-8 h-8 rounded-lg bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 mb-1"><span className="text-sm">AI</span></div>
-                  <span className="block text-sm font-bold text-white font-display">AI-Assisted Diagnostics</span>
-                  <p className="text-[11px] text-slate-400 leading-normal">Generate structured differential diagnoses and clinical insights on any case.</p>
-                </div>
-                <div className="relative z-10 pt-6">
-                  <button onClick={() => { const c = cases[0]; if (c) navigate(`/case/${c.id}`); else toast('No cases yet to analyze.', 'info'); }} className="w-full py-2.5 bg-white text-slate-950 hover:bg-slate-100 active:scale-95 font-bold rounded-lg text-xs shadow-md transition-all" id="ai-banner-btn">Try on a case</button>
-                </div>
-              </div>
-            </div>
-          </div>
 
           <div className="space-y-4">
             <div className="flex justify-between items-center">

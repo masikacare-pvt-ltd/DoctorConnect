@@ -21,7 +21,7 @@ export default function AppShell({ children }: AppShellProps) {
   const { toast } = useToast();
 
   const handleLogout = async () => {
-    try { await logout(); } catch {}
+    try { await logout(); } catch { /* ignore */ }
     toast('Securely logged out.', 'info');
     navigate('/');
   };

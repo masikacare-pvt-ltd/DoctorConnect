@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Bell, ShieldCheck, Mail, Save, Camera } from 'lucide-react';
+import { Bell, ShieldCheck, Mail, Save, Camera, Eye, EyeOff, Lock } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { useToast } from '../contexts/ToastContext';
 import { useCases } from '../hooks/useCases';
 import { useBookmarks } from '../hooks/useBookmarks';
 import { useNotifications } from '../hooks/useNotifications';
+import { authClient } from '../lib/auth-client';
 import { getAvatarUrl } from '../utils/avatar';
 import { GENDERS } from '../utils/constants';
 import AppShell from './AppShell';
@@ -35,6 +36,10 @@ export default function ProfileScreen() {
   });
   const [loading, setLoading] = useState(false);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
+
+  const [passwordForm, setPasswordForm] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' });
+  const [showPassword, setShowPassword] = useState({ current: false, new: false, confirm: false });
+  const [passwordLoading, setPasswordLoading] = useState(false);
 
   useEffect(() => {
     if (profile) {
@@ -93,6 +98,32 @@ export default function ProfileScreen() {
     }
   };
 
+  const handlePasswordChange = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+      toast('Passwords do not match.', 'error');
+      return;
+    }
+    if (passwordForm.newPassword.length < 6) {
+      toast('Password must be at least 6 characters.', 'error');
+      return;
+    }
+    setPasswordLoading(true);
+    try {
+      const { error } = await (authClient as any).changePassword({
+        currentPassword: passwordForm.currentPassword,
+        newPassword: passwordForm.newPassword,
+      });
+      if (error) throw new Error(error.message || 'Failed to change password');
+      toast('Password changed successfully.', 'success');
+      setPasswordForm({ currentPassword: '', newPassword: '', confirmPassword: '' });
+    } catch (err: any) {
+      toast(err?.message || 'Failed to change password.', 'error');
+    } finally {
+      setPasswordLoading(false);
+    }
+  };
+
   return (
     <AppShell>
       <header className="bg-white dark:bg-slate-900 border-b border-slate-200/80 dark:border-slate-800 px-6 py-4 flex items-center justify-between gap-4">
@@ -129,7 +160,7 @@ export default function ProfileScreen() {
           </div>
         </div>
 
-        <div className="lg:col-span-2">
+        <div className="lg:col-span-2 space-y-6">
           <form onSubmit={handleSave} className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 space-y-4">
             <h3 className="text-sm font-bold text-slate-900 font-display">Professional Details</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -201,6 +232,47 @@ export default function ProfileScreen() {
             <div className="pt-2 flex justify-end">
               <button type="submit" disabled={loading} className="px-5 py-2.5 bg-black hover:bg-slate-900 text-white rounded-lg text-xs font-bold shadow-md active:scale-95 transition-all flex items-center gap-1.5 disabled:opacity-60">
                 <Save className="w-4 h-4" />{loading ? 'Saving...' : 'Save Changes'}
+              </button>
+            </div>
+          </form>
+
+          <form onSubmit={handlePasswordChange} className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 space-y-4">
+            <h3 className="text-sm font-bold text-slate-900 font-display">Change Password</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-1">Current Password</label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <input type={showPassword.current ? 'text' : 'password'} value={passwordForm.currentPassword} onChange={(e) => setPasswordForm({ ...passwordForm, currentPassword: e.target.value })} placeholder="Current" className="w-full pl-9 pr-9 py-2.5 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-100" />
+                  <button type="button" onClick={() => setShowPassword({ ...showPassword, current: !showPassword.current })} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                    {showPassword.current ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
+              <div>
+                <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-1">New Password</label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <input type={showPassword.new ? 'text' : 'password'} value={passwordForm.newPassword} onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })} placeholder="New password" className="w-full pl-9 pr-9 py-2.5 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-100" />
+                  <button type="button" onClick={() => setShowPassword({ ...showPassword, new: !showPassword.new })} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                    {showPassword.new ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
+              <div>
+                <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-1">Confirm New</label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <input type={showPassword.confirm ? 'text' : 'password'} value={passwordForm.confirmPassword} onChange={(e) => setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })} placeholder="Confirm new" className="w-full pl-9 pr-9 py-2.5 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-100" />
+                  <button type="button" onClick={() => setShowPassword({ ...showPassword, confirm: !showPassword.confirm })} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                    {showPassword.confirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div className="pt-2 flex justify-end">
+              <button type="submit" disabled={passwordLoading} className="px-5 py-2.5 bg-black hover:bg-slate-900 text-white rounded-lg text-xs font-bold shadow-md active:scale-95 transition-all flex items-center gap-1.5 disabled:opacity-60">
+                <Lock className="w-4 h-4" />{passwordLoading ? 'Changing...' : 'Change Password'}
               </button>
             </div>
           </form>

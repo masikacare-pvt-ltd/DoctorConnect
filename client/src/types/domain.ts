@@ -1,4 +1,5 @@
 export type UserRole = 'doctor' | 'admin';
+export type ApprovalStatus = 'pending' | 'approved' | 'rejected';
 export type AccountStatus = 'active' | 'disabled';
 
 export interface UserAccount {

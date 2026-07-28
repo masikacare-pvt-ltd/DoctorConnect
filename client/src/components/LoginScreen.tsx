@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock, Shield, AlertCircle } from 'lucide-react';
 
@@ -7,13 +7,36 @@ import { useToast } from '../contexts/ToastContext';
 
 export default function LoginScreen() {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, isAuthenticated, isProfileComplete, loading } = useAuth();
   const { toast } = useToast();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
   const [isLoading, setIsLoading] = useState(false);
+  const [loginDone, setLoginDone] = useState(false);
+
+  // Wait for session to update after login, then navigate.
+  // Use a timeout fallback in case the session takes too long (cross-domain cookie delay).
+  useEffect(() => {
+    if (!loginDone) return;
+
+    // Navigate immediately if already authenticated
+    if (!loading && isAuthenticated) {
+      navigate(isProfileComplete ? '/dashboard' : '/complete-profile', { replace: true });
+      return;
+    }
+
+    // Fallback: if loading takes more than 3s after login, force navigate anyway
+    const timer = setTimeout(() => {
+      if (isAuthenticated) {
+        navigate(isProfileComplete ? '/dashboard' : '/complete-profile', { replace: true });
+      }
+      // Do NOT do window.location.href — causes redirect loops
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, [loginDone, loading, isAuthenticated, isProfileComplete, navigate]);
 
   const handleLocalSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,7 +54,7 @@ export default function LoginScreen() {
     try {
       await login({ email: email.trim(), password });
       toast('Logged in successfully!', 'success');
-      navigate('/dashboard');
+      setLoginDone(true);
     } catch (error: any) {
       const code = error?.code;
       let errMsg = 'Failed to sign in. Please verify your credentials.';
@@ -107,7 +130,7 @@ export default function LoginScreen() {
                 <path d="M425 230L440 270L455 230H425Z" fill="#0284C7" />
                 <path d="M440 270V380" stroke="#E2E8F0" strokeWidth="1.5" />
                 <circle cx="440" cy="180" r="32" fill="#F3F4F6" stroke="#CBD5E1" strokeWidth="1.5" />
-                <path d="M408 180C408 145 472 145 472 180F" fill="#334155" />
+                <path d="M408 180C408 145 472 145 472 180" fill="#334155" />
                 <path d="M408 175C415 152 465 152 472 175C460 165 420 165 408 175Z" fill="#1E293B" />
                 <path d="M400 270C385 265 350 255 330 255C325 255 325 260 330 263C345 270 375 285 390 290" stroke="#F3F4F6" strokeWidth="10" strokeLinecap="round" />
               </g>

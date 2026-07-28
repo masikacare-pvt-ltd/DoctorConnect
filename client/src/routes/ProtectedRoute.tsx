@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { Loader2 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
@@ -13,7 +13,15 @@ function LoadingScreen() {
 
 export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isProfileComplete, loading } = useAuth();
-  if (loading) return <LoadingScreen />;
+  const [timedOut, setTimedOut] = useState(false);
+
+  useEffect(() => {
+    if (!loading) return;
+    const t = setTimeout(() => setTimedOut(true), 5000);
+    return () => clearTimeout(t);
+  }, [loading]);
+
+  if (loading && !timedOut) return <LoadingScreen />;
   if (!isAuthenticated) return <Navigate to="/login" replace />;
   if (!isProfileComplete) return <Navigate to="/complete-profile" replace />;
   return <>{children}</>;

@@ -3,7 +3,6 @@ import { fetchBookmarkIds, toggleBookmark } from '../services/bookmark.service';
 import type { Bookmark } from '../types/domain';
 
 export function useBookmarks() {
-  const [bookmarks] = useState<Bookmark[]>([]);
   const [bookmarkIds, setBookmarkIds] = useState<Set<string>>(new Set());
 
   const load = useCallback(async () => {
@@ -26,5 +25,5 @@ export function useBookmarks() {
     [],
   );
 
-  return { bookmarks, bookmarkIds, toggle, refresh: load };
+  return { bookmarkIds, toggle, refresh: load };
 }

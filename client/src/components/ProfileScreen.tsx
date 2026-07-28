@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Home, MessageSquare, User, LogOut, Bell, ShieldCheck, Mail, Phone, Award, Save, Building, Camera } from 'lucide-react';
+import { Bell, ShieldCheck, Mail, Phone, Award, Save, Building, Camera } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { useToast } from '../contexts/ToastContext';
 import { useCases } from '../hooks/useCases';
@@ -8,10 +7,11 @@ import { useBookmarks } from '../hooks/useBookmarks';
 import { useNotifications } from '../hooks/useNotifications';
 import { useSpecializations } from '../hooks/useSpecializations';
 import { getAvatarUrl } from '../utils/avatar';
+import { DESIGNATIONS, GENDERS } from '../utils/constants';
+import AppShell from './AppShell';
 
 export default function ProfileScreen() {
-  const navigate = useNavigate();
-  const { user, profile, updateProfile, uploadAvatar, logout } = useAuth();
+  const { user, profile, updateProfile, uploadAvatar } = useAuth();
   const { toast } = useToast();
   const { cases } = useCases();
   const { bookmarkIds } = useBookmarks();
@@ -38,12 +38,11 @@ export default function ProfileScreen() {
     }
   }, [profile]);
 
-  const handleLogout = async () => { try { await logout(); } catch {} navigate('/'); };
   const activeUser = profile || { firstName: 'Doctor', lastName: '', designation: '', avatarUrl: '', avatarData: '', gender: 'male', email: '' };
   const doctorFullName = `Dr. ${activeUser.firstName} ${activeUser.lastName}`.trim();
   const currentUserId = user?.id;
   const myCases = cases.filter((c) => c.authorUid === currentUserId).length;
-  const designations = ['Chief Resident', 'Specialist Physician', 'Attending Physician', 'Consultant', 'Fellow Specialist', 'Radiologist', 'Dermatologist', 'Cardiologist', 'Neurologist'];
+  const designations = DESIGNATIONS;
 
   const avatarSrc = getAvatarUrl(activeUser);
 
@@ -81,26 +80,7 @@ export default function ProfileScreen() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col md:flex-row font-sans transition-colors duration-200">
-      <aside className="w-full md:w-48 bg-white dark:bg-slate-900 border-b md:border-b-0 md:border-r border-slate-200 dark:border-slate-800 p-4 flex flex-col justify-between shrink-0">
-        <div>
-          <div className="flex items-center gap-2 mb-8">
-            <div className="w-8 h-8 rounded-lg bg-black dark:bg-indigo-600 flex items-center justify-center shadow-sm"><span className="text-white text-lg font-bold">+</span></div>
-            <div>
-              <span className="text-sm font-extrabold tracking-tight text-slate-950 dark:text-white font-display block leading-none">MedConnect</span>
-              <span className="text-[9px] text-slate-400 dark:text-slate-500 font-semibold tracking-wider uppercase mt-0.5 block">Doctor Portal</span>
-            </div>
-          </div>
-          <nav className="space-y-1">
-            <button onClick={() => navigate('/dashboard')} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-950 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-all"><Home className="w-4 h-4" />Home</button>
-            <button onClick={() => navigate('/cases')} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-950 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-all"><MessageSquare className="w-4 h-4" />Cases</button>
-            <button onClick={() => navigate('/profile')} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-xs font-semibold bg-slate-900 text-white shadow-md shadow-slate-900/10 dark:bg-slate-800 transition-all"><User className="w-4 h-4" />Profile</button>
-          </nav>
-        </div>
-        <button onClick={handleLogout} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-xs font-semibold text-rose-500 hover:text-rose-700 hover:bg-rose-50 dark:hover:bg-rose-950/20 transition-all mt-6"><LogOut className="w-4 h-4" />Logout</button>
-      </aside>
-
-      <div className="flex-1 flex flex-col min-w-0">
+    <AppShell>
         <header className="bg-white dark:bg-slate-900 border-b border-slate-200/80 dark:border-slate-800 px-6 py-4 flex items-center justify-between gap-4">
           <h1 className="text-sm font-bold text-slate-900 dark:text-white">My Profile</h1>
           <div className="flex items-center gap-3">
@@ -162,9 +142,7 @@ export default function ProfileScreen() {
                 <div>
                   <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-1">Gender</label>
                   <select value={form.gender} onChange={(e) => setForm({ ...form, gender: e.target.value })} className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-100">
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                    <option value="other">Other</option>
+                    {GENDERS.map((g) => <option key={g.value} value={g.value}>{g.label}</option>)}
                   </select>
                 </div>
                 <div>
@@ -199,7 +177,6 @@ export default function ProfileScreen() {
             </form>
           </div>
         </main>
-      </div>
-    </div>
+    </AppShell>
   );
 }

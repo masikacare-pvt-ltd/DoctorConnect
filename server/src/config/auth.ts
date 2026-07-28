@@ -11,7 +11,7 @@ config({ path: resolve(__dirname, '../../../.env') });
 export const auth = betterAuth({
   database: prismaAdapter(prisma, { provider: 'postgresql' }),
   secret: process.env.BETTER_AUTH_SECRET!,
-  baseURL: process.env.CLIENT_URL || 'http://localhost:5173',
+  baseURL: process.env.BETTER_AUTH_URL || process.env.RENDER_EXTERNAL_URL || 'http://localhost:5000',
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: false,
@@ -24,9 +24,22 @@ export const auth = betterAuth({
       maxAge: 60 * 5,
     },
   },
+  advanced: {
+    useSecureCookies: process.env.NODE_ENV === 'production',
+    crossSubdomainCookies: {
+      enabled: false,
+    },
+    defaultCookieAttributes: {
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      secure: process.env.NODE_ENV === 'production',
+    },
+  },
   trustedOrigins: [
     process.env.CLIENT_URL || 'http://localhost:3000',
+    process.env.RENDER_EXTERNAL_URL || 'http://localhost:5000',
     'http://localhost:5000',
     'http://localhost:3000',
+    'http://localhost:3001',
+    'http://localhost:5173',
   ],
 });

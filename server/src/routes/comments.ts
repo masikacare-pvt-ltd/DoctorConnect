@@ -93,6 +93,31 @@ router.post('/', requireAuth, validate(addCommentSchema), async (req: Request, r
       });
     }
 
+    // Parse @mentions and notify mentioned users
+    const allUsers = await prisma.user.findMany({
+      where: { id: { not: user.id } },
+      include: { profile: true },
+    });
+    const mentionedUserIds: string[] = [];
+    for (const mu of allUsers) {
+      const name = mu.profile?.displayName || mu.name;
+      const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      if (new RegExp(`@${escaped}(?:\\s|$|[.,!?;])`).test(content)) {
+        mentionedUserIds.push(mu.id);
+      }
+    }
+    if (mentionedUserIds.length > 0) {
+      await prisma.notification.createMany({
+        data: mentionedUserIds.map(uid => ({
+          userId: uid,
+          type: 'mention',
+          text: `${user.name} mentioned you in a comment`,
+          caseId,
+          fromName: user.name,
+        })),
+      });
+    }
+
     res.status(201).json({
       status: 'success',
       data: {

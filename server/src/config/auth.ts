@@ -24,6 +24,22 @@ export const auth = betterAuth({
       maxAge: 60 * 5,
     },
   },
+  user: {
+    additionalFields: {
+      role: {
+        type: 'string',
+        required: true,
+        defaultValue: 'doctor',
+        input: false,
+      },
+      approvalStatus: {
+        type: 'string',
+        required: true,
+        defaultValue: 'pending',
+        input: false,
+      },
+    },
+  },
   advanced: {
     useSecureCookies: process.env.NODE_ENV === 'production',
     crossSubdomainCookies: {

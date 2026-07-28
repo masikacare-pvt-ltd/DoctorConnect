@@ -43,12 +43,12 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: (origin, callback) => {
-    // Allow requests with no origin (mobile apps, curl, etc.)
     if (!origin) return callback(null, true);
     if (allowedOrigins.includes(origin)) return callback(null, true);
     callback(new Error(`CORS blocked: ${origin}`));
   },
   credentials: true,
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
 }));
 app.use(compression());
 
@@ -134,6 +134,10 @@ app.use('/api/uploads', express.json());
 app.use('/api/ai', express.json());
 app.use('/api/designations', express.json());
 app.use('/api/hospitals', express.json());
+app.use('/api/subcategories', express.json());
+app.use('/api/admin/auth', express.json());
+app.use('/api/admin', express.json());
+app.use('/api/users', express.json());
 
 import casesRouter from './routes/cases';
 import commentsRouter from './routes/comments';
@@ -145,6 +149,10 @@ import aiRouter from './routes/ai';
 import specializationsRouter from './routes/specializations';
 import designationsRouter from './routes/designations';
 import hospitalsRouter from './routes/hospitals';
+import subcategoriesRouter from './routes/subcategories';
+import adminRouter from './routes/admin';
+import usersRouter from './routes/users';
+import { adminLogin } from './middlewares/adminAuth';
 
 app.use('/api/cases', casesRouter);
 app.use('/api/comments', commentsRouter);
@@ -156,6 +164,11 @@ app.use('/api/ai', aiRouter);
 app.use('/api/specializations', specializationsRouter);
 app.use('/api/designations', designationsRouter);
 app.use('/api/hospitals', hospitalsRouter);
+app.use('/api/subcategories', subcategoriesRouter);
+// Separate admin authentication endpoint (not behind requireAdmin)
+app.post('/api/admin/auth/login', adminLogin);
+app.use('/api/admin', adminRouter);
+app.use('/api/users', usersRouter);
 
 app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date() });

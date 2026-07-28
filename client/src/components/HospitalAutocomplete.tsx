@@ -77,7 +77,8 @@ export default function HospitalAutocomplete({
     setIsOpen(false);
   };
 
-  const handleCreateNew = async () => {
+  const handleCreateNew = async (e: React.MouseEvent) => {
+    e.preventDefault();
     const trimmed = value.trim();
     if (!trimmed || creating) return;
     setCreating(true);
@@ -132,7 +133,10 @@ export default function HospitalAutocomplete({
                 <button
                   key={h.id}
                   type="button"
-                  onClick={() => handleSelect(h.hospitalName)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleSelect(h.hospitalName);
+                  }}
                   className={`w-full flex items-center justify-between px-3 py-2 text-left text-xs rounded-lg transition-colors ${
                     isSelected ? 'bg-slate-100 font-semibold text-slate-900' : 'hover:bg-slate-50 text-slate-700'
                   }`}

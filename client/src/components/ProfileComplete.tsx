@@ -5,6 +5,7 @@ import { useAuth } from '../hooks/useAuth';
 import { useToast } from '../contexts/ToastContext';
 import DesignationSelect from './DesignationSelect';
 import HospitalAutocomplete from './HospitalAutocomplete';
+import VoiceInputButton from './VoiceInputButton';
 
 export default function ProfileComplete() {
   const navigate = useNavigate();
@@ -129,9 +130,15 @@ export default function ProfileComplete() {
             />
           </div>
 
-          {/* Short Bio */}
+          {/* Short Bio with Voice-to-Text */}
           <div className="sm:col-span-2">
-            <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-1">Short Bio</label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wide">Short Bio</label>
+              <VoiceInputButton
+                id="bio-voice-btn"
+                onTranscript={(text) => setBio((prev) => (prev ? `${prev} ${text}`.trim() : text.trim()))}
+              />
+            </div>
             <textarea
               value={bio}
               onChange={(e) => setBio(e.target.value)}

@@ -72,13 +72,15 @@ export default function DesignationSelect({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const handleSelect = (name: string) => {
+  const handleSelect = (e: React.MouseEvent, name: string) => {
+    e.preventDefault();
     onChange(name);
     setIsOpen(false);
     setSearch('');
   };
 
-  const handleCreate = async () => {
+  const handleCreate = async (e: React.MouseEvent) => {
+    e.preventDefault();
     const trimmed = search.trim();
     if (!trimmed || creating) return;
     setCreating(true);
@@ -107,7 +109,10 @@ export default function DesignationSelect({
       <button
         type="button"
         id={id}
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={(e) => {
+          e.preventDefault();
+          setIsOpen(!isOpen);
+        }}
         className={`w-full px-4 py-2.5 bg-white border ${
           error ? 'border-rose-400' : 'border-slate-200'
         } rounded-lg text-sm flex items-center justify-between text-left focus:outline-none focus:ring-4 focus:ring-slate-100 transition-all`}
@@ -150,7 +155,7 @@ export default function DesignationSelect({
                   <button
                     key={item.id}
                     type="button"
-                    onClick={() => handleSelect(item.name)}
+                    onClick={(e) => handleSelect(e, item.name)}
                     className={`w-full flex items-center justify-between px-3 py-2 text-left text-xs rounded-lg transition-colors ${
                       isSelected ? 'bg-slate-100 font-semibold text-slate-900' : 'hover:bg-slate-50 text-slate-700'
                     }`}

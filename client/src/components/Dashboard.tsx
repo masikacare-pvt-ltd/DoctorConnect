@@ -14,6 +14,7 @@ import type { ClinicalCase } from '../types/domain';
 import { validateImageFile } from '../utils/image';
 import { getAvatarUrl } from '../utils/avatar';
 import AppShell from './AppShell';
+import VoiceInputButton from './VoiceInputButton';
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -263,7 +264,13 @@ export default function Dashboard() {
                   </div>
 
                   <div>
-                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Description</label>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Description</label>
+                      <VoiceInputButton
+                        id="case-description-voice-btn"
+                        onTranscript={(text) => setDescription((prev) => (prev ? `${prev} ${text}`.trim() : text.trim()))}
+                      />
+                    </div>
                     <textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Describe the clinical presentation, history, and findings..." rows={3} className="w-full p-4 bg-slate-50 border border-slate-200 focus:border-indigo-500 rounded-xl text-xs focus:bg-white focus:outline-none transition-all" />
                   </div>
 

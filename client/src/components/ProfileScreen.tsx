@@ -11,6 +11,7 @@ import AppShell from './AppShell';
 import PhoneInput from './PhoneInput';
 import DesignationSelect from './DesignationSelect';
 import HospitalAutocomplete from './HospitalAutocomplete';
+import VoiceInputButton from './VoiceInputButton';
 
 export default function ProfileScreen() {
   const { user, profile, updateProfile, uploadAvatar } = useAuth();
@@ -187,7 +188,13 @@ export default function ProfileScreen() {
                 />
               </div>
               <div className="sm:col-span-2">
-                <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-1">Bio</label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wide">Bio</label>
+                  <VoiceInputButton
+                    id="profile-bio-voice-btn"
+                    onTranscript={(text) => setForm((prev) => ({ ...prev, bio: prev.bio ? `${prev.bio} ${text}`.trim() : text.trim() }))}
+                  />
+                </div>
                 <textarea value={form.bio} onChange={(e) => setForm({ ...form, bio: e.target.value })} rows={3} className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-100" />
               </div>
             </div>

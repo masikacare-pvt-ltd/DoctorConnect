@@ -162,14 +162,14 @@ app.get('/api/health', (_req, res) => {
 });
 
 app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
-  console.error('[ERROR]', err);
+  console.error('[ERROR]', err?.stack || err);
 
   if (err?.code === 'P2025') {
     return res.status(404).json({ status: 'error', message: 'Resource not found' });
   }
 
   const status = err?.status || err?.statusCode || 500;
-  const message = status === 500 ? 'Internal server error' : (err?.message || 'Internal server error');
+  const message = status === 500 ? (err?.message || 'Internal server error') : (err?.message || 'Internal server error');
   res.status(status).json({ status: 'error', message });
 });
 

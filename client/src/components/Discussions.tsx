@@ -295,23 +295,134 @@ export default function Discussions() {
                         )}
                       </div>
                     )}
-                    <div className="p-5 space-y-3">
-                      {clinicalCase.urgent && <span className="px-2 py-0.5 bg-rose-500 text-white text-[9px] font-extrabold uppercase rounded-md">Urgent</span>}
-                      <h2 className="text-lg font-bold text-slate-950 font-display">{clinicalCase.title}</h2>
-                      <p className="text-sm text-slate-600 leading-relaxed">{clinicalCase.description}</p>
-                      {clinicalCase.caseQuote && <blockquote className="border-l-2 border-indigo-300 pl-3 text-sm italic text-slate-500">"{clinicalCase.caseQuote}"</blockquote>}
+                    <div className="p-6 space-y-6">
+                      {/* Case Badges Header */}
+                      <div className="flex items-center gap-2 flex-wrap">
+                        {clinicalCase.urgent ? (
+                          <span className="px-3 py-1 bg-rose-500 text-white text-xs font-bold uppercase rounded-xl shadow-sm">
+                            Urgent Feedback Needed
+                          </span>
+                        ) : (
+                          <span className="px-3 py-1 bg-emerald-50 text-emerald-600 border border-emerald-200 text-xs font-bold uppercase rounded-xl">
+                            Normal Case
+                          </span>
+                        )}
+                        <span className="px-3 py-1 bg-blue-50 text-blue-600 border border-blue-100 text-xs font-bold rounded-xl">
+                          {clinicalCase.specialization || 'General Medicine'}
+                        </span>
+                      </div>
+
+                      <h2 className="text-xl font-bold text-slate-900 dark:text-white font-display leading-tight">
+                        {clinicalCase.title}
+                      </h2>
+
+                      {/* Main Description */}
+                      {(() => {
+                        const parts = clinicalCase.description.split('\n\n--- Patient & Clinical Info ---\n');
+                        const mainText = parts[0];
+                        const infoText = parts[1];
+
+                        const parsedInfo = infoText ? infoText.split('\n').reduce((acc: Record<string, string>, line: string) => {
+                          if (line.startsWith('Patient: ')) {
+                            const match = line.match(/Patient: (.*?), Age: (.*?), Gender: (.*?), Blood Group: (.*)/);
+                            if (match) {
+                              acc['Patient Name'] = match[1];
+                              acc['Age'] = match[2];
+                              acc['Gender'] = match[3];
+                              acc['Blood Group'] = match[4];
+                            }
+                          } else if (line.includes(': ')) {
+                            const [k, v] = line.split(': ');
+                            acc[k] = v;
+                          }
+                          return acc;
+                        }, {}) : null;
+
+                        return (
+                          <>
+                            {/* Detailed Description */}
+                            <div className="space-y-1.5">
+                              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">Clinical Observations & Description</h4>
+                              <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-wrap bg-slate-50/70 dark:bg-slate-800/50 p-4 rounded-2xl border border-slate-100 dark:border-slate-800">
+                                {mainText}
+                              </p>
+                            </div>
+
+                            {/* Formatted Patient & Clinical Info Cards */}
+                            {parsedInfo && (
+                              <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-4 space-y-3">
+                                <h4 className="text-xs font-bold text-slate-900 dark:text-slate-100 font-display">Patient & Clinical Details</h4>
+                                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                                  {parsedInfo['Patient Name'] && (
+                                    <div className="bg-[#F8FAFC] dark:bg-slate-800 p-3 rounded-xl">
+                                      <span className="block text-[10px] font-bold text-slate-400 uppercase">Patient Name</span>
+                                      <span className="text-xs font-bold text-slate-800 dark:text-slate-100">{parsedInfo['Patient Name']}</span>
+                                    </div>
+                                  )}
+                                  {parsedInfo['Age'] && (
+                                    <div className="bg-[#F8FAFC] dark:bg-slate-800 p-3 rounded-xl">
+                                      <span className="block text-[10px] font-bold text-slate-400 uppercase">Age</span>
+                                      <span className="text-xs font-bold text-slate-800 dark:text-slate-100">{parsedInfo['Age']}</span>
+                                    </div>
+                                  )}
+                                  {parsedInfo['Gender'] && (
+                                    <div className="bg-[#F8FAFC] dark:bg-slate-800 p-3 rounded-xl">
+                                      <span className="block text-[10px] font-bold text-slate-400 uppercase">Gender</span>
+                                      <span className="text-xs font-bold text-slate-800 dark:text-slate-100">{parsedInfo['Gender']}</span>
+                                    </div>
+                                  )}
+                                  {parsedInfo['Blood Group'] && (
+                                    <div className="bg-[#F8FAFC] dark:bg-slate-800 p-3 rounded-xl">
+                                      <span className="block text-[10px] font-bold text-slate-400 uppercase">Blood Group</span>
+                                      <span className="text-xs font-bold text-slate-800 dark:text-slate-100">{parsedInfo['Blood Group']}</span>
+                                    </div>
+                                  )}
+                                </div>
+                                {(parsedInfo['Chronic History'] || parsedInfo['Genetic Disorder'] || parsedInfo['Future Recommendation']) && (
+                                  <div className="space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+                                    {parsedInfo['Chronic History'] && (
+                                      <div className="text-xs">
+                                        <span className="font-bold text-slate-700 dark:text-slate-300">Chronic History: </span>
+                                        <span className="text-slate-600 dark:text-slate-400">{parsedInfo['Chronic History']}</span>
+                                      </div>
+                                    )}
+                                    {parsedInfo['Genetic Disorder'] && (
+                                      <div className="text-xs">
+                                        <span className="font-bold text-slate-700 dark:text-slate-300">Genetic Disorder: </span>
+                                        <span className="text-slate-600 dark:text-slate-400">{parsedInfo['Genetic Disorder']}</span>
+                                      </div>
+                                    )}
+                                    {parsedInfo['Future Recommendation'] && (
+                                      <div className="text-xs">
+                                        <span className="font-bold text-blue-600 dark:text-blue-400">Future Recommendation: </span>
+                                        <span className="text-slate-700 dark:text-slate-300 font-medium">{parsedInfo['Future Recommendation']}</span>
+                                      </div>
+                                    )}
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                          </>
+                        );
+                      })()}
+
                       {clinicalCase.diseaseTags.length > 0 && (
                         <div className="flex flex-wrap gap-1.5 pt-1">
-                          {clinicalCase.diseaseTags.map((t, i) => (<span key={i} className="text-[9px] font-semibold bg-indigo-50/70 text-indigo-600 px-2 py-0.5 rounded-full border border-indigo-100/50">#{t}</span>))}
+                          {clinicalCase.diseaseTags.map((t, i) => (
+                            <span key={i} className="text-xs font-medium bg-blue-50 text-blue-600 px-3 py-1 rounded-xl border border-blue-100">
+                              #{t}
+                            </span>
+                          ))}
                         </div>
                       )}
-                      <div className="flex items-center gap-4 pt-2 text-slate-400 text-[11px] font-semibold">
-                        <span className="flex items-center gap-1"><MessageSquare className="w-3.5 h-3.5" />{clinicalCase.commentsCount}</span>
-                        <span className="flex items-center gap-1"><FileText className="w-3.5 h-3.5" />{clinicalCase.viewsCount} views</span>
-                        <button onClick={handleLike} className={`flex items-center gap-1 transition-colors ${liked ? 'text-blue-600' : 'hover:text-blue-600'}`}>
-                          <ThumbsUp className="w-3.5 h-3.5" fill={liked ? 'currentColor' : 'none'} />{likesCount}
+
+                      <div className="flex items-center gap-5 pt-3 border-t border-slate-100 dark:border-slate-800 text-slate-400 text-xs font-semibold">
+                        <span className="flex items-center gap-1.5"><MessageSquare className="w-4 h-4 text-blue-500" />{clinicalCase.commentsCount} opinions</span>
+                        <span className="flex items-center gap-1.5"><FileText className="w-4 h-4 text-slate-400" />{clinicalCase.viewsCount} views</span>
+                        <button onClick={handleLike} className={`flex items-center gap-1.5 transition-colors ${liked ? 'text-rose-500 font-bold' : 'hover:text-blue-600'}`}>
+                          <ThumbsUp className="w-4 h-4" fill={liked ? 'currentColor' : 'none'} />{likesCount} likes
                         </button>
-                        <button onClick={handleShowLikes} className="text-[9px] text-slate-400 hover:text-slate-600 underline decoration-dotted">See who liked</button>
+                        <button onClick={handleShowLikes} className="text-xs text-slate-400 hover:text-slate-600 underline">See who liked</button>
                       </div>
                     </div>
                   </>

@@ -196,30 +196,16 @@ export default function LoginScreen() {
             </button>
           </form>
 
-          <div className="mt-6 pt-5 border-t border-slate-100">
-            <span className="block text-center text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-4">Or Sign In with</span>
-            <div className="grid grid-cols-2 gap-3">
-              <button type="button" onClick={handleGoogle} className="flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-50 active:scale-95 transition-all hover:border-slate-300">
-                <svg className="w-4 h-4" viewBox="0 0 24 24"><path fill="#EA4335" d="M12.24 10.285V14.4h6.887c-.648 2.41-2.519 4.114-5.137 4.114-3.41 0-6.173-2.763-6.173-6.173s2.763-6.173 6.173-6.173c1.554 0 2.97.575 4.053 1.53l3.056-3.056C19.1 2.853 15.86 1.3 12.24 1.3 6.273 1.3 1.3 6.273 1.3 12.24s4.973 10.94 10.94 10.94c5.783 0 10.638-4.084 10.638-10.94 0-.61-.06-1.196-.17-1.755H12.24z" /></svg>
-                Google
-              </button>
-              <button type="button" onClick={() => toast('Apple sign-in is not enabled.', 'info')} className="flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-50 active:scale-95 transition-all hover:border-slate-300">
-                <svg className="w-4 h-4 text-slate-900 fill-current" viewBox="0 0 24 24"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 4.17c.66-.81 1.11-1.93.99-3.05-1 .04-2.18.66-2.9 1.5-.62.71-1.16 1.85-1.02 2.96 1.12.09 2.27-.6 2.93-1.41z" /></svg>
-                Apple
-              </button>
-            </div>
-          </div>
-
           <div className="mt-8 text-center text-xs">
             <span className="text-slate-400">Don't have an account? </span>
-            <button onClick={() => navigate('/signup')} className="font-bold text-slate-900 hover:underline hover:text-indigo-600 transition-colors" id="login-to-signup-btn">Create Account</button>
+            <button onClick={() => navigate('/signup')} className="font-bold text-slate-900 hover:underline hover:text-blue-600 transition-colors" id="login-to-signup-btn">Create Account</button>
           </div>
 
           <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-center gap-1.5 text-[10px] text-slate-400">
             <Shield className="w-3 h-3 text-emerald-500" /> Secure login for verified doctors only.
           </div>
           <div className="mt-3 text-center">
-            <button onClick={() => navigate('/admin/login')} className="text-[10px] font-semibold text-slate-400 hover:text-indigo-600 transition-colors">Admin Login</button>
+            <button onClick={() => navigate('/admin/login')} className="text-[10px] font-semibold text-slate-400 hover:text-blue-600 transition-colors">Admin Login</button>
           </div>
         </div>
       </div>

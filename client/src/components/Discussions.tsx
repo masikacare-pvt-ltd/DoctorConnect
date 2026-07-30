@@ -308,7 +308,7 @@ export default function Discussions() {
                           </span>
                         )}
                         <span className="px-3 py-1 bg-blue-50 text-blue-600 border border-blue-100 text-xs font-bold rounded-xl">
-                          {clinicalCase.specialization || 'General Medicine'}
+                          {clinicalCase.category || 'General Medicine'}
                         </span>
                       </div>
 

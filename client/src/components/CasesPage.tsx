@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Heart, Eye, Clock, ThumbsUp, MessageSquare, X, ArrowUpDown, ChevronLeft, ChevronRight, SlidersHorizontal, ChevronDown } from 'lucide-react';
+import { Search, Heart, Eye, Clock, ThumbsUp, MessageSquare, X, ArrowUpDown, ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { useCases } from '../hooks/useCases';
 import { useBookmarks } from '../hooks/useBookmarks';

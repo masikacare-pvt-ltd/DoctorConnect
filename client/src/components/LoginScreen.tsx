@@ -67,10 +67,6 @@ export default function LoginScreen() {
     }
   };
 
-  const handleGoogle = () => {
-    toast('Coming soon.', 'info');
-  };
-
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col md:flex-row" id="login-container">
       <div className="md:w-1/2 bg-white border-b md:border-b-0 md:border-r border-slate-200 p-8 flex flex-col justify-between items-center text-center relative overflow-hidden">

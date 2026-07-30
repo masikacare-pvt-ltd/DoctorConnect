@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home, ClipboardList, User, LogOut, Stethoscope, UserPlus, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Home, ClipboardList, User, LogOut, UserPlus, ChevronLeft, ChevronRight, Activity } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { useToast } from '../contexts/ToastContext';
 
@@ -30,8 +30,8 @@ export default function AppShell({ children }: AppShellProps) {
   return (
     <div className="min-h-screen bg-[#F8FAFC] dark:bg-slate-950 flex flex-col md:flex-row font-sans transition-colors duration-200 pb-16 md:pb-0">
       {/* Desktop sidebar */}
-      <aside className={`hidden md:flex relative ${collapsed ? 'w-16 p-2.5' : 'w-48 p-3.5'} bg-white dark:bg-slate-900 border-r border-slate-100 dark:border-slate-800 flex-col justify-between shrink-0 select-none transition-all duration-300`}>
-        {/* Floating Edge Collapse Toggle Button matching reference */}
+      <aside className={`hidden md:flex relative ${collapsed ? 'w-16 p-2.5' : 'w-60 p-4'} bg-white dark:bg-slate-900 border-r border-slate-200/80 dark:border-slate-800 flex-col justify-between shrink-0 select-none transition-all duration-300`}>
+        {/* Floating Edge Collapse Toggle Button */}
         <button
           onClick={() => setCollapsed(!collapsed)}
           className="absolute -right-3.5 top-6 z-20 w-7 h-7 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full flex items-center justify-center text-slate-500 hover:text-slate-900 dark:hover:text-white shadow-sm hover:shadow transition-all duration-200 hover:scale-105 active:scale-95"
@@ -45,14 +45,16 @@ export default function AppShell({ children }: AppShellProps) {
         </button>
 
         <div>
-          {/* Logo Header */}
-          <div className={`flex items-center ${collapsed ? 'justify-center mb-6' : 'mb-6 px-1'}`}>
-            <div className="flex items-center gap-2">
-              <div className="text-blue-600 dark:text-blue-400 shrink-0">
-                <Stethoscope className="w-6 h-6 stroke-[2.2]" />
+          {/* Logo Header matching reference */}
+          <div className={`flex items-center ${collapsed ? 'justify-center mb-8' : 'mb-8 px-1'}`}>
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-[#0B132B] dark:bg-blue-600 text-white flex items-center justify-center shrink-0 shadow-sm">
+                <div className="w-5 h-5 border-2 border-white rounded-md flex items-center justify-center p-0.5">
+                  <Activity className="w-3.5 h-3.5 stroke-[2.5]" />
+                </div>
               </div>
               {!collapsed && (
-                <span className="text-base font-bold tracking-tight text-slate-900 dark:text-white font-display">
+                <span className="text-lg font-bold tracking-tight text-[#0B132B] dark:text-white font-sans">
                   MedConnect
                 </span>
               )}
@@ -60,7 +62,7 @@ export default function AppShell({ children }: AppShellProps) {
           </div>
 
           {/* Navigation items */}
-          <nav className="space-y-1">
+          <nav className="space-y-1.5">
             {navItems.map(({ label, icon: Icon, path }) => {
               const active = location.pathname === path;
               return (
@@ -68,16 +70,14 @@ export default function AppShell({ children }: AppShellProps) {
                   key={path}
                   onClick={() => navigate(path)}
                   title={collapsed ? label : undefined}
-                  className={`w-full flex items-center ${collapsed ? 'justify-center px-2 py-2.5' : 'gap-2.5 px-3 py-2.5'} rounded-xl text-xs font-semibold transition-all ${
+                  className={`w-full flex items-center ${collapsed ? 'justify-center px-2 py-3' : 'gap-3.5 px-4 py-3'} rounded-xl text-sm font-semibold transition-all ${
                     active
-                      ? 'bg-[#EEF2FF] text-[#3B82F6] dark:bg-blue-950/50 dark:text-blue-400 font-bold'
-                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                      ? 'bg-[#0B132B] text-white dark:bg-blue-600 dark:text-white shadow-sm font-bold'
+                      : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/70 dark:hover:bg-slate-800/60'
                   }`}
                 >
-                  <div className={`p-1 rounded-lg shrink-0 ${active ? 'bg-[#3B82F6] text-white' : 'text-slate-500 dark:text-slate-400'}`}>
-                    <Icon className="w-3.5 h-3.5" />
-                  </div>
-                  {!collapsed && <span>{label}</span>}
+                  <Icon className={`w-5 h-5 shrink-0 ${active ? 'text-white' : 'text-slate-700 dark:text-slate-300'}`} />
+                  {!collapsed && <span className="text-sm">{label}</span>}
                 </button>
               );
             })}
@@ -85,18 +85,25 @@ export default function AppShell({ children }: AppShellProps) {
         </div>
 
         <div>
-          {/* Bottom Card Banner */}
+          {/* Bottom Card Banner matching reference screenshot */}
           {!collapsed && (
-            <div className="bg-gradient-to-b from-blue-50/50 to-indigo-50/30 dark:from-slate-800/40 dark:to-slate-800/20 border border-blue-100/60 dark:border-slate-700/50 rounded-xl p-3 mb-3 relative overflow-hidden">
-              <div className="w-7 h-7 rounded-full bg-blue-100/80 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 flex items-center justify-center mb-2">
-                <UserPlus className="w-3.5 h-3.5" />
+            <div className="bg-white dark:bg-slate-800/50 border border-slate-200/80 dark:border-slate-700/60 rounded-2xl p-4 mb-4 relative overflow-hidden shadow-2xs">
+              <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 flex items-center justify-center mb-3">
+                <UserPlus className="w-4 h-4 stroke-[2]" />
               </div>
-              <h4 className="text-[11px] font-bold text-slate-900 dark:text-slate-100 mb-0.5">
+              <h4 className="text-xs font-bold text-[#0B132B] dark:text-slate-100 mb-1">
                 Connect. Share. Heal.
               </h4>
-              <p className="text-[10px] text-slate-400 leading-snug">
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed font-normal">
                 Building a community of trusted medical professionals.
               </p>
+              {/* Heartbeat ECG wave illustration matching reference */}
+              <div className="mt-3 pt-2 border-t border-slate-100 dark:border-slate-700/40 flex items-center justify-between text-slate-300 dark:text-slate-600">
+                <svg className="w-full h-6" viewBox="0 0 160 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M 0 12 L 35 12 L 42 4 L 50 20 L 58 1 L 66 23 L 74 12 L 130 12" />
+                  <path d="M 138 9 C 136 6, 132 8, 135 12 L 138 15 L 141 12 C 144 8, 140 6, 138 9 Z" fill="currentColor" opacity="0.4" />
+                </svg>
+              </div>
             </div>
           )}
 
@@ -145,3 +152,4 @@ export default function AppShell({ children }: AppShellProps) {
     </div>
   );
 }
+

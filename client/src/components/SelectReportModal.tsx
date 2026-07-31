@@ -1,10 +1,23 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import {
-  ArrowLeft, Search, Check, ChevronRight,
-  Droplet, TestTube, Activity, Microscope,
-  Radio, HeartPulse, Stethoscope, Dna, FileText, MoreHorizontal,
-  Flame, Shield, Zap, CircleDot, Layers, Heart, Sun, Crosshair
+  Droplet,
+  TestTube,
+  Activity,
+  Zap,
+  Flame,
+  Shield,
+  Heart,
+  CircleDot,
+  Layers,
+  Sun,
+  Crosshair,
+  Microscope,
+  ArrowLeft,
+  Search,
+  ChevronRight
 } from 'lucide-react';
+import { getTestIcon } from './icons/IconRegistry';
+import * as CatIcons from './icons/CategoryIcons';
 
 export interface ReportSelection {
   mainCategory: string;
@@ -13,30 +26,49 @@ export interface ReportSelection {
   tags: string[];
 }
 
-// Main categories matching Step 1 in UI reference
-const MAIN_CATEGORIES = [
-  { id: 'blood', name: 'Blood Test', icon: Droplet, color: 'text-rose-500 bg-rose-50 dark:bg-rose-950/40 border-rose-200' },
-  { id: 'urine', name: 'Urine Test', icon: TestTube, color: 'text-amber-500 bg-amber-50 dark:bg-amber-950/40 border-amber-200' },
-  { id: 'stool', name: 'Stool Test', icon: TestTube, color: 'text-amber-700 bg-amber-50 dark:bg-amber-950/40 border-amber-200' },
-  { id: 'pathology', name: 'Pathology / Biopsy', icon: Microscope, color: 'text-purple-500 bg-purple-50 dark:bg-purple-950/40 border-purple-200' },
-  { id: 'xray', name: 'X-Ray', icon: Radio, color: 'text-indigo-500 bg-indigo-50 dark:bg-indigo-950/40 border-indigo-200' },
-  { id: 'usg', name: 'Ultrasound (USG)', icon: Activity, color: 'text-emerald-500 bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200' },
-  { id: 'mri', name: 'MRI', icon: Activity, color: 'text-blue-500 bg-blue-50 dark:bg-blue-950/40 border-blue-200' },
-  { id: 'ct', name: 'CT Scan', icon: Radio, color: 'text-violet-500 bg-violet-50 dark:bg-violet-950/40 border-violet-200' },
-  { id: 'ecg', name: 'ECG / Echo', icon: HeartPulse, color: 'text-pink-500 bg-pink-50 dark:bg-pink-950/40 border-pink-200' },
-  { id: 'endoscopy', name: 'Endoscopy', icon: Stethoscope, color: 'text-orange-500 bg-orange-50 dark:bg-orange-950/40 border-orange-200' },
-  { id: 'genetic', name: 'Genetic Test', icon: Dna, color: 'text-emerald-600 bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200' },
-  { id: 'checkup', name: 'Health Checkup Report', icon: FileText, color: 'text-sky-500 bg-sky-50 dark:bg-sky-950/40 border-sky-200' },
-  { id: 'others', name: 'Others', icon: MoreHorizontal, color: 'text-slate-500 bg-slate-50 dark:bg-slate-800 border-slate-200' },
-];
-
-export interface SubCategoryItem {
+interface SubCategoryItem {
   name: string;
   desc: string;
   iconBg: string;
   iconColor: string;
-  badgeIcon: any;
-  tests: { title: string; desc: string; badgeText?: string; tags: string[] }[];
+  badgeIcon: React.ComponentType<any>;
+  menuIcon: React.ComponentType<any>;
+  tests: Array<{ title: string; desc: string; badgeText: string; tags: string[] }>;
+}
+
+const MAIN_CATEGORIES = [
+  { id: 'blood', name: 'Blood Test', icon: Droplet, color: 'bg-rose-50 text-rose-500 dark:bg-rose-950/50 dark:text-rose-400', iconBg: 'bg-rose-50 dark:bg-rose-950/50', iconColor: 'text-rose-500 dark:text-rose-400', textColor: 'text-rose-600 dark:text-rose-400' },
+  { id: 'urine', name: 'Urine Test', icon: CatIcons.IconUrineDipstick, color: 'bg-amber-50 text-amber-500 dark:bg-amber-950/50 dark:text-amber-400', iconBg: 'bg-amber-50 dark:bg-amber-950/50', iconColor: 'text-amber-500 dark:text-amber-400', textColor: 'text-amber-600 dark:text-amber-400' },
+  { id: 'stool', name: 'Stool Test', icon: CatIcons.IconStoolJar, color: 'bg-yellow-50 text-yellow-600 dark:bg-yellow-950/50 dark:text-yellow-400', iconBg: 'bg-yellow-50 dark:bg-yellow-950/50', iconColor: 'text-yellow-600 dark:text-yellow-400', textColor: 'text-yellow-600 dark:text-yellow-400' },
+  { id: 'pathology', name: 'Pathology / Biopsy', icon: CatIcons.IconBiopsySlide, color: 'bg-purple-50 text-purple-600 dark:bg-purple-950/50 dark:text-purple-400', iconBg: 'bg-purple-50 dark:bg-purple-950/50', iconColor: 'text-purple-600 dark:text-purple-400', textColor: 'text-purple-600 dark:text-purple-400' },
+  { id: 'xray', name: 'X-Ray', icon: CatIcons.IconChestXRay, color: 'bg-blue-50 text-blue-600 dark:bg-blue-950/50 dark:text-blue-400', iconBg: 'bg-blue-50 dark:bg-blue-950/50', iconColor: 'text-blue-600 dark:text-blue-400', textColor: 'text-blue-600 dark:text-blue-400' },
+  { id: 'usg', name: 'Ultrasound (USG)', icon: CatIcons.IconUltrasoundProbe, color: 'bg-cyan-50 text-cyan-600 dark:bg-cyan-950/50 dark:text-cyan-400', iconBg: 'bg-cyan-50 dark:bg-cyan-950/50', iconColor: 'text-cyan-600 dark:text-cyan-400', textColor: 'text-cyan-600 dark:text-cyan-400' },
+  { id: 'mri', name: 'MRI', icon: CatIcons.IconMRIScanner, color: 'bg-indigo-50 text-indigo-600 dark:bg-indigo-950/50 dark:text-indigo-400', iconBg: 'bg-indigo-50 dark:bg-indigo-950/50', iconColor: 'text-indigo-600 dark:text-indigo-400', textColor: 'text-indigo-600 dark:text-indigo-400' },
+  { id: 'ct', name: 'CT Scan', icon: CatIcons.IconCTScanGantry, color: 'bg-teal-50 text-teal-600 dark:bg-teal-950/50 dark:text-teal-400', iconBg: 'bg-teal-50 dark:bg-teal-950/50', iconColor: 'text-teal-600 dark:text-teal-400', textColor: 'text-teal-600 dark:text-teal-400' },
+  { id: 'ecg', name: 'ECG / Echo', icon: CatIcons.IconECGWave, color: 'bg-pink-50 text-pink-600 dark:bg-pink-950/50 dark:text-pink-400', iconBg: 'bg-pink-50 dark:bg-pink-950/50', iconColor: 'text-pink-600 dark:text-pink-400', textColor: 'text-pink-600 dark:text-pink-400' },
+  { id: 'endoscopy', name: 'Endoscopy', icon: CatIcons.IconEndoscope, color: 'bg-orange-50 text-orange-600 dark:bg-orange-950/50 dark:text-orange-400', iconBg: 'bg-orange-50 dark:bg-orange-950/50', iconColor: 'text-orange-600 dark:text-orange-400', textColor: 'text-orange-600 dark:text-orange-400' },
+  { id: 'genetic', name: 'Genetic Test', icon: CatIcons.IconDNAStrand, color: 'bg-violet-50 text-violet-600 dark:bg-violet-950/50 dark:text-violet-400', iconBg: 'bg-violet-50 dark:bg-violet-950/50', iconColor: 'text-violet-600 dark:text-violet-400', textColor: 'text-violet-600 dark:text-violet-400' },
+  { id: 'checkup', name: 'Health Checkup Report', icon: CatIcons.IconCheckupReport, color: 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/50 dark:text-emerald-400', iconBg: 'bg-emerald-50 dark:bg-emerald-950/50', iconColor: 'text-emerald-600 dark:text-emerald-400', textColor: 'text-emerald-600 dark:text-emerald-400' },
+];
+
+// Custom SVG Test Badge renderer using IconRegistry for pixel-perfect medical icons
+function TestBadgeIcon({ title, badgeText, iconBg, iconColor }: { title: string; badgeText?: string; iconBg: string; iconColor: string }) {
+  const IconComponent = getTestIcon(title);
+
+  if (IconComponent) {
+    return (
+      <div className={`w-10 h-10 rounded-full flex items-center justify-center ${iconBg} ${iconColor} border border-slate-200/80 dark:border-slate-800 mx-auto shadow-2xs shrink-0`}>
+        <IconComponent className="w-5 h-5 stroke-[1.8] stroke-current fill-none" />
+      </div>
+    );
+  }
+
+  // Fallback text badge for unmapped or custom user tests
+  return (
+    <div className={`w-10 h-10 rounded-full flex items-center justify-center ${iconBg} ${iconColor} border border-slate-200/80 dark:border-slate-800 mx-auto shadow-2xs font-extrabold text-[11px] font-sans tracking-tight shrink-0`}>
+      {badgeText || title.split(' ')[0]}
+    </div>
+  );
 }
 
 // Complete Blood Test data matching all 11 reference UI screenshots exactly
@@ -47,6 +79,7 @@ const BLOOD_TEST_SUBCATEGORIES: SubCategoryItem[] = [
     iconBg: 'bg-rose-50 dark:bg-rose-950/50',
     iconColor: 'text-rose-500 dark:text-rose-400',
     badgeIcon: Droplet,
+    menuIcon: Droplet,
     tests: [
       { title: 'Complete Blood Count (CBC)', desc: 'Overall health summary including RBC, WBC, Platelets, Hb, etc.', badgeText: 'CBC', tags: ['CBC', 'Hemoglobin', 'Platelets', 'RBC', 'WBC'] },
       { title: 'Peripheral Blood Smear (PBS)', desc: 'Examination of blood cells under microscope', badgeText: 'PBS', tags: ['Blood Smear', 'Morphology'] },
@@ -66,6 +99,7 @@ const BLOOD_TEST_SUBCATEGORIES: SubCategoryItem[] = [
     iconBg: 'bg-pink-50 dark:bg-pink-950/50',
     iconColor: 'text-pink-500 dark:text-pink-400',
     badgeIcon: TestTube,
+    menuIcon: TestTube,
     tests: [
       { title: 'Liver Function Test (LFT)', desc: 'Assess liver health and its functioning', badgeText: 'LFT', tags: ['LFT', 'Liver'] },
       { title: 'Kidney Function Test (KFT)', desc: 'Evaluate kidney function and filtration', badgeText: 'KFT', tags: ['KFT', 'Kidney'] },
@@ -87,6 +121,7 @@ const BLOOD_TEST_SUBCATEGORIES: SubCategoryItem[] = [
     iconBg: 'bg-purple-50 dark:bg-purple-950/50',
     iconColor: 'text-purple-600 dark:text-purple-400',
     badgeIcon: Activity,
+    menuIcon: Activity,
     tests: [
       { title: 'Thyroid Profile (T3, T4, TSH)', desc: 'Evaluate thyroid gland function', badgeText: 'TFT', tags: ['Thyroid', 'T3', 'T4', 'TSH'] },
       { title: 'T3 (Triiodothyronine)', desc: 'Measures triiodothyronine level in blood', badgeText: 'T3', tags: ['T3', 'Thyroid'] },
@@ -108,6 +143,7 @@ const BLOOD_TEST_SUBCATEGORIES: SubCategoryItem[] = [
     iconBg: 'bg-emerald-50 dark:bg-emerald-950/50',
     iconColor: 'text-emerald-500 dark:text-emerald-400',
     badgeIcon: Zap,
+    menuIcon: Zap,
     tests: [
       { title: 'Typhoid (Widal Test)', desc: 'Detects Salmonella typhi infection', badgeText: 'WIDAL', tags: ['Typhoid', 'Widal', 'Salmonella'] },
       { title: 'Malaria Parasite (MP) Test', desc: 'Detects malaria parasite in blood', badgeText: 'MP', tags: ['Malaria', 'MP Test', 'Parasite'] },
@@ -129,6 +165,7 @@ const BLOOD_TEST_SUBCATEGORIES: SubCategoryItem[] = [
     iconBg: 'bg-amber-50 dark:bg-amber-950/50',
     iconColor: 'text-amber-500 dark:text-amber-400',
     badgeIcon: Flame,
+    menuIcon: Flame,
     tests: [
       { title: 'SGOT (AST)', desc: 'Aspartate Aminotransferase enzyme level', badgeText: 'SGOT', tags: ['SGOT', 'AST', 'Liver Enzyme'] },
       { title: 'SGPT (ALT)', desc: 'Alanine Aminotransferase enzyme level', badgeText: 'SGPT', tags: ['SGPT', 'ALT', 'Liver Enzyme'] },
@@ -150,6 +187,7 @@ const BLOOD_TEST_SUBCATEGORIES: SubCategoryItem[] = [
     iconBg: 'bg-[#EEF2FF] dark:bg-indigo-950/50',
     iconColor: 'text-[#4F46E5] dark:text-indigo-400',
     badgeIcon: Shield,
+    menuIcon: Shield,
     tests: [
       { title: 'Serum Creatinine', desc: 'Measures creatinine level in blood', badgeText: 'CREAT', tags: ['Creatinine', 'Renal', 'KFT'] },
       { title: 'Blood Urea', desc: 'Measures urea level in blood', badgeText: 'UREA', tags: ['Urea', 'Renal Function'] },
@@ -171,6 +209,7 @@ const BLOOD_TEST_SUBCATEGORIES: SubCategoryItem[] = [
     iconBg: 'bg-rose-50 dark:bg-rose-950/50',
     iconColor: 'text-rose-600 dark:text-rose-400',
     badgeIcon: Heart,
+    menuIcon: Heart,
     tests: [
       { title: 'Troponin I', desc: 'Highly specific marker for heart muscle injury', badgeText: 'TnI', tags: ['Troponin I', 'Cardiac Injury', 'MI'] },
       { title: 'Troponin T', desc: 'Specific marker for cardiac injury', badgeText: 'TnT', tags: ['Troponin T', 'Cardiac Injury'] },
@@ -190,6 +229,7 @@ const BLOOD_TEST_SUBCATEGORIES: SubCategoryItem[] = [
     iconBg: 'bg-indigo-50 dark:bg-indigo-950/50',
     iconColor: 'text-indigo-600 dark:text-indigo-400',
     badgeIcon: CircleDot,
+    menuIcon: CircleDot,
     tests: [
       { title: 'Fasting Blood Sugar (FBS)', desc: 'Measures blood glucose after an overnight fast', badgeText: 'FBS', tags: ['FBS', 'Fasting Glucose', 'Diabetes'] },
       { title: 'Postprandial Blood Sugar (PPBS)', desc: 'Measures blood glucose 2 hours after meal', badgeText: 'PPBS', tags: ['PPBS', 'Postprandial', 'Glucose'] },
@@ -208,6 +248,7 @@ const BLOOD_TEST_SUBCATEGORIES: SubCategoryItem[] = [
     iconBg: 'bg-amber-50 dark:bg-amber-950/50',
     iconColor: 'text-amber-600 dark:text-amber-400',
     badgeIcon: Layers,
+    menuIcon: Layers,
     tests: [
       { title: 'Serum Iron', desc: 'Measures the level of iron in the blood', badgeText: 'Fe', tags: ['Serum Iron', 'Iron Deficiency'] },
       { title: 'Serum Ferritin', desc: 'Reflects body iron stores and deficiency', badgeText: 'FERR', tags: ['Ferritin', 'Iron Stores'] },
@@ -225,6 +266,7 @@ const BLOOD_TEST_SUBCATEGORIES: SubCategoryItem[] = [
     iconBg: 'bg-emerald-50 dark:bg-emerald-950/50',
     iconColor: 'text-emerald-600 dark:text-emerald-400',
     badgeIcon: Sun,
+    menuIcon: Sun,
     tests: [
       { title: 'Vitamin D (25-OH)', desc: 'Measures vitamin D level for bone & immunity', badgeText: 'Vit D', tags: ['Vitamin D', '25-OH', 'Bone Health'] },
       { title: 'Vitamin B12', desc: 'Essential for nerve function and red blood cell formation', badgeText: 'B12', tags: ['Vitamin B12', 'Cyanocobalamin'] },
@@ -246,6 +288,7 @@ const BLOOD_TEST_SUBCATEGORIES: SubCategoryItem[] = [
     iconBg: 'bg-[#EEF2FF] dark:bg-indigo-950/50',
     iconColor: 'text-[#4F46E5] dark:text-indigo-400',
     badgeIcon: Crosshair,
+    menuIcon: Crosshair,
     tests: [
       { title: 'ANA (ANA Screen)', desc: 'Antinuclear Antibody Screening', badgeText: 'ANA', tags: ['ANA', 'Antinuclear Antibody', 'Autoimmune'] },
       { title: 'ANCA', desc: 'Anti Neutrophil Cytoplasmic Antibody', badgeText: 'ANCA', tags: ['ANCA', 'Vasculitis'] },
@@ -269,13 +312,17 @@ const BLOOD_TEST_SUBCATEGORIES: SubCategoryItem[] = [
 // Fallback generator for non-blood categories
 function getCategorySubData(catId: string, catName: string): SubCategoryItem[] {
   if (catId === 'blood') return BLOOD_TEST_SUBCATEGORIES;
+
+  const catObj = MAIN_CATEGORIES.find((c) => c.id === catId) || MAIN_CATEGORIES[0];
+
   return [
     {
       name: `General ${catName}`,
       desc: `Standard diagnostic reporting for ${catName}`,
-      iconBg: 'bg-indigo-50 dark:bg-indigo-950/50',
-      iconColor: 'text-indigo-600 dark:text-indigo-400',
-      badgeIcon: Activity,
+      iconBg: catObj.iconBg,
+      iconColor: catObj.iconColor,
+      badgeIcon: catObj.icon,
+      menuIcon: catObj.icon,
       tests: [
         { title: `${catName} - Standard Report`, desc: `Comprehensive summary and findings for ${catName}`, badgeText: 'STD', tags: [catName, 'Diagnostic'] },
         { title: `${catName} - Follow-up / Serial`, desc: `Comparative serial assessment for ${catName}`, badgeText: 'SER', tags: [catName, 'Follow-up'] },
@@ -285,9 +332,10 @@ function getCategorySubData(catId: string, catName: string): SubCategoryItem[] {
     {
       name: `Specialized ${catName}`,
       desc: `Advanced contrast, targeted or sub-specialty ${catName} protocols`,
-      iconBg: 'bg-purple-50 dark:bg-purple-950/50',
-      iconColor: 'text-purple-600 dark:text-purple-400',
+      iconBg: catObj.iconBg,
+      iconColor: catObj.iconColor,
       badgeIcon: Microscope,
+      menuIcon: Microscope,
       tests: [
         { title: `${catName} - Advanced Protocol`, desc: `High resolution / contrast-enhanced study`, badgeText: 'ADV', tags: [catName, 'Specialized'] },
         { title: `${catName} - Guided Procedure / Biopsy`, desc: `Interventional guided study procedure`, badgeText: 'PROC', tags: [catName, 'Procedure'] },
@@ -333,11 +381,11 @@ export default function SelectReportModal({ isOpen, onClose, onSelect }: SelectR
   const HeaderIcon = activeSubCat.badgeIcon || Activity;
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex flex-col justify-end sm:justify-center items-center p-0 sm:p-4 overflow-y-auto">
-      <div className="bg-[#F8FAFC] dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-t-3xl sm:rounded-3xl max-w-6xl w-full max-h-[92vh] flex flex-col shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+    <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex flex-col justify-end sm:justify-center items-center p-2 sm:p-5 overflow-y-auto">
+      <div className="bg-[#F8FAFC] dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl sm:rounded-3xl max-w-[96vw] xl:max-w-[1440px] w-full h-[92vh] max-h-[95vh] flex flex-col shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         
         {/* Header bar matching "Add Report" reference UI */}
-        <div className="bg-white dark:bg-slate-900 border-b border-slate-200/80 dark:border-slate-800 px-6 py-4 flex items-center justify-between shrink-0">
+        <div className="bg-white dark:bg-slate-900 border-b border-slate-200/80 dark:border-slate-800 px-6 py-3.5 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3">
             <button
               onClick={onClose}
@@ -346,7 +394,7 @@ export default function SelectReportModal({ isOpen, onClose, onSelect }: SelectR
               <ArrowLeft className="w-5 h-5 stroke-[2]" />
             </button>
             <div>
-              <h2 className="text-xl font-bold tracking-tight text-[#0B132B] dark:text-white font-sans">
+              <h2 className="text-lg sm:text-xl font-bold tracking-tight text-[#0B132B] dark:text-white font-sans">
                 Add Report
               </h2>
               <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">
@@ -356,23 +404,23 @@ export default function SelectReportModal({ isOpen, onClose, onSelect }: SelectR
           </div>
 
           {/* Search box on right */}
-          <div className="relative hidden md:block w-72">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
+          <div className="relative hidden md:flex items-center w-72">
+            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 pointer-events-none stroke-[2]" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search subcategory..."
-              className="w-full pl-9 pr-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900/10"
+              className="w-full pl-9 pr-4 h-9 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900/10 transition-all font-sans leading-none"
             />
           </div>
         </div>
 
         {/* Scrollable Content Body */}
-        <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6">
+        <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-5">
           
           {/* STEP 1: Choose Main Category Horizontal Row matching UI reference */}
-          <div className="space-y-3">
+          <div className="space-y-2.5">
             <div className="flex items-center gap-2">
               <span className="w-5 h-5 rounded-full bg-[#0B132B] text-white text-[11px] font-bold flex items-center justify-center">1</span>
               <h3 className="text-xs font-bold text-[#0B132B] dark:text-slate-100 tracking-wide uppercase">
@@ -380,8 +428,8 @@ export default function SelectReportModal({ isOpen, onClose, onSelect }: SelectR
               </h3>
             </div>
 
-            {/* Main Category Cards Row */}
-            <div className="flex items-center gap-3 overflow-x-auto pb-2 scrollbar-thin">
+            {/* Main Category Cards Grid */}
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-12 gap-2">
               {MAIN_CATEGORIES.map((cat) => {
                 const isActive = selectedMainCat === cat.id;
                 const IconComponent = cat.icon;
@@ -392,25 +440,20 @@ export default function SelectReportModal({ isOpen, onClose, onSelect }: SelectR
                       setSelectedMainCat(cat.id);
                       setSelectedSubCatIndex(0);
                     }}
-                    className={`relative flex flex-col items-center justify-center p-3.5 rounded-2xl min-w-[100px] border transition-all shrink-0 select-none ${
+                    className={`relative flex flex-col items-center justify-center py-2.5 px-1.5 rounded-xl border transition-all duration-200 select-none ${
                       isActive
-                        ? 'bg-[#0B132B] text-white border-[#0B132B] shadow-md scale-102'
-                        : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:border-slate-300'
+                        ? `${cat.iconBg} ${cat.textColor} border-current ring-2 ring-current/20 shadow-xs font-bold scale-[1.02]`
+                        : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-200/90 dark:border-slate-800 hover:border-slate-300 hover:bg-slate-50/80 font-medium'
                     }`}
                   >
-                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-2 ${
-                      isActive ? 'bg-white/10 text-white' : cat.color
+                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center mb-1.5 transition-colors ${
+                      isActive ? 'bg-white dark:bg-slate-800 shadow-2xs ' + cat.iconColor : cat.color
                     }`}>
-                      <IconComponent className="w-5 h-5 stroke-[2]" />
+                      <IconComponent className="w-4 h-4 stroke-[2]" />
                     </div>
-                    <span className={`text-[11px] font-bold text-center leading-tight ${isActive ? 'text-white' : 'text-slate-800 dark:text-slate-200'}`}>
+                    <span className="text-[10px] font-bold text-center leading-tight truncate w-full">
                       {cat.name}
                     </span>
-
-                    {/* Pointer triangle pointing down for active item matching screenshot */}
-                    {isActive && (
-                      <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[7px] border-l-transparent border-r-[7px] border-r-transparent border-t-[7px] border-t-[#0B132B]" />
-                    )}
                   </button>
                 );
               })}
@@ -423,19 +466,19 @@ export default function SelectReportModal({ isOpen, onClose, onSelect }: SelectR
               <div className="flex items-center gap-2">
                 <span className="w-5 h-5 rounded-full bg-[#0B132B] text-white text-[11px] font-bold flex items-center justify-center">2</span>
                 <h3 className="text-xs font-bold text-[#0B132B] dark:text-slate-100 tracking-wide uppercase">
-                  Choose Subcategory – <span className="text-blue-600 dark:text-blue-400">{currentMainCatObj.name}</span>
+                  Choose Subcategory – <span className={currentMainCatObj.textColor}>{currentMainCatObj.name}</span>
                 </h3>
               </div>
 
               {/* Search box on mobile */}
-              <div className="relative md:hidden w-full">
-                <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
+              <div className="relative md:hidden flex items-center w-full">
+                <Search className="w-4 h-4 text-slate-400 absolute left-3.5 pointer-events-none stroke-[2]" />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search subcategory..."
-                  className="w-full pl-9 pr-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400"
+                  className="w-full pl-9 pr-4 h-9 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900/10 transition-all font-sans leading-none"
                 />
               </div>
             </div>
@@ -443,10 +486,11 @@ export default function SelectReportModal({ isOpen, onClose, onSelect }: SelectR
             {/* Split layout: Subcategory Menu (Left) + Subcategory Test Cards (Right) */}
             <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-start pt-1">
               
-              {/* Left Subcategory Vertical List */}
-              <div className="md:col-span-3 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-2 space-y-1 shadow-2xs">
+              {/* Left Subcategory Vertical List with individual colorful icons */}
+              <div className="md:col-span-3 lg:col-span-3 xl:col-span-2 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-1.5 space-y-0.5 shadow-2xs">
                 {subCategoriesList.map((sub, idx) => {
                   const isActive = selectedSubCatIndex === idx;
+                  const MenuIcon = sub.menuIcon || Activity;
                   return (
                     <button
                       key={sub.name}
@@ -454,31 +498,32 @@ export default function SelectReportModal({ isOpen, onClose, onSelect }: SelectR
                         setSelectedSubCatIndex(idx);
                         if (sub.tests.length > 0) setSelectedTestTitle(sub.tests[0].title);
                       }}
-                      className={`w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-semibold flex items-center justify-between transition-all ${
+                      className={`w-full text-left px-3 py-2 rounded-xl text-[11px] font-semibold flex items-center justify-between transition-all ${
                         isActive
-                          ? 'bg-[#EEF2FF] text-[#4F46E5] dark:bg-indigo-950/50 dark:text-indigo-400 font-bold shadow-2xs'
+                          ? `${sub.iconBg} ${sub.iconColor} font-bold shadow-2xs border border-current/20`
                           : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/60'
                       }`}
                     >
                       <span className="truncate flex items-center gap-2">
+                        <MenuIcon className={`w-3.5 h-3.5 shrink-0 ${sub.iconColor}`} />
                         {sub.name}
                       </span>
-                      <ChevronRight className={`w-4 h-4 shrink-0 transition-transform ${isActive ? 'text-[#4F46E5] translate-x-0.5' : 'text-slate-400'}`} />
+                      <ChevronRight className={`w-3.5 h-3.5 shrink-0 transition-transform ${isActive ? `${sub.iconColor} translate-x-0.5` : 'text-slate-400'}`} />
                     </button>
                   );
                 })}
               </div>
 
               {/* Right Cards Area */}
-              <div className="md:col-span-9 space-y-4">
+              <div className="md:col-span-9 lg:col-span-9 xl:col-span-10 space-y-3">
                 
-                {/* Active Subcategory Banner Card matching reference screenshot */}
-                <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-4.5 shadow-2xs flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-[#0B132B] dark:bg-blue-600 text-white flex items-center justify-center shrink-0 shadow-sm">
-                    <HeaderIcon className="w-6 h-6 stroke-[2]" />
+                {/* Active Subcategory Banner Card */}
+                <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-xl p-3 shadow-2xs flex items-center gap-3">
+                  <div className={`w-10 h-10 rounded-lg ${activeSubCat.iconBg} ${activeSubCat.iconColor} border border-slate-200/80 dark:border-slate-800 flex items-center justify-center shrink-0 shadow-2xs`}>
+                    <HeaderIcon className="w-5 h-5 stroke-[2] stroke-current fill-none" />
                   </div>
                   <div>
-                    <h4 className="text-base font-bold text-[#0B132B] dark:text-white font-sans">
+                    <h4 className="text-sm font-bold text-[#0B132B] dark:text-white font-sans">
                       {activeSubCat.name}
                     </h4>
                     <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 font-medium">
@@ -487,58 +532,36 @@ export default function SelectReportModal({ isOpen, onClose, onSelect }: SelectR
                   </div>
                 </div>
 
-                {/* Test Cards Grid matching reference UI */}
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                {/* Test Cards Grid */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
                   {filteredTests.map((test) => {
                     const isSelected = selectedTestTitle === test.title;
                     return (
                       <div
                         key={test.title}
                         onClick={() => setSelectedTestTitle(test.title)}
-                        className={`bg-white dark:bg-slate-900 border rounded-2xl p-4 cursor-pointer transition-all flex flex-col justify-between space-y-3 relative group hover:shadow-md ${
+                        className={`bg-white dark:bg-slate-900 border rounded-xl p-3 cursor-pointer transition-all flex flex-col items-center justify-center text-center space-y-2 min-h-[140px] relative group hover:shadow-md ${
                           isSelected
-                            ? 'border-indigo-600 ring-2 ring-indigo-500/20 bg-indigo-50/20 dark:bg-indigo-950/30'
-                            : 'border-slate-200/80 dark:border-slate-800 hover:border-indigo-300'
+                            ? `border-current ring-2 ring-current/20 ${activeSubCat.iconBg} ${activeSubCat.iconColor}`
+                            : 'border-slate-200/80 dark:border-slate-800 hover:border-slate-300'
                         }`}
                       >
-                        {/* Circle Badge with Test Icon / Text Badge matching reference UI */}
-                        <div className={`w-11 h-11 rounded-full flex items-center justify-center font-bold text-[11px] border mx-auto ${
-                          activeSubCat.iconBg || 'bg-purple-50 dark:bg-purple-950/40'
-                        } ${activeSubCat.iconColor || 'text-purple-600 dark:text-purple-400'} border-slate-200/60 dark:border-slate-800`}>
-                          {test.badgeText || test.title.split(' ')[0].slice(0, 4)}
-                        </div>
+                        {/* Custom SVG Test Badge graphic matching reference UI */}
+                        <TestBadgeIcon
+                          title={test.title}
+                          badgeText={test.badgeText}
+                          iconBg={activeSubCat.iconBg}
+                          iconColor={activeSubCat.iconColor}
+                        />
 
-                        <div className="text-center space-y-1">
-                          <h5 className="text-xs font-bold text-[#0B132B] dark:text-white leading-snug">
+                        <div className="text-center space-y-0.5 w-full">
+                          <h5 className="text-[11px] font-bold text-[#0B132B] dark:text-white leading-snug">
                             {test.title}
                           </h5>
-                          <p className="text-[11px] text-slate-400 dark:text-slate-500 line-clamp-2 font-normal leading-tight">
+                          <p className="text-[10px] text-slate-400 dark:text-slate-500 line-clamp-2 font-medium leading-tight">
                             {test.desc}
                           </p>
                         </div>
-
-                        {/* Quick Select Checkmark or Button */}
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedTestTitle(test.title);
-                            handleConfirmSelect(test);
-                          }}
-                          className={`w-full py-1.5 rounded-xl text-[11px] font-bold transition-all flex items-center justify-center gap-1 ${
-                            isSelected
-                              ? 'bg-[#0B132B] dark:bg-blue-600 text-white shadow-xs'
-                              : 'bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-indigo-50 hover:text-indigo-600'
-                          }`}
-                        >
-                          {isSelected ? (
-                            <>
-                              <Check className="w-3.5 h-3.5" /> Selected
-                            </>
-                          ) : (
-                            'Select Test'
-                          )}
-                        </button>
                       </div>
                     );
                   })}

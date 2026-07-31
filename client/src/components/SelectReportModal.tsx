@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { getTestIcon } from './icons/IconRegistry';
 import * as CatIcons from './icons/CategoryIcons';
+import * as MedicalIcons from './icons/MedicalOrganIcons';
 
 export interface ReportSelection {
   mainCategory: string;
@@ -309,9 +310,128 @@ const BLOOD_TEST_SUBCATEGORIES: SubCategoryItem[] = [
   }
 ];
 
+// Pathology / Biopsy Subcategories matching reference UI
+const PATHOLOGY_SUBCATEGORIES: SubCategoryItem[] = [
+  {
+    name: 'Cytology',
+    desc: 'Microscopic examination of individual cells and fluid aspirates',
+    iconBg: 'bg-purple-50 dark:bg-purple-950/50',
+    iconColor: 'text-purple-600 dark:text-purple-400',
+    badgeIcon: MedicalIcons.IconCytologyCell,
+    menuIcon: MedicalIcons.IconCytologyCell,
+    tests: [
+      { title: 'FNAC (Fine Needle Aspiration Cytology)', desc: 'Diagnostic procedure using thin needle to sample cells', badgeText: 'FNAC', tags: ['FNAC', 'Aspiration', 'Cytology'] },
+      { title: 'Pap Smear', desc: 'Screening test for cervical cell abnormalities', badgeText: 'PAP', tags: ['Pap Smear', 'Cervical', 'Screening'] },
+      { title: 'Fluid Cytology (Pleural / Ascitic)', desc: 'Microscopic cell analysis of body cavity fluids', badgeText: 'FLUID', tags: ['Fluid', 'Pleural', 'Ascitic'] },
+      { title: 'Sputum Cytology', desc: 'Examination of sputum cells for respiratory conditions', badgeText: 'SPUT', tags: ['Sputum', 'Respiratory'] },
+      { title: 'Urine Cytology', desc: 'Detection of atypical or cancerous cells in urine', badgeText: 'URINE', tags: ['Urine Cytology', 'Urothelial'] }
+    ]
+  },
+  {
+    name: 'Histopathology (Biopsy)',
+    desc: 'Microscopic analysis of tissue biopsy samples for disease diagnosis',
+    iconBg: 'bg-indigo-50 dark:bg-indigo-950/50',
+    iconColor: 'text-indigo-600 dark:text-indigo-400',
+    badgeIcon: MedicalIcons.IconBiopsySlide,
+    menuIcon: MedicalIcons.IconBiopsySlide,
+    tests: [
+      { title: 'Small Tissue Biopsy (Punch / Core)', desc: 'Histopathological evaluation of small tissue specimen', badgeText: 'BIOPSY', tags: ['Biopsy', 'Core', 'Punch'] },
+      { title: 'Large Resection Specimen', desc: 'Comprehensive examination of surgically excised organ/tissue', badgeText: 'RESECT', tags: ['Resection', 'Surgical Specimen'] },
+      { title: 'Endoscopic Biopsy', desc: 'Biopsy sample collected during endoscopic procedure', badgeText: 'ENDO', tags: ['Endoscopic', 'GI Biopsy'] },
+      { title: 'Skin Biopsy', desc: 'Histopathology of skin lesion or rash sample', badgeText: 'SKIN', tags: ['Skin', 'Dermatopathology'] }
+    ]
+  },
+  {
+    name: 'Hematopathology',
+    desc: 'Pathology of blood, bone marrow, and lymph tissue disorders',
+    iconBg: 'bg-rose-50 dark:bg-rose-950/50',
+    iconColor: 'text-rose-600 dark:text-rose-400',
+    badgeIcon: Droplet,
+    menuIcon: Droplet,
+    tests: [
+      { title: 'Bone Marrow Aspiration & Biopsy', desc: 'Comprehensive evaluation of bone marrow cells and structure', badgeText: 'BMA', tags: ['Bone Marrow', 'Biopsy', 'Leukemia'] },
+      { title: 'Lymph Node Biopsy', desc: 'Histopathological examination for lymphoma or metastasis', badgeText: 'LN', tags: ['Lymph Node', 'Lymphoma'] }
+    ]
+  },
+  {
+    name: 'Immunohistochemistry (IHC)',
+    desc: 'Specialized antibody staining to classify tumors and biomarker expression',
+    iconBg: 'bg-pink-50 dark:bg-pink-950/50',
+    iconColor: 'text-pink-600 dark:text-pink-400',
+    badgeIcon: MedicalIcons.IconAntibodyY,
+    menuIcon: MedicalIcons.IconAntibodyY,
+    tests: [
+      { title: 'ER / PR / HER2 Neu Panel', desc: 'Breast cancer biomarker receptor panel', badgeText: 'IHC3', tags: ['ER', 'PR', 'HER2', 'Breast Panel'] },
+      { title: 'Ki-67 Proliferation Index', desc: 'Measures cellular proliferation rate in tumors', badgeText: 'Ki67', tags: ['Ki-67', 'Proliferation'] },
+      { title: 'PD-L1 Expression', desc: 'Immunotherapy biomarker response predictor', badgeText: 'PD-L1', tags: ['PD-L1', 'Immunotherapy'] },
+      { title: 'Single Marker IHC Staining', desc: 'Targeted single antibody marker evaluation', badgeText: 'IHC1', tags: ['IHC', 'Antibody'] }
+    ]
+  },
+  {
+    name: 'Molecular Pathology',
+    desc: 'DNA & RNA molecular diagnostics for genetic mutations and targeted therapy',
+    iconBg: 'bg-violet-50 dark:bg-violet-950/50',
+    iconColor: 'text-violet-600 dark:text-violet-400',
+    badgeIcon: MedicalIcons.IconDNAStrand,
+    menuIcon: MedicalIcons.IconDNAStrand,
+    tests: [
+      { title: 'EGFR Mutation Analysis', desc: 'Targeted mutation analysis for lung adenocarcinoma', badgeText: 'EGFR', tags: ['EGFR', 'Lung Cancer'] },
+      { title: 'KRAS / NRAS / BRAF Panel', desc: 'Colorectal and melanoma mutation profiling', badgeText: 'RAS', tags: ['KRAS', 'BRAF', 'Mutation'] },
+      { title: 'BRCA 1 & 2 Gene Testing', desc: 'Hereditary breast and ovarian cancer risk analysis', badgeText: 'BRCA', tags: ['BRCA1', 'BRCA2', 'Hereditary'] },
+      { title: 'FISH (Fluorescence In Situ Hybridization)', desc: 'Chromosomal translocation and gene amplification', badgeText: 'FISH', tags: ['FISH', 'Chromosomal'] }
+    ]
+  },
+  {
+    name: 'Flow Cytometry',
+    desc: 'Laser-based biophysical analysis of cellular markers for leukemia and lymphoma',
+    iconBg: 'bg-cyan-50 dark:bg-cyan-950/50',
+    iconColor: 'text-cyan-600 dark:text-cyan-400',
+    badgeIcon: Zap,
+    menuIcon: Zap,
+    tests: [
+      { title: 'Leukemia / Lymphoma Immunophenotyping', desc: 'Multi-color flow cytometry marker panel', badgeText: 'FLOW', tags: ['Flow Cytometry', 'Leukemia', 'Lymphoma'] },
+      { title: 'CD4 / CD8 Count', desc: 'T-cell subset enumeration for immune status', badgeText: 'CD4', tags: ['CD4', 'CD8', 'T-Cell'] }
+    ]
+  },
+  {
+    name: 'Special Stains',
+    desc: 'Specialized chemical staining for tissue elements and microorganisms',
+    iconBg: 'bg-amber-50 dark:bg-amber-950/50',
+    iconColor: 'text-amber-600 dark:text-amber-400',
+    badgeIcon: MedicalIcons.IconScalpel,
+    menuIcon: MedicalIcons.IconScalpel,
+    tests: [
+      { title: 'PAS (Periodic Acid-Schiff) Stain', desc: 'Detects glycogen, mucins and fungal organisms', badgeText: 'PAS', tags: ['PAS', 'Special Stain', 'Fungal'] },
+      { title: 'Ziehl-Neelsen (AFB) Stain', desc: 'Specialized acid-fast stain for mycobacteria', badgeText: 'ZN', tags: ['AFB', 'Ziehl-Neelsen', 'TB'] },
+      { title: 'Grocott Silver (GMS) Stain', desc: 'Fungal visualization stain in histology', badgeText: 'GMS', tags: ['GMS', 'Fungi', 'Histology'] }
+    ]
+  },
+  {
+    name: 'Frozen Section',
+    desc: 'Intraoperative rapid diagnosis using frozen tissue sections to guide surgical decisions',
+    iconBg: 'bg-blue-50 dark:bg-blue-950/50',
+    iconColor: 'text-blue-600 dark:text-blue-400',
+    badgeIcon: MedicalIcons.IconSnowflake,
+    menuIcon: MedicalIcons.IconSnowflake,
+    tests: [
+      { title: 'General Frozen Section', desc: 'Rapid diagnosis for intraoperative decision making', badgeText: 'FROZEN', tags: ['Frozen Section', 'Intraoperative'] },
+      { title: 'Brain Tumor Frozen Section', desc: 'Assessment of brain lesions and tumor margins', badgeText: 'BRAIN', tags: ['Brain', 'Neuro', 'Frozen'] },
+      { title: 'Breast Lump Frozen Section', desc: 'Determine nature of lesion (benign vs malignant)', badgeText: 'BREAST', tags: ['Breast', 'Frozen'] },
+      { title: 'Thyroid Nodule Frozen Section', desc: 'Evaluation of thyroid nodules during surgery', badgeText: 'THYROID', tags: ['Thyroid', 'Frozen'] },
+      { title: 'Renal (Kidney) Frozen Section', desc: 'Assessment of renal masses and margins', badgeText: 'RENAL', tags: ['Renal', 'Kidney', 'Frozen'] },
+      { title: 'Liver Lesion Frozen Section', desc: 'Intraoperative evaluation of liver lesions', badgeText: 'LIVER', tags: ['Liver', 'Frozen'] },
+      { title: 'Lung Nodule Frozen Section', desc: 'Rapid diagnosis of pulmonary nodules and masses', badgeText: 'LUNG', tags: ['Lung', 'Pulmonary', 'Frozen'] },
+      { title: 'Ovarian Mass Frozen Section', desc: 'Differentiation of benign and malignant masses', badgeText: 'OVARIAN', tags: ['Ovarian', 'Frozen'] },
+      { title: 'Lymph Node Frozen Section', desc: 'Assessment of lymph node involvement', badgeText: 'LYMPH', tags: ['Lymph Node', 'Metastasis'] },
+      { title: 'Margin Assessment Frozen Section', desc: 'Check surgical margins for tumor clearance', badgeText: 'MARGIN', tags: ['Margin', 'Surgical Clearance'] }
+    ]
+  }
+];
+
 // Fallback generator for non-blood categories
 function getCategorySubData(catId: string, catName: string): SubCategoryItem[] {
   if (catId === 'blood') return BLOOD_TEST_SUBCATEGORIES;
+  if (catId === 'pathology') return PATHOLOGY_SUBCATEGORIES;
 
   const catObj = MAIN_CATEGORIES.find((c) => c.id === catId) || MAIN_CATEGORIES[0];
 

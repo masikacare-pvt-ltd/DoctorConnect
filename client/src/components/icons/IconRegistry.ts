@@ -2,9 +2,37 @@ import React from 'react';
 import { TextCircle, TextDrop, TextTube, TextHexagon, TextHeart } from './IconFactories';
 import * as BloodIcons from './BloodTestIcons';
 import * as CatIcons from './CategoryIcons';
+import * as OrganIcons from './MedicalOrganIcons';
 
 // Central Registry mapping test item titles & category names to React Icon components
 export const TEST_ICON_MAP: Record<string, React.FC<any>> = {
+  // --- Pathology & Organ Biopsies ---
+  'General Frozen Section': OrganIcons.IconScalpel,
+  'Brain Tumor Frozen Section': OrganIcons.IconBrain,
+  'Breast Lump Frozen Section': OrganIcons.IconBreast,
+  'Thyroid Nodule Frozen Section': OrganIcons.IconThyroid,
+  'Renal (Kidney) Frozen Section': OrganIcons.IconKidney,
+  'Liver Lesion Frozen Section': OrganIcons.IconLiver,
+  'Lung Nodule Frozen Section': OrganIcons.IconLungs,
+  'Ovarian Mass Frozen Section': OrganIcons.IconOvary,
+  'Lymph Node Frozen Section': OrganIcons.IconLymphNode,
+  'Margin Assessment Frozen Section': OrganIcons.IconMarginAssessment,
+  'Brain': OrganIcons.IconBrain,
+  'Breast': OrganIcons.IconBreast,
+  'Thyroid': OrganIcons.IconThyroid,
+  'Kidney': OrganIcons.IconKidney,
+  'Renal': OrganIcons.IconKidney,
+  'Liver': OrganIcons.IconLiver,
+  'Lung': OrganIcons.IconLungs,
+  'Pulmonary': OrganIcons.IconLungs,
+  'Ovary': OrganIcons.IconOvary,
+  'Lymph Node': OrganIcons.IconLymphNode,
+  'Frozen Section': OrganIcons.IconSnowflake,
+  'FNAC (Fine Needle Aspiration Cytology)': OrganIcons.IconScalpel,
+  'Pap Smear': OrganIcons.IconCytologyCell,
+  'ER / PR / HER2 Neu Panel': OrganIcons.IconAntibodyY,
+  'EGFR Mutation Analysis': OrganIcons.IconDNAStrand,
+
   // --- Hematology ---
   'Complete Blood Count (CBC)': BloodIcons.IconCBC,
   'Peripheral Blood Smear (PBS)': BloodIcons.IconPBS,

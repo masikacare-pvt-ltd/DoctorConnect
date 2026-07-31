@@ -33,6 +33,18 @@ export const TEST_ICON_MAP: Record<string, React.FC<any>> = {
   'ER / PR / HER2 Neu Panel': OrganIcons.IconAntibodyY,
   'EGFR Mutation Analysis': OrganIcons.IconDNAStrand,
 
+  // --- Stool Routine Tests ---
+  'Stool Routine Examination': CatIcons.IconStoolJar,
+  'Stool Microscopic Examination': OrganIcons.IconMicroscope,
+  'Stool Physical Examination': OrganIcons.IconPhysicalExam,
+  'Stool Consistency & Appearance': OrganIcons.IconStoolConsistency,
+  'Mucus in Stool': OrganIcons.IconMucusDrop,
+  'Pus Cells in Stool': OrganIcons.IconPusCells,
+  'RBC in Stool': OrganIcons.IconRBCCells,
+  'Yeast Cells in Stool': OrganIcons.IconYeastCell,
+  'Vegetable Fibres in Stool': OrganIcons.IconLeaf,
+  'Starch Granules in Stool': OrganIcons.IconStarchGranules,
+
   // --- Hematology ---
   'Complete Blood Count (CBC)': BloodIcons.IconCBC,
   'Peripheral Blood Smear (PBS)': BloodIcons.IconPBS,

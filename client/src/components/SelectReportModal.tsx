@@ -11,10 +11,10 @@ import {
   Layers,
   Sun,
   Crosshair,
-  Microscope,
   ArrowLeft,
   Search,
-  ChevronRight
+  ChevronRight,
+  MoreHorizontal
 } from 'lucide-react';
 import { getTestIcon } from './icons/IconRegistry';
 import * as CatIcons from './icons/CategoryIcons';
@@ -50,16 +50,27 @@ const MAIN_CATEGORIES = [
   { id: 'endoscopy', name: 'Endoscopy', icon: CatIcons.IconEndoscope, color: 'bg-orange-50 text-orange-600 dark:bg-orange-950/50 dark:text-orange-400', iconBg: 'bg-orange-50 dark:bg-orange-950/50', iconColor: 'text-orange-600 dark:text-orange-400', textColor: 'text-orange-600 dark:text-orange-400' },
   { id: 'genetic', name: 'Genetic Test', icon: CatIcons.IconDNAStrand, color: 'bg-violet-50 text-violet-600 dark:bg-violet-950/50 dark:text-violet-400', iconBg: 'bg-violet-50 dark:bg-violet-950/50', iconColor: 'text-violet-600 dark:text-violet-400', textColor: 'text-violet-600 dark:text-violet-400' },
   { id: 'checkup', name: 'Health Checkup Report', icon: CatIcons.IconCheckupReport, color: 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/50 dark:text-emerald-400', iconBg: 'bg-emerald-50 dark:bg-emerald-950/50', iconColor: 'text-emerald-600 dark:text-emerald-400', textColor: 'text-emerald-600 dark:text-emerald-400' },
+  { id: 'others', name: 'Others', icon: MoreHorizontal, color: 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300', iconBg: 'bg-slate-100 dark:bg-slate-800', iconColor: 'text-slate-600 dark:text-slate-300', textColor: 'text-slate-700 dark:text-slate-200' },
 ];
 
 // Custom SVG Test Badge renderer using IconRegistry for pixel-perfect medical icons
-function TestBadgeIcon({ title, badgeText, iconBg, iconColor }: { title: string; badgeText?: string; iconBg: string; iconColor: string }) {
+function TestBadgeIcon({ title, badgeText, iconBg, iconColor, fallbackIcon: FallbackIcon }: { title: string; badgeText?: string; iconBg: string; iconColor: string; fallbackIcon?: React.ComponentType<any> }) {
   const IconComponent = getTestIcon(title);
 
   if (IconComponent) {
     return (
       <div className={`w-10 h-10 rounded-full flex items-center justify-center ${iconBg} ${iconColor} border border-slate-200/80 dark:border-slate-800 mx-auto shadow-2xs shrink-0`}>
         <IconComponent className="w-5 h-5 stroke-[1.8] stroke-current fill-none" />
+      </div>
+    );
+  }
+
+  // Every reference tile has a medical illustration.  Use its subcategory
+  // illustration for tests which do not need a more specific registry icon.
+  if (FallbackIcon) {
+    return (
+      <div className={`w-10 h-10 rounded-full flex items-center justify-center ${iconBg} ${iconColor} border border-slate-200/80 dark:border-slate-800 mx-auto shadow-2xs shrink-0`}>
+        <FallbackIcon className="w-5 h-5 stroke-[1.8] stroke-current fill-none" />
       </div>
     );
   }
@@ -307,6 +318,17 @@ const BLOOD_TEST_SUBCATEGORIES: SubCategoryItem[] = [
       { title: 'AFP', desc: 'Alpha Fetoprotein (Liver tumor marker)', badgeText: 'AFP', tags: ['AFP', 'Alpha Fetoprotein'] },
       { title: 'Ferritin', desc: 'Iron storage protein (Tumor & inflammation marker)', badgeText: 'FERR', tags: ['Ferritin', 'Inflammation Marker'] }
     ]
+  },
+  {
+    name: 'Others',
+    desc: 'Unlisted blood investigations and custom patient reports',
+    iconBg: 'bg-slate-100 dark:bg-slate-800',
+    iconColor: 'text-slate-600 dark:text-slate-300',
+    badgeIcon: MoreHorizontal,
+    menuIcon: MoreHorizontal,
+    tests: [
+      { title: 'Custom / Other Blood Report', desc: 'General unclassified blood investigation summary', badgeText: 'OTHER', tags: ['Blood', 'Custom', 'Other'] }
+    ]
   }
 ];
 
@@ -425,43 +447,304 @@ const PATHOLOGY_SUBCATEGORIES: SubCategoryItem[] = [
       { title: 'Lymph Node Frozen Section', desc: 'Assessment of lymph node involvement', badgeText: 'LYMPH', tags: ['Lymph Node', 'Metastasis'] },
       { title: 'Margin Assessment Frozen Section', desc: 'Check surgical margins for tumor clearance', badgeText: 'MARGIN', tags: ['Margin', 'Surgical Clearance'] }
     ]
+  },
+  {
+    name: 'Others',
+    desc: 'Unlisted tissue biopsies and specialized pathology investigations',
+    iconBg: 'bg-slate-100 dark:bg-slate-800',
+    iconColor: 'text-slate-600 dark:text-slate-300',
+    badgeIcon: MoreHorizontal,
+    menuIcon: MoreHorizontal,
+    tests: [
+      { title: 'Custom / Other Pathology Report', desc: 'General unclassified pathology investigation summary', badgeText: 'OTHER', tags: ['Pathology', 'Custom', 'Other'] }
+    ]
   }
 ];
 
-// Fallback generator for non-blood categories
-function getCategorySubData(catId: string, catName: string): SubCategoryItem[] {
-  if (catId === 'blood') return BLOOD_TEST_SUBCATEGORIES;
-  if (catId === 'pathology') return PATHOLOGY_SUBCATEGORIES;
+// Stool Test Subcategories matching reference UI
+const STOOL_TEST_SUBCATEGORIES: SubCategoryItem[] = [
+  {
+    name: 'Routine & Microscopic',
+    desc: 'Basic stool analysis to evaluate general bowel health and detect infections or abnormalities.',
+    iconBg: 'bg-amber-50 dark:bg-amber-950/50',
+    iconColor: 'text-amber-600 dark:text-amber-400',
+    badgeIcon: CatIcons.IconBiopsySlide,
+    menuIcon: CatIcons.IconBiopsySlide,
+    tests: [
+      { title: 'Stool Routine Examination', desc: 'General assessment of stool characteristics', badgeText: 'STOOL', tags: ['Stool', 'Routine'] },
+      { title: 'Stool Microscopic Examination', desc: 'Microscopic analysis for cells, parasites, and other elements', badgeText: 'SCOPE', tags: ['Microscopic', 'Stool'] },
+      { title: 'Stool Physical Examination', desc: 'Evaluation of color, consistency, odor and mucus', badgeText: 'PHYS', tags: ['Physical', 'Appearance'] },
+      { title: 'Stool Consistency & Appearance', desc: 'Assessment of stool form and texture', badgeText: 'FORM', tags: ['Consistency', 'Texture'] },
+      { title: 'Mucus in Stool', desc: 'Detection of mucus in stool', badgeText: 'MUCUS', tags: ['Mucus', 'Bowel'] },
+      { title: 'Pus Cells in Stool', desc: 'Detection of pus cells (WBC) in stool', badgeText: 'PUS', tags: ['Pus Cells', 'WBC', 'Infection'] },
+      { title: 'RBC in Stool', desc: 'Detection of red blood cells in stool', badgeText: 'RBC', tags: ['RBC', 'Blood', 'Microscopic'] },
+      { title: 'Yeast Cells in Stool', desc: 'Detection of yeast cells in stool', badgeText: 'YEAST', tags: ['Yeast', 'Fungal'] },
+      { title: 'Vegetable Fibres in Stool', desc: 'Presence of undigested plant material', badgeText: 'FIBRE', tags: ['Plant Material', 'Digestion'] },
+      { title: 'Starch Granules in Stool', desc: 'Detection of starch granules in stool', badgeText: 'STARCH', tags: ['Starch', 'Digestion'] }
+    ]
+  },
+  {
+    name: 'Chemical Examination',
+    desc: 'Chemical evaluation of stool pH, reducing substances, and occult blood',
+    iconBg: 'bg-yellow-50 dark:bg-yellow-950/50',
+    iconColor: 'text-yellow-600 dark:text-yellow-400',
+    badgeIcon: TestTube,
+    menuIcon: TestTube,
+    tests: [
+      { title: 'Stool pH Test', desc: 'Acidity / alkalinity measurement of stool', badgeText: 'pH', tags: ['pH', 'Acidic'] },
+      { title: 'Reducing Substances in Stool', desc: 'Screening for carbohydrate malabsorption (lactose intolerance)', badgeText: 'RED', tags: ['Reducing Sugar', 'Malabsorption'] },
+      { title: 'Occult Blood (Chemical)', desc: 'Chemical detection of hidden blood in stool sample', badgeText: 'OB', tags: ['Occult Blood', 'FOBT'] }
+    ]
+  },
+  {
+    name: 'Culture & Sensitivity',
+    desc: 'Bacterial culture identification and antibiotic sensitivity testing',
+    iconBg: 'bg-purple-50 dark:bg-purple-950/50',
+    iconColor: 'text-purple-600 dark:text-purple-400',
+    badgeIcon: CircleDot,
+    menuIcon: CircleDot,
+    tests: [
+      { title: 'Stool Culture & Sensitivity', desc: 'Isolation of enteric pathogens and drug susceptibility', badgeText: 'CULT', tags: ['Culture', 'Sensitivity', 'Pathogen'] },
+      { title: 'Salmonella & Shigella Culture', desc: 'Targeted screening for dysentery and typhoid bacteria', badgeText: 'SALM', tags: ['Salmonella', 'Shigella'] }
+    ]
+  },
+  {
+    name: 'Parasitology',
+    desc: 'Microscopic identification of protozoa, intestinal parasites, and ova',
+    iconBg: 'bg-rose-50 dark:bg-rose-950/50',
+    iconColor: 'text-rose-600 dark:text-rose-400',
+    badgeIcon: Shield,
+    menuIcon: Shield,
+    tests: [
+      { title: 'Stool Ova & Parasite (O&P) Concentration', desc: 'Concentration method for ova, cysts and trophozoites', badgeText: 'O&P', tags: ['Parasites', 'Ova', 'Cysts'] },
+      { title: 'Giardia Lamblia Antigen', desc: 'Immunoassay for Giardia intestinal infection', badgeText: 'GIAR', tags: ['Giardia', 'Protozoa'] },
+      { title: 'Entamoeba Histolytica Test', desc: 'Detection of amoebic dysentery parasite', badgeText: 'AMOEBA', tags: ['Entamoeba', 'Amoebiasis'] }
+    ]
+  },
+  {
+    name: 'Blood & Occult Blood',
+    desc: 'Screening for gastrointestinal bleeding and colorectal lesions',
+    iconBg: 'bg-red-50 dark:bg-red-950/50',
+    iconColor: 'text-red-600 dark:text-red-400',
+    badgeIcon: Droplet,
+    menuIcon: Droplet,
+    tests: [
+      { title: 'Fecal Occult Blood Test (FOBT)', desc: 'Screening test for invisible GI blood loss', badgeText: 'FOBT', tags: ['FOBT', 'Occult Blood'] },
+      { title: 'Fecal Immunochemical Test (FIT)', desc: 'Specific human hemoglobin immunoassay', badgeText: 'FIT', tags: ['FIT', 'Colorectal Screening'] }
+    ]
+  },
+  {
+    name: 'Calprotectin & Inflammatory Markers',
+    desc: 'Biomarkers for Inflammatory Bowel Disease (IBD vs IBS)',
+    iconBg: 'bg-blue-50 dark:bg-blue-950/50',
+    iconColor: 'text-blue-600 dark:text-blue-400',
+    badgeIcon: Activity,
+    menuIcon: Activity,
+    tests: [
+      { title: 'Fecal Calprotectin', desc: 'Differentiates Crohn\'s / Ulcerative Colitis from IBS', badgeText: 'CALPRO', tags: ['Calprotectin', 'IBD', 'Colitis'] },
+      { title: 'Fecal Lactoferrin', desc: 'Neutrophil marker for intestinal inflammation', badgeText: 'LACTO', tags: ['Lactoferrin', 'Inflammation'] }
+    ]
+  },
+  {
+    name: 'Pancreatic Elastase & Digestive Markers',
+    desc: 'Assessment of exocrine pancreatic function and enzyme output',
+    iconBg: 'bg-cyan-50 dark:bg-cyan-950/50',
+    iconColor: 'text-cyan-600 dark:text-cyan-400',
+    badgeIcon: MedicalIcons.IconLiver,
+    menuIcon: MedicalIcons.IconLiver,
+    tests: [
+      { title: 'Pancreatic Elastase-1 in Stool', desc: 'Gold standard non-invasive test for pancreatic insufficiency', badgeText: 'PE1', tags: ['Elastase', 'Pancreas', 'Digestion'] }
+    ]
+  },
+  {
+    name: 'Fecal Fat & Malabsorption Tests',
+    desc: 'Quantification of unabsorbed dietary fat and steatorrhea evaluation',
+    iconBg: 'bg-indigo-50 dark:bg-indigo-950/50',
+    iconColor: 'text-indigo-600 dark:text-indigo-400',
+    badgeIcon: Sun,
+    menuIcon: Sun,
+    tests: [
+      { title: 'Fecal Fat Quantitative (72-Hour)', desc: '72-hour collection fat absorption efficiency measurement', badgeText: 'FAT72', tags: ['Fecal Fat', 'Steatorrhea'] },
+      { title: 'Fecal Fat Qualitative (Sudan Stain)', desc: 'Rapid microscopic stain screening for fat globules', badgeText: 'SUDAN', tags: ['Sudan Stain', 'Fat Globules'] }
+    ]
+  },
+  {
+    name: 'Viral & Antigen Detection',
+    desc: 'Rapid immunochromatographic detection of gastroenteritis viruses & H. pylori',
+    iconBg: 'bg-teal-50 dark:bg-teal-950/50',
+    iconColor: 'text-teal-600 dark:text-teal-400',
+    badgeIcon: Flame,
+    menuIcon: Flame,
+    tests: [
+      { title: 'Rotavirus & Adenovirus Antigen', desc: 'Rapid test for viral acute gastroenteritis', badgeText: 'ROTA', tags: ['Rotavirus', 'Gastroenteritis'] },
+      { title: 'H. Pylori Stool Antigen Test', desc: 'Non-invasive detection of gastric H. pylori infection', badgeText: 'HPYL', tags: ['H. Pylori', 'Gastric'] }
+    ]
+  },
+  {
+    name: 'Others',
+    desc: 'Unlisted stool investigations and custom digestive report uploads',
+    iconBg: 'bg-slate-100 dark:bg-slate-800',
+    iconColor: 'text-slate-600 dark:text-slate-300',
+    badgeIcon: MoreHorizontal,
+    menuIcon: MoreHorizontal,
+    tests: [
+      { title: 'Custom / Other Stool Report', desc: 'General unclassified stool investigation summary', badgeText: 'OTHER', tags: ['Stool', 'Custom', 'Other'] }
+    ]
+  }
+];
 
-  const catObj = MAIN_CATEGORIES.find((c) => c.id === catId) || MAIN_CATEGORIES[0];
+type CategoryBlueprint = {
+  name: string;
+  desc: string;
+  tests: string[];
+};
 
-  return [
-    {
-      name: `General ${catName}`,
-      desc: `Standard diagnostic reporting for ${catName}`,
+// Transcribed from the supplied report-picker reference screens.  Keeping this
+// data explicit prevents the UI from silently falling back to placeholder
+// “General” / “Specialized” categories for the remaining report types.
+const CATEGORY_BLUEPRINTS: Partial<Record<string, CategoryBlueprint[]>> = {
+  urine: [
+    { name: 'Routine & Microscopic', desc: 'Basic urine tests to evaluate general health, kidney function and detect infections', tests: ['Routine Urine Examination (RUE)', 'Urine Microscopy', 'Urine pH', 'Urine Specific Gravity', 'Urine Color', 'Urine Appearance', 'Urine Sugar (Glucose)', 'Urine Protein (Albumin)', 'Urine Ketones', 'Urine Bilirubin'] },
+    { name: 'Chemical Examination', desc: 'Detects biochemical changes and helps in diagnosing various conditions', tests: ['Protein', 'Glucose', 'Ketones', 'Bilirubin', 'Urobilinogen', 'Nitrite', 'Leukocyte Esterase', 'Blood', 'pH', 'Specific Gravity'] },
+    { name: '24 Hour Urine Tests', desc: 'Measures substances excreted in urine over a 24-hour period for better assessment', tests: ['24-Hour Urine Protein', 'Creatinine Clearance', '24-Hour Urine Microalbumin', '24-Hour Urine Calcium', '24-Hour Urine Sodium', '24-Hour Urine Potassium', '24-Hour Urine Uric Acid', '24-Hour Urine Cortisol', '24-Hour Urine Catecholamines', '24-Hour Urine Metanephrines', '24-Hour Urine Oxalate', '24-Hour Urine Copper'] },
+    { name: 'Microalbumin Tests', desc: 'Early detection of kidney damage and monitoring kidney health', tests: ['Urine Microalbumin', 'Albumin / Creatinine Ratio (ACR)', 'Spot Urine Albumin', 'Timed Urine Albumin', 'Urine Creatinine', 'Protein / Creatinine Ratio (PCR)'] },
+    { name: 'Urine Culture & Sensitivity', desc: 'Detection of urinary pathogens and antibiotic sensitivity', tests: ['Urine Culture', 'Culture & Antibiotic Sensitivity (C/S)', 'Colony Count (CFU/mL)', 'Organism Identification', 'Antibiotic Susceptibility Panel', 'Yeast / Fungal Culture', 'Mycobacterial (TB) Urine Culture'] },
+    { name: 'Hormones in Urine', desc: 'Urinary hormone and endocrine investigations', tests: ['Urine hCG', '24-Hour Urine Cortisol', 'Urine Free Cortisol', 'Urine Catecholamines', 'Metanephrines', 'VMA (Vanillylmandelic Acid)', '5-HIAA (5-Hydroxyindole Acetic Acid)', 'Urine Aldosterone', 'Urine Estrogens', 'Urine Progesterone Metabolites'] },
+    { name: 'Drug & Toxicology Screen', desc: 'Detects drugs, medications, and toxic substances in urine for screening and monitoring', tests: ['Urine Drug Screen (Multi-panel)', 'Amphetamines', 'Cocaine', 'Cannabis (THC)', 'Opiates', 'Benzodiazepines', 'Barbiturates', 'Methadone', 'Buprenorphine', 'Phencyclidine (PCP)', 'Tramadol', 'Fentanyl', 'Nicotine / Cotinine', 'Alcohol Metabolites (EtG / EtS)', 'Other Toxins'] },
+    { name: 'Stone Risk Profile', desc: 'Urinary metabolic assessment for renal stone risk', tests: ['Urine Calcium', 'Urine Oxalate', 'Urine Citrate', 'Uric Acid', 'Magnesium', 'Phosphate', 'Sodium', 'Cystine', 'Urine pH', 'Supersaturation Profile', 'Crystal Analysis', 'Stone Risk Score'] },
+    { name: 'Specialized / Advanced Tests', desc: 'Specialized urine diagnostic investigations', tests: ['Urine Bence Jones Protein', 'Urine Osmolality', 'Urine Electrolytes', 'Urine Amino Acid Analysis', 'Urine Porphyrins', 'Urine Heavy Metals', 'Urine Organic Acids', 'Urine Protein Electrophoresis (UPEP)', 'Urine Immunofixation', 'Urine Cytology'] },
+    { name: 'Pediatric Urine Tests', desc: 'Urine investigations tailored for infants, children, and adolescents', tests: ['Pediatric Routine Urine Exam', 'Urine Calcium / Creatinine Ratio', 'Urine Protein / Creatinine Ratio', 'Urine pH (Pediatric Reference)', 'Urine Specific Gravity (Pediatric Reference)', 'Urine Culture (Pediatric Reference)', 'Urine Glucose', 'Urine Ketones', 'Urine Blood (RBC) Microscopy', 'Urine Electrolytes (Pediatric Reference)'] },
+    { name: 'Others', desc: 'Miscellaneous and rare urine investigations for special clinical needs', tests: ['Urine AFB (Smear)', 'Urine AFB (Culture)', 'Urine Eosinophils', 'Urine Crystal Analysis', 'Urine Cytochemistry', 'Urine Parasitology', 'Urine Dipstick (Strip Test)', 'Urine Total Protein', 'Urine Ammonia', 'Other Rare Tests'] },
+  ],
+  xray: [
+    { name: 'Chest', desc: 'Radiographs of the chest and lungs', tests: ['Chest X-Ray PA View', 'Chest X-Ray AP View', 'Chest X-Ray Lateral View'] },
+    { name: 'Head & Neck', desc: 'X-ray studies of the skull, face and neck', tests: ['X-Ray Skull', 'X-Ray PNS', 'X-Ray Soft Tissue Neck'] },
+    { name: 'Spine', desc: 'Cervical, thoracic and lumbar spine radiographs', tests: ['X-Ray Cervical Spine', 'X-Ray Thoracic Spine', 'X-Ray Lumbar Spine'] },
+    { name: 'Upper Limb', desc: 'X-ray studies of shoulder, arm, elbow and hand', tests: ['X-Ray Shoulder', 'X-Ray Elbow', 'X-Ray Wrist & Hand'] },
+    { name: 'Pelvis & Hip', desc: 'Pelvic and hip joint radiographs', tests: ['X-Ray Pelvis', 'X-Ray Hip', 'X-Ray Sacroiliac Joints'] },
+    { name: 'Lower Limb', desc: 'X-ray studies of knee, leg, ankle and foot', tests: ['X-Ray Knee', 'X-Ray Ankle', 'X-Ray Foot'] },
+    { name: 'Abdomen', desc: 'Abdominal radiographic examinations', tests: ['X-Ray Abdomen Erect', 'X-Ray Abdomen Supine'] },
+    { name: 'Dental', desc: 'Dental and maxillofacial radiographs', tests: ['Dental OPG', 'Intraoral Periapical X-Ray'] },
+    { name: 'Special X-ray Studies', desc: 'Contrast and specialized X-ray examinations', tests: ['Mammogram (Breast X-ray)', 'Barium Swallow', 'Barium Meal Follow Through', 'Barium Enema', 'HSG (Hysterosalpingogram)', 'IVP (Intravenous Pyelogram)', 'Bronchogram', 'MCU (Micturating Cystourethrogram)'] },
+  ],
+  usg: [
+    { name: 'General Abdomen', desc: 'Ultrasound assessment of abdominal organs', tests: ['Whole Abdomen Ultrasound', 'Upper Abdomen Ultrasound', 'KUB Ultrasound'] },
+    { name: 'Obstetrics & Gynecology', desc: 'Pregnancy, fetal well-being and female pelvic ultrasound', tests: ['Early Pregnancy Scan (≤ 12 Weeks)', 'NT Scan (11–13+6 Weeks)', 'Anomaly Scan (18–24 Weeks)', 'Growth Scan (28–36 Weeks)', 'Doppler Study', 'Third Trimester Scan (> 36 Weeks)', 'Pelvic Ultrasound (Transabdominal)', 'Pelvic Ultrasound (Transvaginal)', 'Follicular Study (For Ovulation)', 'Infertility Evaluation', 'PCOS Evaluation', 'Placenta Evaluation'] },
+    { name: 'Small Parts', desc: 'Targeted ultrasound of superficial structures', tests: ['Thyroid Ultrasound', 'Breast Ultrasound', 'Scrotal Ultrasound'] },
+    { name: 'Vascular Studies', desc: 'Doppler ultrasound of arteries and veins', tests: ['Carotid Doppler', 'Venous Doppler', 'Arterial Doppler'] },
+    { name: 'Cardiac', desc: 'Ultrasound-based cardiac studies', tests: ['Echocardiography', 'Fetal Echocardiography'] },
+    { name: 'Musculoskeletal', desc: 'Ultrasound of joints, tendons and soft tissues', tests: ['Shoulder Ultrasound', 'Knee Ultrasound', 'Soft Tissue Ultrasound'] },
+    { name: 'Pediatric', desc: 'Ultrasound examinations for children', tests: ['Pediatric Abdomen Ultrasound', 'Pediatric Hip Ultrasound'] },
+    { name: 'Neonatal', desc: 'Ultrasound studies for newborns', tests: ['Neonatal Cranial Ultrasound', 'Neonatal Abdomen Ultrasound'] },
+  ],
+  mri: [
+    { name: 'Brain', desc: 'Detailed MRI evaluation of the brain', tests: ['MRI Brain – Plain', 'MRI Brain – With Contrast', 'MR Angiography (MRA) Brain', 'MR Venography (MRV) Brain', 'MRI Brain – Functional (fMRI)', 'Diffusion MRI (DWI)', 'MR Spectroscopy (MRS)', 'MRI Pituitary (Sellar Region)', 'MRI IAC (Internal Acoustic Canal)', 'Pediatric Brain MRI'] },
+    { name: 'Spine', desc: 'MRI assessment of the spinal column and cord', tests: ['MRI Cervical Spine', 'MRI Thoracic Spine', 'MRI Lumbar Spine'] },
+    { name: 'Musculoskeletal', desc: 'MRI of joints, bones and soft tissues', tests: ['MRI Knee', 'MRI Shoulder', 'MRI Hip'] },
+    { name: 'Abdomen', desc: 'MRI of abdominal organs and biliary system', tests: ['MRI Abdomen', 'MRCP', 'MRI Liver'] },
+    { name: 'Pelvis', desc: 'MRI assessment of pelvic organs', tests: ['MRI Pelvis', 'MRI Prostate', 'MRI Rectum'] },
+    { name: 'Cardiac', desc: 'MRI studies of heart structure and function', tests: ['Cardiac MRI', 'Cardiac MR Angiography'] },
+    { name: 'Breast', desc: 'Dedicated MRI breast imaging', tests: ['MRI Breast', 'MRI Breast With Contrast'] },
+    { name: 'Vascular', desc: 'MR angiography and venography studies', tests: ['MR Angiography', 'MR Venography'] },
+    { name: 'Neck', desc: 'MRI of neck soft tissues', tests: ['MRI Neck', 'MRI Soft Tissue Neck'] },
+  ],
+  ct: [
+    { name: 'Head & Brain', desc: 'CT scans of the head and brain for neurological conditions', tests: ['CT Brain (Plain / Non-contrast)', 'CT Brain (Contrast Enhanced)', 'CT Head Injury', 'CT Brain Angiography (CTA)', 'CT Venography (CTV)', 'CT Skull (Bone Windows)', 'CT Temporal Bone', 'CT PNS (Paranasal Sinuses)', 'CT Orbits', 'CT Sellar / Suprasellar Region', 'CT Face'] },
+    { name: 'Neck', desc: 'CT scans of the neck and soft tissues', tests: ['CT Neck Plain', 'CT Neck With Contrast'] },
+    { name: 'Chest', desc: 'CT imaging of lungs and thoracic structures', tests: ['CT Chest', 'CT Chest With Contrast'] },
+    { name: 'Abdomen', desc: 'CT imaging of abdominal organs', tests: ['CT Abdomen Plain', 'CT Abdomen With Contrast'] },
+    { name: 'Pelvis', desc: 'CT imaging of the pelvic region', tests: ['CT Pelvis', 'CT KUB'] },
+    { name: 'Spine', desc: 'CT scans of cervical, thoracic and lumbar spine', tests: ['CT Cervical Spine', 'CT Thoracic Spine', 'CT Lumbar Spine'] },
+    { name: 'Musculoskeletal', desc: 'CT imaging of bones and joints', tests: ['CT Knee', 'CT Shoulder', 'CT Hip'] },
+    { name: 'Angiography (CT Angio)', desc: 'CT angiography of arteries and veins', tests: ['CT Coronary Angiography', 'CT Pulmonary Angiography', 'CT Aortic Angiography'] },
+    { name: 'Dental / Maxillofacial', desc: 'CT scans of the dental and facial regions', tests: ['CT Maxillofacial', 'CT Dental'] },
+    { name: 'HRCT (High Resolution CT)', desc: 'High-resolution CT for detailed lung assessment', tests: ['HRCT Chest', 'HRCT Temporal Bone'] },
+  ],
+  ecg: [
+    { name: 'Basic ECG', desc: 'Resting electrocardiogram studies', tests: ['Resting 12-Lead ECG', 'Rhythm Strip ECG'] },
+    { name: 'Advanced ECG', desc: 'Advanced electrocardiographic analysis', tests: ['Signal Averaged ECG', 'Vector Cardiography'] },
+    { name: 'Holter Monitoring', desc: 'Continuous ECG monitoring for intermittent cardiac abnormalities', tests: ['24 Hour Holter Monitoring', '48 Hour Holter Monitoring', '7 Day Holter Monitoring', 'Event Triggered Holter Monitoring', 'Night-time Holter Monitoring', 'Arrhythmia Detection (24–48h)', 'ST Segment Analysis', 'PVC / PAC Burden Analysis', 'Heart Rate Variability (HRV)', 'Holter Report (Interpretation)'] },
+    { name: 'Stress / Exercise Test', desc: 'Cardiac assessment during exertion', tests: ['Treadmill Test (TMT)', 'Stress ECG'] },
+    { name: 'Ambulatory BP Monitoring', desc: 'Blood-pressure monitoring over daily activity', tests: ['24 Hour ABPM', 'Daytime / Night-time BP Analysis'] },
+    { name: 'Echocardiography (Echo)', desc: 'Ultrasound assessment of cardiac structure and function', tests: ['2D Echocardiography', '3D Echocardiography'] },
+    { name: 'Doppler / Color Doppler', desc: 'Doppler assessment of cardiac blood flow', tests: ['Color Doppler Echo', 'Tissue Doppler Imaging'] },
+    { name: 'Transesophageal Echo (TEE)', desc: 'Detailed transesophageal cardiac imaging', tests: ['TEE', 'TEE With Doppler'] },
+    { name: 'Fetal Echocardiography', desc: 'Prenatal assessment of fetal cardiac anatomy', tests: ['Fetal Echocardiography', 'Fetal Doppler Study'] },
+  ],
+  endoscopy: [
+    { name: 'Upper GI Endoscopy (OGD)', desc: 'Endoscopic examination of the upper gastrointestinal tract', tests: ['Diagnostic Upper GI Endoscopy', 'Upper GI Endoscopy With Biopsy'] },
+    { name: 'Colonoscopy', desc: 'Endoscopic examination of the large intestine', tests: ['Diagnostic Colonoscopy', 'Colonoscopy With Biopsy'] },
+    { name: 'Sigmoidoscopy', desc: 'Endoscopic examination of sigmoid colon and rectum', tests: ['Flexible Sigmoidoscopy', 'Sigmoidoscopy With Biopsy'] },
+    { name: 'ERCP', desc: 'Endoscopic imaging and treatment of bile and pancreatic ducts', tests: ['Diagnostic ERCP', 'Therapeutic ERCP'] },
+    { name: 'Capsule Endoscopy', desc: 'Capsule-based imaging of the small bowel', tests: ['Small Bowel Capsule Endoscopy', 'Capsule Endoscopy Report'] },
+    { name: 'Bronchoscopy', desc: 'Endoscopic examination of the airways', tests: ['Diagnostic Bronchoscopy', 'Bronchoscopy With Biopsy'] },
+    { name: 'Cystoscopy', desc: 'Endoscopic examination of bladder and urethra', tests: ['Diagnostic Cystoscopy', 'Cystoscopy With Biopsy'] },
+    { name: 'Laparoscopy', desc: 'Minimally invasive abdominal and pelvic examination', tests: ['Diagnostic Laparoscopy', 'Laparoscopic Biopsy'] },
+    { name: 'ENT Endoscopy', desc: 'Endoscopic examination of ear, nose and throat structures', tests: ['Nasal Endoscopy', 'Laryngeal Endoscopy', 'Otoscopy', 'Pharyngoscopy', 'Sinus Endoscopy', 'Foreign Body Removal', 'Biopsy', 'Balloon Sinuplasty', 'Therapeutic Endoscopy', 'ENT Endoscopy Report (Interpretation)'] },
+  ],
+  genetic: [
+    { name: 'Carrier Screening', desc: 'Genetic screening for inherited conditions', tests: ['Expanded Carrier Screening', 'Single Gene Carrier Test'] },
+    { name: 'Pharmacogenomics', desc: 'Genetic testing to guide medicine selection and dosage', tests: ['Pharmacogenomic Panel', 'Drug Response Genetic Test'] },
+    { name: 'Oncology / Cancer Genetics', desc: 'Genetic testing for inherited cancer risk', tests: ['Hereditary Cancer Panel', 'BRCA 1 & 2 Gene Testing'] },
+    { name: 'Prenatal & Reproductive Genetics', desc: 'Genetic testing for pregnancy and reproductive health', tests: ['NIPT', 'Preimplantation Genetic Testing'] },
+    { name: 'Cardiovascular Genetics', desc: 'Genetic assessment of inherited cardiac disease', tests: ['Cardiomyopathy Genetic Panel', 'Arrhythmia Genetic Panel'] },
+    { name: 'Neurology Genetics', desc: 'Genetic tests for neurological disorders', tests: ['Neurology Genetic Panel', 'Neurodegenerative Disease Panel'] },
+    { name: 'Metabolic Genetics', desc: 'Genetic tests for inherited metabolic conditions', tests: ['Metabolic Disorder Panel', 'Newborn Metabolic Genetics'] },
+    { name: 'Infectious Disease Genetics', desc: 'Host genetics and pathogen genomic tests', tests: ['Infectious Disease Genetic Panel', 'Pathogen Sequencing'] },
+    { name: 'Nutrigenomics', desc: 'Genetic insights into diet and nutrient metabolism', tests: ['Nutrigenomics Profile', 'Vitamin & Mineral Predisposition'] },
+    { name: 'Wellness & Ancestry Genetics', desc: 'Genetic insights for wellness, traits and ancestry', tests: ['Health Risk Assessment', 'Nutrigenomics Profile', 'Fitness & Performance Genetic Test', 'Skin & Hair Genetic Test', 'Sleep & Stress Genetics', 'Vitamin & Mineral Predisposition', 'Detoxification & Toxicity Genetic Test', 'Longevity & Healthy Aging Test', 'Ancestry & Ethnicity Analysis', 'Trait & Personality Genetics'] },
+  ],
+  checkup: [
+    { name: 'General Health Checkup', desc: 'Comprehensive preventive health assessment', tests: ['Basic Health Checkup', 'Comprehensive Health Checkup'] },
+    { name: 'Cardiac Health Checkup', desc: 'Preventive screening for cardiovascular health', tests: ['Cardiac Risk Checkup', 'Executive Cardiac Checkup'] },
+    { name: 'Diabetic Checkup', desc: 'Diabetes screening and monitoring package', tests: ['Diabetes Checkup', 'HbA1c Monitoring Package'] },
+    { name: "Women's Health Checkup", desc: 'Preventive screening for women’s health', tests: ["Women's Wellness Checkup", 'Breast & Cervical Screening'] },
+    { name: "Men's Health Checkup", desc: 'Preventive screening for men’s health', tests: ["Men's Wellness Checkup", 'Prostate Health Checkup'] },
+    { name: 'Thyroid Checkup', desc: 'Thyroid function and related health screening', tests: ['Thyroid Profile Checkup', 'Comprehensive Thyroid Checkup'] },
+    { name: 'Liver Health Checkup', desc: 'Liver function and metabolic health screening', tests: ['Liver Health Checkup', 'Fatty Liver Screening'] },
+    { name: 'Kidney Health Checkup', desc: 'Kidney function and renal health screening', tests: ['Kidney Health Checkup', 'Renal Risk Screening'] },
+    { name: 'Bone & Joint Checkup', desc: 'Bone mineral and musculoskeletal health screening', tests: ['Bone Health Checkup', 'Arthritis Risk Checkup'] },
+    { name: 'Senior Citizen Checkup', desc: 'Comprehensive health assessment for older adults', tests: ['Senior Citizen Basic Checkup', 'Senior Citizen Comprehensive Checkup'] },
+    { name: 'Child Health Checkup', desc: 'Comprehensive child health and development assessment', tests: ['Growth & Development Assessment', 'Nutrition Assessment', 'Complete Blood Count (CBC)', 'Iron Profile', 'Vitamin D Test', 'Calcium Test', 'Lead Level Test', 'Thyroid Function Test (TSH)', 'Vision Screening', 'Hearing Screening', 'Immunization Status Check'] },
+    { name: 'Pre-Employment Checkup', desc: 'Medical fitness evaluation for employment', tests: ['Pre-Employment Basic Checkup', 'Pre-Employment Comprehensive Checkup'] },
+  ],
+};
+
+function makeCategorySubcategories(catId: string): SubCategoryItem[] {
+  const catObj = MAIN_CATEGORIES.find((category) => category.id === catId) || MAIN_CATEGORIES[0];
+  const blueprints = CATEGORY_BLUEPRINTS[catId] || [];
+  // Reference groups occasionally use either “Other …” or “Others”. Keep the
+  // first definition only, so a category can never display duplicate catch-alls.
+  const uniqueBlueprints = blueprints.filter(
+    (blueprint, index) => blueprints.findIndex((candidate) => candidate.name.toLowerCase() === blueprint.name.toLowerCase()) === index,
+  );
+  const subcategories = [
+    ...uniqueBlueprints.map((blueprint) => ({
+      ...blueprint,
       iconBg: catObj.iconBg,
       iconColor: catObj.iconColor,
       badgeIcon: catObj.icon,
       menuIcon: catObj.icon,
-      tests: [
-        { title: `${catName} - Standard Report`, desc: `Comprehensive summary and findings for ${catName}`, badgeText: 'STD', tags: [catName, 'Diagnostic'] },
-        { title: `${catName} - Follow-up / Serial`, desc: `Comparative serial assessment for ${catName}`, badgeText: 'SER', tags: [catName, 'Follow-up'] },
-        { title: `${catName} - Urgent / Emergency`, desc: `Priority emergency imaging or test findings`, badgeText: 'EMG', tags: [catName, 'Emergency'] },
-      ]
-    },
-    {
-      name: `Specialized ${catName}`,
-      desc: `Advanced contrast, targeted or sub-specialty ${catName} protocols`,
-      iconBg: catObj.iconBg,
-      iconColor: catObj.iconColor,
-      badgeIcon: Microscope,
-      menuIcon: Microscope,
-      tests: [
-        { title: `${catName} - Advanced Protocol`, desc: `High resolution / contrast-enhanced study`, badgeText: 'ADV', tags: [catName, 'Specialized'] },
-        { title: `${catName} - Guided Procedure / Biopsy`, desc: `Interventional guided study procedure`, badgeText: 'PROC', tags: [catName, 'Procedure'] },
-      ]
-    }
+      tests: blueprint.tests.map((title) => ({ title, desc: `${title} diagnostic report`, badgeText: title.split(/\s|\(/)[0].slice(0, 8).toUpperCase(), tags: [catObj.name, blueprint.name, title] })),
+    })),
   ];
+  if (!uniqueBlueprints.some((blueprint) => /^other\b/i.test(blueprint.name))) {
+    subcategories.push({
+      name: 'Others', desc: `Unlisted ${catObj.name} diagnostic reports and custom patient files`,
+      iconBg: 'bg-slate-100 dark:bg-slate-800', iconColor: 'text-slate-600 dark:text-slate-300', badgeIcon: MoreHorizontal, menuIcon: MoreHorizontal,
+      tests: [{ title: `Custom / Other ${catObj.name} Report`, desc: `General unclassified ${catObj.name} investigation summary`, badgeText: 'OTHER', tags: [catObj.name, 'Custom', 'Other'] }],
+    });
+  }
+  return subcategories;
+}
+
+// Complete category data for every report type in the reference picker.
+function getCategorySubData(catId: string): SubCategoryItem[] {
+  if (catId === 'blood') return BLOOD_TEST_SUBCATEGORIES;
+  if (catId === 'pathology') return PATHOLOGY_SUBCATEGORIES;
+  if (catId === 'stool') return STOOL_TEST_SUBCATEGORIES;
+
+  return makeCategorySubcategories(catId);
 }
 
 interface SelectReportModalProps {
@@ -479,7 +762,7 @@ export default function SelectReportModal({ isOpen, onClose, onSelect }: SelectR
   if (!isOpen) return null;
 
   const currentMainCatObj = MAIN_CATEGORIES.find((c) => c.id === selectedMainCat) || MAIN_CATEGORIES[0];
-  const subCategoriesList = getCategorySubData(selectedMainCat, currentMainCatObj.name);
+  const subCategoriesList = getCategorySubData(selectedMainCat);
   const activeSubCat = subCategoriesList[selectedSubCatIndex] || subCategoriesList[0];
 
   const filteredTests = activeSubCat.tests.filter((t) =>
@@ -548,8 +831,9 @@ export default function SelectReportModal({ isOpen, onClose, onSelect }: SelectR
               </h3>
             </div>
 
-            {/* Main Category Cards Grid */}
-            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-12 gap-2">
+            {/* One continuous, horizontally scrollable category rail. */}
+            <div className="w-full max-w-full overflow-x-auto overscroll-x-contain scroll-smooth snap-x snap-mandatory px-2 py-1 pb-3">
+              <div className="flex min-w-max gap-3">
               {MAIN_CATEGORIES.map((cat) => {
                 const isActive = selectedMainCat === cat.id;
                 const IconComponent = cat.icon;
@@ -560,7 +844,7 @@ export default function SelectReportModal({ isOpen, onClose, onSelect }: SelectR
                       setSelectedMainCat(cat.id);
                       setSelectedSubCatIndex(0);
                     }}
-                    className={`relative flex flex-col items-center justify-center py-2.5 px-1.5 rounded-xl border transition-all duration-200 select-none ${
+                    className={`relative flex h-[104px] w-[132px] shrink-0 snap-start flex-col items-center justify-center py-2.5 px-2 rounded-xl border transition-all duration-200 select-none ${
                       isActive
                         ? `${cat.iconBg} ${cat.textColor} border-current ring-2 ring-current/20 shadow-xs font-bold scale-[1.02]`
                         : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-200/90 dark:border-slate-800 hover:border-slate-300 hover:bg-slate-50/80 font-medium'
@@ -571,12 +855,13 @@ export default function SelectReportModal({ isOpen, onClose, onSelect }: SelectR
                     }`}>
                       <IconComponent className="w-4 h-4 stroke-[2]" />
                     </div>
-                    <span className="text-[10px] font-bold text-center leading-tight truncate w-full">
+                    <span className="w-full text-center text-[10px] font-bold leading-tight whitespace-normal break-words">
                       {cat.name}
                     </span>
                   </button>
                 );
               })}
+              </div>
             </div>
           </div>
 
@@ -613,7 +898,7 @@ export default function SelectReportModal({ isOpen, onClose, onSelect }: SelectR
                   const MenuIcon = sub.menuIcon || Activity;
                   return (
                     <button
-                      key={sub.name}
+                      key={`${selectedMainCat}-${sub.name}-${idx}`}
                       onClick={() => {
                         setSelectedSubCatIndex(idx);
                         if (sub.tests.length > 0) setSelectedTestTitle(sub.tests[0].title);
@@ -672,6 +957,7 @@ export default function SelectReportModal({ isOpen, onClose, onSelect }: SelectR
                           badgeText={test.badgeText}
                           iconBg={activeSubCat.iconBg}
                           iconColor={activeSubCat.iconColor}
+                          fallbackIcon={activeSubCat.badgeIcon}
                         />
 
                         <div className="text-center space-y-0.5 w-full">

@@ -136,3 +136,71 @@ export const IconStomach = (props: IconProps) => (
     <path d="M9 3v4c0 6 3 12 9 12 3 0 4-2 4-4 0-4-3-6-7-6-2 0-4 1-5 2V3H9Z" />
   </svg>
 );
+
+// --- Stool Routine Icons matching Reference Screenshot ---
+export const IconPhysicalExam = (props: IconProps) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={props.strokeWidth || 1.5} strokeLinecap="round" strokeLinejoin="round" {...props}>
+    <circle cx="11" cy="11" r="7" />
+    <path d="m21 21-4.35-4.35" strokeWidth="2" />
+    <circle cx="11" cy="11" r="2" fill="currentColor" opacity="0.4" />
+  </svg>
+);
+
+export const IconStoolConsistency = (props: IconProps) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={props.strokeWidth || 1.5} strokeLinecap="round" strokeLinejoin="round" {...props}>
+    <path d="M12 4c-4 0-7 3-7 7 0 4 3 9 7 9s7-5 7-9c0-4-3-7-7-7Z" />
+    <path d="M9 10c0 2 1.5 3.5 3 3.5s3-1.5 3-3.5" opacity="0.5" />
+  </svg>
+);
+
+export const IconMucusDrop = (props: IconProps) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={props.strokeWidth || 1.5} strokeLinecap="round" strokeLinejoin="round" {...props}>
+    <path d="M12 3c-4.5 4.5-7 8-7 12 0 3.8 3.1 7 7 7s7-3.2 7-7c0-4-2.5-7.5-7-12Z" />
+    <path d="M12 9c-2 2-3 4-3 6" opacity="0.6" strokeWidth="2" />
+  </svg>
+);
+
+export const IconPusCells = (props: IconProps) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={props.strokeWidth || 1.5} strokeLinecap="round" strokeLinejoin="round" {...props}>
+    <circle cx="12" cy="12" r="9" />
+    <circle cx="9" cy="9" r="1.5" fill="currentColor" />
+    <circle cx="15" cy="9" r="1.5" fill="currentColor" />
+    <circle cx="12" cy="15" r="1.5" fill="currentColor" />
+  </svg>
+);
+
+export const IconRBCCells = (props: IconProps) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={props.strokeWidth || 1.5} strokeLinecap="round" strokeLinejoin="round" {...props}>
+    <circle cx="8" cy="8" r="4" fill="currentColor" opacity="0.3" />
+    <circle cx="16" cy="8" r="4" fill="currentColor" opacity="0.3" />
+    <circle cx="8" cy="16" r="4" fill="currentColor" opacity="0.3" />
+    <circle cx="16" cy="16" r="4" fill="currentColor" opacity="0.3" />
+    <circle cx="8" cy="8" r="4" />
+    <circle cx="16" cy="8" r="4" />
+    <circle cx="8" cy="16" r="4" />
+    <circle cx="16" cy="16" r="4" />
+  </svg>
+);
+
+export const IconYeastCell = (props: IconProps) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={props.strokeWidth || 1.5} strokeLinecap="round" strokeLinejoin="round" {...props}>
+    <ellipse cx="10" cy="14" rx="6" ry="7" />
+    <ellipse cx="16" cy="8" rx="4" ry="4.5" />
+  </svg>
+);
+
+export const IconLeaf = (props: IconProps) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={props.strokeWidth || 1.5} strokeLinecap="round" strokeLinejoin="round" {...props}>
+    <path d="M11 20A9 9 0 0 0 20 11V3h-8a9 9 0 0 0-9 9c0 4.5 3.5 8 8 8Z" />
+    <path d="M11 20v-9" strokeWidth="2" />
+  </svg>
+);
+
+export const IconStarchGranules = (props: IconProps) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={props.strokeWidth || 1.5} strokeLinecap="round" strokeLinejoin="round" {...props}>
+    <polygon points="12 3 17 8 12 13 7 8 12 3" fill="currentColor" opacity="0.3" />
+    <polygon points="12 3 17 8 12 13 7 8 12 3" />
+    <polygon points="7 14 11 18 7 22 3 18 7 14" />
+    <polygon points="17 14 21 18 17 22 13 18 17 14" />
+  </svg>
+);

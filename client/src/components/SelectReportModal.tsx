@@ -1415,11 +1415,11 @@ export default function SelectReportModal({ isOpen, onClose, onSelect }: SelectR
           </div>
         </div>
 
-        {/* Scrollable Content Body */}
-        <div className="flex-1 overflow-y-auto overscroll-contain p-4 sm:p-5 space-y-5">
+        {/* Non-scrolling Flex Content Body */}
+        <div className="flex-1 flex flex-col min-h-0 p-4 sm:p-5 space-y-4 overflow-hidden">
           
           {/* STEP 1: Choose Main Category Horizontal Row matching UI reference */}
-          <div className="space-y-2.5">
+          <div className="space-y-2.5 shrink-0">
             <div className="flex items-center gap-2">
               <span className="w-5 h-5 rounded-full bg-[#0B132B] text-white text-[11px] font-bold flex items-center justify-center">1</span>
               <h3 className="text-xs font-bold text-[#0B132B] dark:text-slate-100 tracking-wide uppercase">
@@ -1462,7 +1462,7 @@ export default function SelectReportModal({ isOpen, onClose, onSelect }: SelectR
           </div>
 
           {/* STEP 2: Choose Subcategory & Grid matching UI reference */}
-          <div className="space-y-3 pt-2 border-t border-slate-200/80 dark:border-slate-800">
+          <div className="flex-1 min-h-0 flex flex-col space-y-3 pt-2 border-t border-slate-200/80 dark:border-slate-800">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div className="flex items-center gap-2">
                 <span className="w-5 h-5 rounded-full bg-[#0B132B] text-white text-[11px] font-bold flex items-center justify-center">2</span>
@@ -1485,10 +1485,10 @@ export default function SelectReportModal({ isOpen, onClose, onSelect }: SelectR
             </div>
 
             {/* Split layout: Subcategory Menu (Left) + Subcategory Test Cards (Right) */}
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-start pt-1">
+            <div className="flex-1 min-h-0 grid grid-cols-1 md:grid-cols-12 gap-4 pt-1">
               
               {/* Left Subcategory Vertical List with individual colorful icons */}
-              <div className="md:col-span-3 lg:col-span-3 xl:col-span-2 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-1.5 space-y-0.5 shadow-2xs max-h-[300px] md:max-h-[540px] overflow-y-auto overscroll-contain">
+              <div className="md:col-span-3 lg:col-span-3 xl:col-span-2 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-1.5 space-y-0.5 shadow-2xs h-full max-h-[160px] md:max-h-none overflow-y-auto overscroll-contain">
                 {subCategoriesList.map((sub, idx) => {
                   const isActive = selectedSubCatIndex === idx;
                   const MenuIcon = sub.menuIcon || Activity;
@@ -1516,7 +1516,7 @@ export default function SelectReportModal({ isOpen, onClose, onSelect }: SelectR
               </div>
 
               {/* Right Cards Area */}
-              <div className="md:col-span-9 lg:col-span-9 xl:col-span-10 space-y-3">
+              <div className="md:col-span-9 lg:col-span-9 xl:col-span-10 space-y-3 h-full overflow-y-auto overscroll-contain pr-1">
                 
                 {/* Active Subcategory Banner Card */}
                 <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-xl p-3 shadow-2xs flex items-center gap-3">

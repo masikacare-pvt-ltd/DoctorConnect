@@ -204,3 +204,17 @@ export const IconStarchGranules = (props: IconProps) => (
     <polygon points="17 14 21 18 17 22 13 18 17 14" />
   </svg>
 );
+
+export const IconCapsule = (props: IconProps) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={props.strokeWidth || 1.5} strokeLinecap="round" strokeLinejoin="round" {...props}>
+    <rect x="4" y="8" width="16" height="8" rx="4" transform="rotate(-45 12 12)" />
+    <line x1="8.5" y1="8.5" x2="15.5" y2="15.5" opacity="0.6" />
+  </svg>
+);
+
+export const IconColon = (props: IconProps) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={props.strokeWidth || 1.5} strokeLinecap="round" strokeLinejoin="round" {...props}>
+    <path d="M5 19V9a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v10" />
+    <path d="M5 14h14" opacity="0.5" />
+  </svg>
+);

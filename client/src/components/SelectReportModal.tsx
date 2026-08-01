@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Droplet,
   TestTube,
@@ -593,6 +593,209 @@ const STOOL_TEST_SUBCATEGORIES: SubCategoryItem[] = [
   }
 ];
 
+// Endoscopy Subcategories matching reference UI screens
+const ENDOSCOPY_SUBCATEGORIES: SubCategoryItem[] = [
+  {
+    name: 'Upper GI Endoscopy (OGD)',
+    desc: 'Endoscopic examination of the upper gastrointestinal tract including esophagus, stomach and duodenum.',
+    iconBg: 'bg-rose-50 dark:bg-rose-950/50',
+    iconColor: 'text-rose-500 dark:text-rose-400',
+    badgeIcon: CatIcons.IconEndoscope,
+    menuIcon: CatIcons.IconEndoscope,
+    tests: [
+      { title: 'Diagnostic OGD', desc: 'General diagnostic endoscopy to evaluate symptoms like pain, acidity, vomiting, etc.', badgeText: 'OGD', tags: ['OGD', 'Upper GI', 'Diagnostic'] },
+      { title: 'EGD for GERD', desc: 'Evaluation of esophageal inflammation, reflux esophagitis and grade assessment.', badgeText: 'GERD', tags: ['GERD', 'Reflux', 'Esophagus'] },
+      { title: 'Peptic Ulcer Evaluation', desc: 'Assessment of gastric or duodenal ulcers, size, depth and healing status.', badgeText: 'ULCER', tags: ['Peptic Ulcer', 'Gastric', 'Duodenal'] },
+      { title: 'H. Pylori Detection', desc: 'Endoscopic sampling for Helicobacter pylori detection (CLO test / biopsy).', badgeText: 'CLO', tags: ['H. Pylori', 'CLO Test', 'Biopsy'] },
+      { title: 'Biopsy (Upper GI)', desc: 'Tissue sampling from suspicious lesions or abnormal areas for histopathology.', badgeText: 'BIOPSY', tags: ['Upper GI Biopsy', 'Histopathology'] },
+      { title: 'Polyp Detection & Removal', desc: 'Identification and endoscopic removal of polyps in the upper GI tract.', badgeText: 'POLYP', tags: ['Polyp', 'Polypectomy', 'Upper GI'] },
+      { title: 'GI Bleed Evaluation', desc: 'Identification of bleeding source in upper GI tract and treatment if required.', badgeText: 'BLEED', tags: ['GI Bleed', 'Hemostasis', 'Upper GI'] },
+      { title: 'Surveillance Endoscopy', desc: "Follow-up endoscopy for known conditions (Barrett's esophagus, chronic gastritis, etc.).", badgeText: 'SURV', tags: ['Surveillance', 'Barretts', 'Gastritis'] },
+      { title: 'Dilation Procedure', desc: 'Endoscopic dilation for esophageal strictures or narrowing.', badgeText: 'DILAT', tags: ['Esophageal Dilation', 'Stricture'] },
+      { title: 'OGD Report (Interpretation)', desc: 'Comprehensive interpretation of OGD findings and observations.', badgeText: 'REPORT', tags: ['OGD Report', 'Interpretation'] }
+    ]
+  },
+  {
+    name: 'Colonoscopy',
+    desc: 'Endoscopic examination of the colon (large intestine) and rectum to diagnose and treat various conditions.',
+    iconBg: 'bg-pink-50 dark:bg-pink-950/50',
+    iconColor: 'text-pink-500 dark:text-pink-400',
+    badgeIcon: MedicalIcons.IconColon,
+    menuIcon: MedicalIcons.IconColon,
+    tests: [
+      { title: 'Diagnostic Colonoscopy', desc: 'Examination of the entire colon to identify causes of symptoms like bleeding, pain, or changes in bowel habits.', badgeText: 'COLON', tags: ['Colonoscopy', 'Diagnostic', 'Large Bowel'] },
+      { title: 'Polyp Detection & Removal (Polypectomy)', desc: 'Detection and endoscopic removal of polyps to prevent progression to colon cancer.', badgeText: 'POLYP', tags: ['Polyp Removal', 'Polypectomy', 'Colon'] },
+      { title: 'Biopsy (Colonic)', desc: 'Tissue sampling from abnormal areas or lesions in the colon for histopathological examination.', badgeText: 'BIOPSY', tags: ['Colonic Biopsy', 'Histopathology'] },
+      { title: 'GI Bleed Evaluation', desc: 'Identification of bleeding sources in the colon and management of lower GI bleeding.', badgeText: 'BLEED', tags: ['Lower GI Bleed', 'Hemostasis'] },
+      { title: 'Colitis / IBD Evaluation', desc: "Assessment of inflammation, ulcers, and disease activity in conditions like Ulcerative Colitis and Crohn's Disease.", badgeText: 'IBD', tags: ['Colitis', 'IBD', 'Crohns', 'Ulcerative Colitis'] },
+      { title: 'Diverticulosis Evaluation', desc: 'Diagnosis and assessment of diverticula and complications like diverticulitis.', badgeText: 'DIVERT', tags: ['Diverticulosis', 'Diverticulitis'] },
+      { title: 'Hemostasis / Bleed Control', desc: 'Endoscopic treatment of bleeding lesions using clips, thermal therapy, or injection.', badgeText: 'HEMO', tags: ['Hemostasis', 'Clips', 'Bleed Control'] },
+      { title: 'Stricture Dilatation', desc: 'Dilation of narrowed areas in the colon due to inflammatory or benign strictures.', badgeText: 'DILAT', tags: ['Stricture Dilation', 'Colonic Stricture'] },
+      { title: 'Surveillance Colonoscopy', desc: 'Follow-up colonoscopy for high-risk patients (polyps, IBD, or family history of colorectal cancer).', badgeText: 'SURV', tags: ['Surveillance', 'Colorectal Screening'] },
+      { title: 'Colonoscopy Report (Interpretation)', desc: 'Comprehensive interpretation of colonoscopic findings and recommendations.', badgeText: 'REPORT', tags: ['Colonoscopy Report', 'Interpretation'] }
+    ]
+  },
+  {
+    name: 'Sigmoidoscopy',
+    desc: 'Endoscopic examination of the rectum and sigmoid colon to diagnose and manage lower bowel conditions.',
+    iconBg: 'bg-purple-50 dark:bg-purple-950/50',
+    iconColor: 'text-purple-600 dark:text-purple-400',
+    badgeIcon: CatIcons.IconEndoscope,
+    menuIcon: CatIcons.IconEndoscope,
+    tests: [
+      { title: 'Diagnostic Sigmoidoscopy', desc: 'Examination of the rectum and sigmoid colon to evaluate symptoms like bleeding, pain, or altered bowel habits.', badgeText: 'SIG', tags: ['Sigmoidoscopy', 'Diagnostic', 'Rectum'] },
+      { title: 'Polyp Detection & Removal', desc: 'Identification and endoscopic removal of polyps in the rectum and sigmoid colon to prevent progression.', badgeText: 'POLYP', tags: ['Polyp Removal', 'Sigmoid'] },
+      { title: 'Bleeding Evaluation', desc: 'Assessment and localization of bleeding sources in the rectum and sigmoid colon.', badgeText: 'BLEED', tags: ['Rectal Bleed', 'Sigmoid Bleed'] },
+      { title: 'Inflammation Assessment', desc: "Evaluation of inflammatory conditions such as ulcerative proctitis and Crohn's disease.", badgeText: 'INFLAM', tags: ['Proctitis', 'Inflammation', 'IBD'] },
+      { title: 'Biopsy (Recto-Sigmoid)', desc: 'Tissue sampling from abnormal mucosa or lesions for histopathological diagnosis.', badgeText: 'BIOPSY', tags: ['Biopsy', 'Recto-Sigmoid'] },
+      { title: 'Fecal Impaction Evaluation', desc: 'Assessment and management of fecal impaction in the rectum or sigmoid colon.', badgeText: 'FECAL', tags: ['Fecal Impaction', 'Rectal'] },
+      { title: 'Stricture / Obstruction Evaluation', desc: 'Evaluation of strictures, narrowing, or obstructions in the recto-sigmoid region.', badgeText: 'STRICT', tags: ['Stricture', 'Obstruction'] },
+      { title: 'Surveillance Sigmoidoscopy', desc: 'Follow-up examination for patients with IBD, polyps, or previous colorectal lesions.', badgeText: 'SURV', tags: ['Surveillance', 'Sigmoidoscopy'] },
+      { title: 'Therapeutic Interventions', desc: 'Endoscopic interventions like hemostasis, clip placement, or dilation when required.', badgeText: 'THERAP', tags: ['Therapeutic', 'Interventions'] },
+      { title: 'Sigmoidoscopy Report (Interpretation)', desc: 'Comprehensive interpretation of sigmoidoscopy findings and recommendations.', badgeText: 'REPORT', tags: ['Sigmoidoscopy Report', 'Interpretation'] }
+    ]
+  },
+  {
+    name: 'ERCP',
+    desc: 'Endoscopic Retrograde Cholangiopancreatography – diagnosis and treatment of bile duct, pancreatic duct and related conditions.',
+    iconBg: 'bg-emerald-50 dark:bg-emerald-950/50',
+    iconColor: 'text-emerald-500 dark:text-emerald-400',
+    badgeIcon: CatIcons.IconEndoscope,
+    menuIcon: CatIcons.IconEndoscope,
+    tests: [
+      { title: 'Diagnostic ERCP', desc: 'Evaluation of bile duct and pancreatic duct abnormalities like stones, strictures, or blockages.', badgeText: 'ERCP', tags: ['ERCP', 'Diagnostic', 'Bile Duct'] },
+      { title: 'Stone Extraction', desc: 'Endoscopic removal of gallstones or bile duct stones using balloon or basket catheters.', badgeText: 'STONE', tags: ['Stone Extraction', 'Gallstones', 'Bile Duct'] },
+      { title: 'Stent Placement', desc: 'Placement of plastic or metal stents to relieve obstruction in bile or pancreatic ducts.', badgeText: 'STENT', tags: ['Stent Placement', 'Biliary Stent'] },
+      { title: 'Dilation (Stricture)', desc: 'Endoscopic dilation of bile duct or pancreatic duct strictures to restore normal flow.', badgeText: 'DILAT', tags: ['Duct Dilation', 'Biliary Stricture'] },
+      { title: 'Biopsy / Brush Cytology', desc: 'Tissue or cell sampling from bile duct or pancreatic duct for histopathological examination.', badgeText: 'CYTO', tags: ['Brush Cytology', 'Biliary Biopsy'] },
+      { title: 'Sphincterotomy', desc: 'Cutting of the sphincter muscle to allow access for stone extraction or stent placement.', badgeText: 'SPHINC', tags: ['Sphincterotomy', 'Biliary Sphincter'] },
+      { title: 'Leak / Bile Leak Management', desc: 'Endoscopic management of bile leaks using stenting or other therapeutic interventions.', badgeText: 'LEAK', tags: ['Bile Leak', 'Stenting'] },
+      { title: 'Pancreatic Duct Evaluation', desc: 'Assessment of pancreatic duct abnormalities including pancreatitis, strictures and divisum.', badgeText: 'PANCR', tags: ['Pancreatic Duct', 'Pancreatitis'] },
+      { title: 'Post-Cholecystectomy Evaluation', desc: 'ERCP to evaluate bile duct complications after gallbladder surgery.', badgeText: 'POST-OP', tags: ['Post-Cholecystectomy', 'Complications'] },
+      { title: 'ERCP Report (Interpretation)', desc: 'Comprehensive interpretation of ERCP findings and recommendations.', badgeText: 'REPORT', tags: ['ERCP Report', 'Interpretation'] }
+    ]
+  },
+  {
+    name: 'Capsule Endoscopy',
+    desc: 'Non-invasive endoscopic procedure using a swallowable capsule with camera to visualize the small intestine and detect abnormalities.',
+    iconBg: 'bg-amber-50 dark:bg-amber-950/50',
+    iconColor: 'text-amber-500 dark:text-amber-400',
+    badgeIcon: MedicalIcons.IconCapsule,
+    menuIcon: MedicalIcons.IconCapsule,
+    tests: [
+      { title: 'Diagnostic Capsule Endoscopy', desc: "Evaluation of small intestine for bleeding, ulcers, Crohn's disease, tumors and other abnormalities.", badgeText: 'CAPSULE', tags: ['Capsule Endoscopy', 'Small Bowel'] },
+      { title: 'Small Bowel Bleeding Evaluation', desc: 'Detection and localization of obscure gastrointestinal bleeding sources.', badgeText: 'BLEED', tags: ['Small Bowel Bleed', 'Obscure Bleed'] },
+      { title: "Crohn's Disease Assessment", desc: 'Assessment of inflammation, ulcers and mucosal damage in the small intestine.', badgeText: 'CROHN', tags: ['Crohns Disease', 'Mucosal Damage'] },
+      { title: 'Small Bowel Tumor Detection', desc: 'Detection of polyps, tumors or mass lesions in the small intestine.', badgeText: 'TUMOR', tags: ['Small Bowel Tumor', 'Polyps'] },
+      { title: 'Celiac Disease Evaluation', desc: 'Assessment of small intestinal mucosal damage in suspected celiac disease.', badgeText: 'CELIAC', tags: ['Celiac Disease', 'Villus Atrophy'] },
+      { title: 'Transit Time Assessment', desc: 'Evaluation of gastric, small bowel and colonic transit times using capsule tracking.', badgeText: 'TRANSIT', tags: ['Transit Time', 'Motility'] },
+      { title: 'Retained Capsule Evaluation', desc: 'Monitoring and assessment of retained capsule in patients with known strictures.', badgeText: 'RETAIN', tags: ['Retained Capsule', 'Stricture'] },
+      { title: 'Pre-Procedure Assessment', desc: 'Patient assessment and bowel preparation review prior to capsule endoscopy.', badgeText: 'PRE-OP', tags: ['Pre-Procedure', 'Preparation'] },
+      { title: 'Image Review & Analysis', desc: 'Comprehensive review of capsule images and video for abnormal findings.', badgeText: 'REVIEW', tags: ['Image Review', 'Video Analysis'] },
+      { title: 'Capsule Endoscopy Report (Interpretation)', desc: 'Detailed interpretation and report of capsule endoscopy findings and recommendations.', badgeText: 'REPORT', tags: ['Capsule Report', 'Interpretation'] }
+    ]
+  },
+  {
+    name: 'Bronchoscopy',
+    desc: 'Endoscopic examination of the airways and lungs to diagnose and manage respiratory conditions.',
+    iconBg: 'bg-blue-50 dark:bg-blue-950/50',
+    iconColor: 'text-blue-600 dark:text-blue-400',
+    badgeIcon: MedicalIcons.IconLungs,
+    menuIcon: MedicalIcons.IconLungs,
+    tests: [
+      { title: 'Diagnostic Bronchoscopy', desc: 'Examination of the airways to evaluate symptoms like chronic cough, hemoptysis, or persistent infections.', badgeText: 'BRONCHO', tags: ['Bronchoscopy', 'Airway', 'Lungs'] },
+      { title: 'Biopsy / Brush Cytology', desc: 'Tissue or cell sampling from bronchial lesions or abnormal areas for histopathological diagnosis.', badgeText: 'BIOPSY', tags: ['Bronchial Biopsy', 'Brush Cytology'] },
+      { title: 'Bronchoalveolar Lavage (BAL)', desc: 'Collection and analysis of fluid from the lungs to detect infections, inflammation, or malignancy.', badgeText: 'BAL', tags: ['BAL', 'Lavage', 'Lung Infection'] },
+      { title: 'Endobronchial Ultrasound (EBUS)', desc: 'Ultrasound-guided evaluation and sampling of lymph nodes and mediastinal structures.', badgeText: 'EBUS', tags: ['EBUS', 'Mediastinal Node', 'Ultrasound'] },
+      { title: 'Foreign Body Removal', desc: 'Detection and endoscopic removal of foreign bodies from the airway.', badgeText: 'REMOVAL', tags: ['Foreign Body', 'Airway Removal'] },
+      { title: 'Therapeutic Bronchoscopy', desc: 'Treatment of airway blockages using interventions like debulking, dilation, or stent placement.', badgeText: 'THERAP', tags: ['Therapeutic Bronchoscopy', 'Airway'] },
+      { title: 'Airway Stent Placement', desc: 'Placement of stents to keep airways open in cases of strictures, tumors, or compression.', badgeText: 'STENT', tags: ['Airway Stent', 'Tracheobronchial'] },
+      { title: 'Image Review & Documentation', desc: 'Detailed review of bronchoscopic images and videos for accurate interpretation and reporting.', badgeText: 'REVIEW', tags: ['Bronchoscopy Review', 'Documentation'] },
+      { title: 'Bronchoscopy Report (Interpretation)', desc: 'Comprehensive interpretation of findings and recommendations for further management.', badgeText: 'REPORT', tags: ['Bronchoscopy Report', 'Interpretation'] }
+    ]
+  },
+  {
+    name: 'Cystoscopy',
+    desc: 'Endoscopic examination of the urinary bladder and urethra to diagnose and treat urological conditions.',
+    iconBg: 'bg-cyan-50 dark:bg-cyan-950/50',
+    iconColor: 'text-cyan-600 dark:text-cyan-400',
+    badgeIcon: CatIcons.IconUrineDipstick,
+    menuIcon: CatIcons.IconUrineDipstick,
+    tests: [
+      { title: 'Diagnostic Cystoscopy', desc: 'Examination of the bladder and urethra to evaluate symptoms like hematuria, pain, or recurrent infections.', badgeText: 'CYSTO', tags: ['Cystoscopy', 'Bladder', 'Urethra'] },
+      { title: 'Bladder Tumor Evaluation', desc: 'Detection and assessment of tumors or abnormal growths in the bladder lining.', badgeText: 'TUMOR', tags: ['Bladder Tumor', 'Urothelial'] },
+      { title: 'Bladder Stone Removal', desc: 'Endoscopic removal of bladder stones using specialized instruments.', badgeText: 'STONE', tags: ['Bladder Stone', 'Stone Removal'] },
+      { title: 'Urethral Stricture Evaluation', desc: 'Identification and assessment of narrowing or blockage in the urethra.', badgeText: 'STRICT', tags: ['Urethral Stricture', 'Blockage'] },
+      { title: 'Biopsy (Bladder / Urethra)', desc: 'Tissue sampling from suspicious areas for histopathological examination.', badgeText: 'BIOPSY', tags: ['Bladder Biopsy', 'Urethral Biopsy'] },
+      { title: 'Therapeutic Cystoscopy', desc: 'Treatment of conditions like bleeding, lesions, or small growths within the bladder or urethra.', badgeText: 'THERAP', tags: ['Therapeutic Cystoscopy', 'Bladder'] },
+      { title: 'Urethral Dilation', desc: 'Endoscopic dilation of urethral strictures to restore normal urine flow.', badgeText: 'DILAT', tags: ['Urethral Dilation', 'Urine Flow'] },
+      { title: 'Image Review & Documentation', desc: 'Detailed review of cystoscopic images and video for accurate interpretation and reporting.', badgeText: 'REVIEW', tags: ['Cystoscopy Review', 'Documentation'] },
+      { title: 'Post-Procedure Evaluation', desc: 'Assessment of treatment outcomes and follow-up recommendations.', badgeText: 'EVAL', tags: ['Post-Procedure', 'Outcome'] },
+      { title: 'Cystoscopy Report (Interpretation)', desc: 'Comprehensive interpretation of cystoscopic findings and clinical recommendations.', badgeText: 'REPORT', tags: ['Cystoscopy Report', 'Interpretation'] }
+    ]
+  },
+  {
+    name: 'Laparoscopy',
+    desc: 'Minimally invasive surgical procedure using a camera and small instruments to diagnose and treat conditions in the abdomen and pelvis.',
+    iconBg: 'bg-violet-50 dark:bg-violet-950/50',
+    iconColor: 'text-violet-600 dark:text-violet-400',
+    badgeIcon: MedicalIcons.IconScalpel,
+    menuIcon: MedicalIcons.IconScalpel,
+    tests: [
+      { title: 'Diagnostic Laparoscopy', desc: 'Examination of abdominal organs to diagnose conditions like pain, infertility, endometriosis, or unexplained symptoms.', badgeText: 'LAP', tags: ['Laparoscopy', 'Diagnostic', 'Abdomen'] },
+      { title: 'Gynecological Laparoscopy', desc: 'Evaluation and treatment of conditions like ovarian cysts, endometriosis, fibroids, or ectopic pregnancy.', badgeText: 'GYNEC', tags: ['Gynecological', 'Endometriosis', 'Ovarian Cyst'] },
+      { title: 'Cholecystectomy', desc: 'Laparoscopic removal of the gallbladder to treat gallstones or inflammation.', badgeText: 'CHOLE', tags: ['Cholecystectomy', 'Gallbladder'] },
+      { title: 'Appendectomy', desc: 'Minimally invasive removal of the appendix for acute appendicitis.', badgeText: 'APPEND', tags: ['Appendectomy', 'Appendix'] },
+      { title: 'Hernia Repair', desc: 'Laparoscopic repair of inguinal, umbilical, or ventral hernias using mesh or sutures.', badgeText: 'HERNIA', tags: ['Hernia Repair', 'Mesh Repair'] },
+      { title: 'Bowel Resection', desc: 'Removal of a diseased or damaged section of the intestine using minimally invasive techniques.', badgeText: 'BOWEL', tags: ['Bowel Resection', 'Intestine'] },
+      { title: 'Splenectomy', desc: 'Laparoscopic removal of the spleen for conditions like enlargement, trauma, or blood disorders.', badgeText: 'SPLEN', tags: ['Splenectomy', 'Spleen'] },
+      { title: 'Nephrectomy', desc: 'Laparoscopic removal of a kidney partially or completely for tumors or severe damage.', badgeText: 'NEPHR', tags: ['Nephrectomy', 'Kidney'] },
+      { title: 'Adhesiolysis', desc: 'Removal of internal scar tissue (adhesions) causing pain or organ obstructions.', badgeText: 'ADHES', tags: ['Adhesiolysis', 'Scar Tissue'] },
+      { title: 'Laparoscopy Report (Interpretation)', desc: 'Comprehensive interpretation of laparoscopic findings and surgical observations.', badgeText: 'REPORT', tags: ['Laparoscopy Report', 'Interpretation'] }
+    ]
+  },
+  {
+    name: 'ENT Endoscopy',
+    desc: 'Endoscopic examination of the ear, nose, throat, and related structures to diagnose and treat ENT conditions.',
+    iconBg: 'bg-orange-50 dark:bg-orange-950/50',
+    iconColor: 'text-orange-600 dark:text-orange-400',
+    badgeIcon: CatIcons.IconEndoscope,
+    menuIcon: CatIcons.IconEndoscope,
+    tests: [
+      { title: 'Nasal Endoscopy', desc: 'Examination of nasal cavity and sinuses to diagnose conditions like sinusitis, polyps, or nasal obstruction.', badgeText: 'NASAL', tags: ['Nasal Endoscopy', 'Sinusitis', 'Polyps'] },
+      { title: 'Laryngeal Endoscopy', desc: 'Evaluation of the larynx and vocal cords to assess hoarseness, voice disorders, or laryngeal lesions.', badgeText: 'LARYNX', tags: ['Laryngeal Endoscopy', 'Vocal Cords'] },
+      { title: 'Otoscopy', desc: 'Endoscopic examination of the ear canal and tympanic membrane for infections or injuries.', badgeText: 'OTO', tags: ['Otoscopy', 'Ear Canal', 'Tympanic'] },
+      { title: 'Pharyngoscopy', desc: 'Visualization of the throat (pharynx) to detect infections, inflammation, or structural abnormalities.', badgeText: 'PHARYNX', tags: ['Pharyngoscopy', 'Throat'] },
+      { title: 'Sinus Endoscopy', desc: 'Endoscopic assessment of the paranasal sinuses to diagnose chronic sinusitis or nasal polyps.', badgeText: 'SINUS', tags: ['Sinus Endoscopy', 'Paranasal'] },
+      { title: 'Foreign Body Removal', desc: 'Endoscopic guided removal of foreign bodies from the nose, ear, or throat.', badgeText: 'REMOVAL', tags: ['Foreign Body', 'ENT Removal'] },
+      { title: 'Biopsy', desc: 'Tissue sampling from suspicious lesions in ENT structures for histopathological analysis.', badgeText: 'BIOPSY', tags: ['ENT Biopsy', 'Histopathology'] },
+      { title: 'Balloon Sinuplasty', desc: 'Minimally invasive procedure to dilate sinus passages and improve sinus drainage.', badgeText: 'SINU', tags: ['Balloon Sinuplasty', 'Sinus Drainage'] },
+      { title: 'Therapeutic Endoscopy', desc: 'Endoscopic treatment for ENT conditions like polyp removal, cauterization, or stent placement.', badgeText: 'THERAP', tags: ['Therapeutic ENT', 'Polyp Removal'] },
+      { title: 'ENT Endoscopy Report (Interpretation)', desc: 'Comprehensive interpretation of endoscopic findings and clinical recommendations.', badgeText: 'REPORT', tags: ['ENT Report', 'Interpretation'] }
+    ]
+  },
+  {
+    name: 'Others – Endoscopy',
+    desc: 'Other specialized endoscopic procedures used for diagnostic or therapeutic purposes.',
+    iconBg: 'bg-slate-100 dark:bg-slate-800',
+    iconColor: 'text-slate-600 dark:text-slate-300',
+    badgeIcon: MoreHorizontal,
+    menuIcon: MoreHorizontal,
+    tests: [
+      { title: 'Enteroscopy', desc: 'Endoscopic examination of the small intestine using a long endoscope.', badgeText: 'ENTER', tags: ['Enteroscopy', 'Small Intestine'] },
+      { title: 'EUS (Endoscopic Ultrasound)', desc: 'Combines endoscopy and ultrasound to visualize digestive tract and nearby structures.', badgeText: 'EUS', tags: ['EUS', 'Endoscopic Ultrasound'] },
+      { title: 'Double Balloon Enteroscopy', desc: 'Advanced endoscopic technique for deep examination of the small intestine.', badgeText: 'DBE', tags: ['Double Balloon', 'Enteroscopy'] },
+      { title: 'Narrow Band Imaging (NBI)', desc: 'Enhanced imaging technique to improve visualization of mucosal structures and blood vessels.', badgeText: 'NBI', tags: ['Narrow Band Imaging', 'NBI'] },
+      { title: 'Endoscopic Mucosal Resection (EMR)', desc: 'Removal of superficial lesions from the gastrointestinal tract.', badgeText: 'EMR', tags: ['EMR', 'Mucosal Resection'] },
+      { title: 'Endoscopic Submucosal Dissection (ESD)', desc: 'Advanced technique for removal of larger lesions in the GI tract.', badgeText: 'ESD', tags: ['ESD', 'Submucosal Dissection'] },
+      { title: 'Peroral Endoscopic Myotomy (POEM)', desc: 'Minimally invasive procedure for treating achalasia.', badgeText: 'POEM', tags: ['POEM', 'Achalasia'] },
+      { title: 'Endoscopic Retrograde Appendicitis (E.R.A.)', desc: 'Endoscopic approach for diagnosing and treating appendicitis.', badgeText: 'ERA', tags: ['ERA', 'Appendicitis'] },
+      { title: 'Endoscopic Stent Placement', desc: 'Placement of stents to relieve blockages in the digestive tract.', badgeText: 'STENT', tags: ['Stent Placement', 'GI Stent'] },
+      { title: 'Others – Endoscopy Procedures', desc: 'Other specialized endoscopic procedures not listed above.', badgeText: 'OTHER', tags: ['Endoscopy', 'Custom', 'Other'] }
+    ]
+  }
+];
+
 type CategoryBlueprint = {
   name: string;
   desc: string;
@@ -743,6 +946,7 @@ function getCategorySubData(catId: string): SubCategoryItem[] {
   if (catId === 'blood') return BLOOD_TEST_SUBCATEGORIES;
   if (catId === 'pathology') return PATHOLOGY_SUBCATEGORIES;
   if (catId === 'stool') return STOOL_TEST_SUBCATEGORIES;
+  if (catId === 'endoscopy') return ENDOSCOPY_SUBCATEGORIES;
 
   return makeCategorySubcategories(catId);
 }
@@ -758,6 +962,24 @@ export default function SelectReportModal({ isOpen, onClose, onSelect }: SelectR
   const [selectedSubCatIndex, setSelectedSubCatIndex] = useState<number>(0);
   const [selectedTestTitle, setSelectedTestTitle] = useState<string>('Complete Blood Count (CBC)');
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [customCategory, setCustomCategory] = useState<string>('');
+  const [customSubCategory, setCustomSubCategory] = useState<string>('');
+  const [customTestTitle, setCustomTestTitle] = useState<string>('');
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const originalBodyOverflow = document.body.style.overflow;
+    const originalHtmlOverflow = document.documentElement.style.overflow;
+
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+
+    return () => {
+      document.body.style.overflow = originalBodyOverflow;
+      document.documentElement.style.overflow = originalHtmlOverflow;
+    };
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -771,12 +993,26 @@ export default function SelectReportModal({ isOpen, onClose, onSelect }: SelectR
     t.tags.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
-  const handleConfirmSelect = (testItem: { title: string; tags: string[] }) => {
+  const handleConfirmSelect = (testItem?: { title: string; tags: string[] }) => {
+    const defaultTest = testItem || activeSubCat.tests.find((t) => t.title === selectedTestTitle) || activeSubCat.tests[0];
+
+    const finalMainCategory = customCategory.trim()
+      ? customCategory.trim()
+      : (selectedMainCat === 'others' ? 'Others' : currentMainCatObj.name);
+
+    const finalSubCategoryName = customSubCategory.trim()
+      ? customSubCategory.trim()
+      : activeSubCat.name;
+
+    const finalTestTitle = customTestTitle.trim()
+      ? customTestTitle.trim()
+      : (defaultTest?.title || selectedTestTitle || 'Custom Report');
+
     onSelect({
-      mainCategory: currentMainCatObj.name,
-      subCategory: `${activeSubCat.name} - ${testItem.title}`,
-      testItem: testItem.title,
-      tags: testItem.tags,
+      mainCategory: finalMainCategory,
+      subCategory: `${finalSubCategoryName} - ${finalTestTitle}`,
+      testItem: finalTestTitle,
+      tags: defaultTest?.tags || [finalMainCategory, finalSubCategoryName, finalTestTitle, 'Custom'],
     });
     onClose();
   };
@@ -784,7 +1020,7 @@ export default function SelectReportModal({ isOpen, onClose, onSelect }: SelectR
   const HeaderIcon = activeSubCat.badgeIcon || Activity;
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex flex-col justify-end sm:justify-center items-center p-2 sm:p-5 overflow-y-auto">
+    <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex flex-col justify-end sm:justify-center items-center p-2 sm:p-5 overflow-y-auto overscroll-contain">
       <div className="bg-[#F8FAFC] dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl sm:rounded-3xl max-w-[96vw] xl:max-w-[1440px] w-full h-[92vh] max-h-[95vh] flex flex-col shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         
         {/* Header bar matching "Add Report" reference UI */}
@@ -820,7 +1056,7 @@ export default function SelectReportModal({ isOpen, onClose, onSelect }: SelectR
         </div>
 
         {/* Scrollable Content Body */}
-        <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-5">
+        <div className="flex-1 overflow-y-auto overscroll-contain p-4 sm:p-5 space-y-5">
           
           {/* STEP 1: Choose Main Category Horizontal Row matching UI reference */}
           <div className="space-y-2.5">
@@ -892,7 +1128,7 @@ export default function SelectReportModal({ isOpen, onClose, onSelect }: SelectR
             <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-start pt-1">
               
               {/* Left Subcategory Vertical List with individual colorful icons */}
-              <div className="md:col-span-3 lg:col-span-3 xl:col-span-2 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-1.5 space-y-0.5 shadow-2xs">
+              <div className="md:col-span-3 lg:col-span-3 xl:col-span-2 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-1.5 space-y-0.5 shadow-2xs max-h-[300px] md:max-h-[540px] overflow-y-auto overscroll-contain">
                 {subCategoriesList.map((sub, idx) => {
                   const isActive = selectedSubCatIndex === idx;
                   const MenuIcon = sub.menuIcon || Activity;
@@ -972,6 +1208,69 @@ export default function SelectReportModal({ isOpen, onClose, onSelect }: SelectR
                     );
                   })}
                 </div>
+
+                {/* Custom Category & Subcategory Input Section for 'Others' */}
+                {(selectedMainCat === 'others' ||
+                  activeSubCat.name.toLowerCase().includes('other') ||
+                  selectedTestTitle.toLowerCase().includes('other') ||
+                  selectedTestTitle.toLowerCase().includes('custom')) && (
+                  <div className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-xl p-4 shadow-2xs space-y-3 mt-3">
+                    <div className="flex items-center gap-2.5 border-b border-slate-100 dark:border-slate-800 pb-2.5">
+                      <div className="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 flex items-center justify-center font-bold">
+                        <MoreHorizontal className="w-4 h-4 stroke-[2]" />
+                      </div>
+                      <div>
+                        <h4 className="text-xs font-bold text-[#0B132B] dark:text-white font-sans">
+                          Specify Custom Category & Subcategory Report Details
+                        </h4>
+                        <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
+                          Type your custom category, subcategory, and specific test name below
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
+                          Custom Category
+                        </label>
+                        <input
+                          type="text"
+                          value={customCategory}
+                          onChange={(e) => setCustomCategory(e.target.value)}
+                          placeholder={selectedMainCat === 'others' ? 'e.g. Dentistry, Ophthalmology' : currentMainCatObj.name}
+                          className="w-full h-9 px-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400 font-medium focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:bg-white dark:focus:bg-slate-900 transition-all font-sans"
+                        />
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
+                          Custom Subcategory
+                        </label>
+                        <input
+                          type="text"
+                          value={customSubCategory}
+                          onChange={(e) => setCustomSubCategory(e.target.value)}
+                          placeholder={`e.g. ${activeSubCat.name}`}
+                          className="w-full h-9 px-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400 font-medium focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:bg-white dark:focus:bg-slate-900 transition-all font-sans"
+                        />
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
+                          Specific Test / Report Title
+                        </label>
+                        <input
+                          type="text"
+                          value={customTestTitle}
+                          onChange={(e) => setCustomTestTitle(e.target.value)}
+                          placeholder="e.g. OCT Retinal Scan, Dental OPG"
+                          className="w-full h-9 px-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400 font-medium focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:bg-white dark:focus:bg-slate-900 transition-all font-sans"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -980,7 +1279,9 @@ export default function SelectReportModal({ isOpen, onClose, onSelect }: SelectR
         {/* Action Footer Bar with Next button matching reference */}
         <div className="bg-white dark:bg-slate-900 border-t border-slate-200/80 dark:border-slate-800 px-6 py-4 flex items-center justify-between shrink-0">
           <div className="text-xs text-slate-500 font-medium truncate max-w-md">
-            Selected: <span className="font-bold text-[#0B132B] dark:text-white">{currentMainCatObj.name} → {activeSubCat.name} ({selectedTestTitle})</span>
+            Selected: <span className="font-bold text-[#0B132B] dark:text-white">
+              {customCategory.trim() || (selectedMainCat === 'others' ? 'Others' : currentMainCatObj.name)} → {customSubCategory.trim() || activeSubCat.name} ({customTestTitle.trim() || selectedTestTitle})
+            </span>
           </div>
 
           <div className="flex items-center gap-3 shrink-0">

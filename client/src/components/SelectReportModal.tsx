@@ -796,6 +796,365 @@ const ENDOSCOPY_SUBCATEGORIES: SubCategoryItem[] = [
   }
 ];
 
+const XRAY_SUBCATEGORIES: SubCategoryItem[] = [
+  {
+    name: 'Chest',
+    desc: 'X-ray examination of the chest, lungs, heart, ribs, and diaphragm',
+    iconBg: 'bg-blue-50 dark:bg-blue-950/50',
+    iconColor: 'text-blue-600 dark:text-blue-400',
+    badgeIcon: CatIcons.IconChestXRay,
+    menuIcon: CatIcons.IconChestXRay,
+    tests: [
+      { title: 'Chest (PA View)', desc: 'Standard posteroanterior view for lung and heart evaluation', badgeText: 'PA', tags: ['Chest', 'PA View'] },
+      { title: 'Chest (AP View)', desc: 'Anteroposterior view for bedside or supine patients', badgeText: 'AP', tags: ['Chest', 'AP View'] },
+      { title: 'Chest Lateral', desc: 'Side view of chest to locate lesions behind the heart', badgeText: 'LAT', tags: ['Chest', 'Lateral'] },
+      { title: 'Ribs', desc: 'Evaluation of ribs for fractures or lesions', badgeText: 'RIBS', tags: ['Ribs', 'Chest'] },
+      { title: 'Sternum', desc: 'Targeted view of the breastbone', badgeText: 'STERN', tags: ['Sternum', 'Chest'] },
+      { title: 'Clavicles', desc: 'Collarbone fractures or dislocation assessment', badgeText: 'CLAV', tags: ['Clavicles', 'Chest'] },
+      { title: 'Scapula', desc: 'Shoulder blade fracture or lesion visualization', badgeText: 'SCAP', tags: ['Scapula', 'Chest'] },
+      { title: 'Whole Chest (Bilateral)', desc: 'Bilateral chest and thoracic cage view', badgeText: 'BILAT', tags: ['Bilateral', 'Chest'] },
+      { title: 'Expiratory Chest', desc: 'Expiratory view to detect pneumothorax or foreign body', badgeText: 'EXP', tags: ['Expiratory', 'Chest'] },
+      { title: 'Decubitus Chest', desc: 'Lying on side to detect free pleural fluid', badgeText: 'DECUB', tags: ['Decubitus', 'Chest'] },
+      { title: 'Pneumothorax View', desc: 'Optimized view for air in the pleural space', badgeText: 'PTX', tags: ['Pneumothorax', 'Chest'] },
+      { title: 'Lung Field View', desc: 'High definition view focused on lung parenchyma', badgeText: 'LUNG', tags: ['Lung Fields', 'Chest'] },
+      { title: 'Mediastinum View', desc: 'Clear visualization of central mediastinal structures', badgeText: 'MEDIA', tags: ['Mediastinum', 'Chest'] },
+      { title: 'Cardiac Silhouette View', desc: 'Cardiomegaly and heart chamber size assessment', badgeText: 'HEART', tags: ['Cardiac', 'Chest'] },
+      { title: 'Diaphragm View', desc: 'Assessment of diaphragmatic movement and shape', badgeText: 'DIAPH', tags: ['Diaphragm', 'Chest'] },
+      { title: 'Posteroanterior Oblique (Right)', desc: 'Right oblique view of the chest cage', badgeText: 'R-OBL', tags: ['Right Oblique', 'Chest'] },
+      { title: 'Posteroanterior Oblique (Left)', desc: 'Left oblique view of the chest cage', badgeText: 'L-OBL', tags: ['Left Oblique', 'Chest'] },
+      { title: 'Lordotic View', desc: 'Apical lordotic view for tuberculosis or lung apex masses', badgeText: 'LORD', tags: ['Lordotic', 'Chest'] },
+      { title: 'Apical Lordotic View', desc: 'Detailed view of pulmonary apices', badgeText: 'APICAL', tags: ['Apical', 'Chest'] },
+      { title: 'Lateral Decubitus', desc: 'Lateral projection with patient in horizontal position', badgeText: 'L-DEC', tags: ['Lateral Decubitus', 'Chest'] },
+      { title: 'Erect View', desc: 'Standing view for free air under the diaphragm', badgeText: 'ERECT', tags: ['Erect', 'Chest'] },
+      { title: 'Supine View', desc: 'Lying down view of chest structures', badgeText: 'SUPINE', tags: ['Supine', 'Chest'] },
+      { title: 'Trauma Series', desc: 'Rapid chest series for trauma patient assessment', badgeText: 'TRAUM', tags: ['Trauma', 'Chest'] },
+      { title: 'Post Operative View', desc: 'Check placement of tubes, lines, and lung expansion', badgeText: 'P-OP', tags: ['Post Operative', 'Chest'] },
+      { title: 'Follow-up Chest', desc: 'Monitoring resolution of pneumonia, effusion or nodules', badgeText: 'F-UP', tags: ['Follow-up', 'Chest'] }
+    ]
+  },
+  {
+    name: 'Head & Neck',
+    desc: 'X-ray scans of skull, PNS, cervical vertebrae, and jaw',
+    iconBg: 'bg-indigo-50 dark:bg-indigo-950/50',
+    iconColor: 'text-indigo-600 dark:text-indigo-400',
+    badgeIcon: CatIcons.IconChestXRay,
+    menuIcon: CatIcons.IconChestXRay,
+    tests: [
+      { title: 'Skull', desc: 'Evaluation of cranial vault bones for fracture or suture fusion', badgeText: 'SKULL', tags: ['Skull', 'Head'] },
+      { title: 'Facial Bones', desc: 'Detailed assessment of orbit, maxilla, and zygoma structures', badgeText: 'FACIAL', tags: ['Facial', 'Head'] },
+      { title: 'Nasal Bones', desc: 'Specialized view to detect nasal fractures', badgeText: 'NASAL', tags: ['Nasal', 'Head'] },
+      { title: 'Sinuses (PNS)', desc: 'Water\'s and Caldwell views for sinusitis and sinus cavity disease', badgeText: 'PNS', tags: ['Sinuses', 'PNS'] },
+      { title: 'Mandible', desc: 'Assessment of jawbone fractures or TMJ issues', badgeText: 'MAND', tags: ['Mandible', 'Jaw'] },
+      { title: 'TM Joint (Jaw)', desc: 'Temporomandibular joint open and closed mouth views', badgeText: 'TMJ', tags: ['TMJ', 'Jaw'] },
+      { title: 'Neck / Soft Tissue Neck', desc: 'Visualization of airway, epiglottis, and retropharyngeal space', badgeText: 'NECK', tags: ['Neck', 'Soft Tissue'] },
+      { title: 'Cervical Spine', desc: 'Radiography of the C1-C7 cervical vertebrae', badgeText: 'C-SP', tags: ['Cervical Spine', 'Spine'] }
+    ]
+  },
+  {
+    name: 'Spine',
+    desc: 'Complete spinal column radiography including cervical, dorsal, and lumbar vertebrae',
+    iconBg: 'bg-violet-50 dark:bg-violet-950/50',
+    iconColor: 'text-violet-600 dark:text-violet-400',
+    badgeIcon: CatIcons.IconChestXRay,
+    menuIcon: CatIcons.IconChestXRay,
+    tests: [
+      { title: 'Cervical Spine', desc: 'C1-C7 vertebrae views for pain or trauma assessment', badgeText: 'C-SPINE', tags: ['Cervical Spine', 'Spine'] },
+      { title: 'Thoracic (Dorsal) Spine', desc: 'Assessment of upper back dorsal vertebrae', badgeText: 'D-SPINE', tags: ['Dorsal Spine', 'Spine'] },
+      { title: 'Lumbar Spine', desc: 'Assessment of lower back vertebrae for stenosis or alignment', badgeText: 'L-SPINE', tags: ['Lumbar Spine', 'Spine'] },
+      { title: 'Sacrum & Coccyx', desc: 'Targeted view of tailbone and lower spinal sacrum', badgeText: 'SACRUM', tags: ['Sacrum', 'Coccyx'] },
+      { title: 'Whole Spine', desc: 'Panoramic view of the entire spinal column', badgeText: 'W-SP', tags: ['Whole Spine', 'Spine'] },
+      { title: 'Scoliosis Series', desc: 'Spine views to measure curvature angle (Cobb angle)', badgeText: 'SCOLI', tags: ['Scoliosis', 'Spine'] },
+      { title: 'Spine (Full Length) Standing', desc: 'Weight-bearing full spine alignment study', badgeText: 'STAND', tags: ['Standing', 'Spine'] },
+      { title: 'Spine (Full Length) Flexion', desc: 'Assess stability of spinal vertebrae during bending', badgeText: 'FLEX', tags: ['Flexion', 'Spine'] },
+      { title: 'Spine (Full Length) Extension', desc: 'Assess stability of spinal vertebrae during arching', badgeText: 'EXT', tags: ['Extension', 'Spine'] },
+      { title: 'Spine (Full Length) Lateral', desc: 'Side-view evaluation of full spine curvature', badgeText: 'LAT', tags: ['Lateral', 'Spine'] }
+    ]
+  },
+  {
+    name: 'Upper Limb',
+    desc: 'X-ray imaging of hand, wrist, forearm, elbow, humerus, scapula, and shoulder',
+    iconBg: 'bg-rose-50 dark:bg-rose-950/50',
+    iconColor: 'text-rose-600 dark:text-rose-400',
+    badgeIcon: CatIcons.IconChestXRay,
+    menuIcon: CatIcons.IconChestXRay,
+    tests: [
+      { title: 'Shoulder', desc: 'Radiography of shoulder joint, acromion and clavicle', badgeText: 'SHOULD', tags: ['Shoulder', 'Upper Limb'] },
+      { title: 'Clavicle', desc: 'Collarbone fractures or dislocation assessment', badgeText: 'CLAV', tags: ['Clavicle', 'Upper Limb'] },
+      { title: 'Scapula', desc: 'Shoulder blade fracture or lesion visualization', badgeText: 'SCAP', tags: ['Scapula', 'Upper Limb'] },
+      { title: 'Humerus', desc: 'Assessment of upper arm bone', badgeText: 'HUMER', tags: ['Humerus', 'Upper Limb'] },
+      { title: 'Elbow', desc: 'Assessment of elbow joint, olecranon, and epicondyles', badgeText: 'ELBOW', tags: ['Elbow', 'Upper Limb'] },
+      { title: 'Forearm (Radius & Ulna)', desc: 'Radiography of forearm bones', badgeText: 'FORE', tags: ['Forearm', 'Upper Limb'] },
+      { title: 'Wrist', desc: 'Carpal bones fracture or arthritis assessment', badgeText: 'WRIST', tags: ['Wrist', 'Upper Limb'] },
+      { title: 'Hand', desc: 'Metacarpals and phalanges radiographic evaluation', badgeText: 'HAND', tags: ['Hand', 'Upper Limb'] },
+      { title: 'Fingers', desc: 'Targeted view of index, middle, ring or pinky fingers', badgeText: 'FINGER', tags: ['Fingers', 'Upper Limb'] },
+      { title: 'Thumb', desc: 'Dedicated view of the first digit bones', badgeText: 'THUMB', tags: ['Thumb', 'Upper Limb'] }
+    ]
+  },
+  {
+    name: 'Pelvis & Hip',
+    desc: 'X-ray of the pelvic girdle, hip joints, and sacroiliac joints',
+    iconBg: 'bg-pink-50 dark:bg-pink-950/50',
+    iconColor: 'text-pink-600 dark:text-pink-400',
+    badgeIcon: CatIcons.IconChestXRay,
+    menuIcon: CatIcons.IconChestXRay,
+    tests: [
+      { title: 'Pelvis', desc: 'AP view of pelvic girdle and sacroiliac joints', badgeText: 'PELVIS', tags: ['Pelvis', 'Hip'] },
+      { title: 'Hip (Right/Left/Bilateral)', desc: 'Evaluation of femoral head and acetabulum', badgeText: 'HIP', tags: ['Hip', 'Pelvis'] },
+      { title: 'Sacroiliac (SI) Joint', desc: 'SI joint views for ankylosing spondylitis assessment', badgeText: 'SIJT', tags: ['SI Joint', 'Pelvis'] }
+    ]
+  },
+  {
+    name: 'Lower Limb',
+    desc: 'X-ray imaging of foot, ankle, tibia, fibula, patella, knee, and femur',
+    iconBg: 'bg-purple-50 dark:bg-purple-950/50',
+    iconColor: 'text-purple-600 dark:text-purple-400',
+    badgeIcon: CatIcons.IconChestXRay,
+    menuIcon: CatIcons.IconChestXRay,
+    tests: [
+      { title: 'Femur', desc: 'Evaluation of thigh bone fractures or lesions', badgeText: 'FEMUR', tags: ['Femur', 'Lower Limb'] },
+      { title: 'Knee', desc: 'Knee joint, patella, and tibia-femoral space evaluation', badgeText: 'KNEE', tags: ['Knee', 'Lower Limb'] },
+      { title: 'Patella', desc: 'Skyline view to detect kneecap tracking or fractures', badgeText: 'PATEL', tags: ['Patella', 'Lower Limb'] },
+      { title: 'Tibia & Fibula', desc: 'Assessment of shin bones', badgeText: 'TIB-FIB', tags: ['Tibia', 'Fibula', 'Lower Limb'] },
+      { title: 'Ankle', desc: 'Mortise and lateral views of the ankle joint', badgeText: 'ANKLE', tags: ['Ankle', 'Lower Limb'] },
+      { title: 'Foot', desc: 'Tarsal, metatarsal, and phalanges views', badgeText: 'FOOT', tags: ['Foot', 'Lower Limb'] },
+      { title: 'Heel (Calcaneus)', desc: 'Axial and lateral views for calcaneal spur or fracture', badgeText: 'HEEL', tags: ['Heel', 'Calcaneus', 'Lower Limb'] },
+      { title: 'Toes', desc: 'Radiography of lower limb phalanges', badgeText: 'TOES', tags: ['Toes', 'Lower Limb'] }
+    ]
+  },
+  {
+    name: 'Abdomen',
+    desc: 'X-ray views of the abdominal cavity, KUB, and gastrointestinal gas patterns',
+    iconBg: 'bg-amber-50 dark:bg-amber-950/50',
+    iconColor: 'text-amber-600 dark:text-amber-400',
+    badgeIcon: CatIcons.IconChestXRay,
+    menuIcon: CatIcons.IconChestXRay,
+    tests: [
+      { title: 'Abdomen (KUB)', desc: 'Kidneys, ureters, and bladder scout film', badgeText: 'KUB', tags: ['Abdomen', 'KUB'] },
+      { title: 'Abdomen Erect', desc: 'Erect view to detect air-fluid levels or free gas', badgeText: 'ERECT', tags: ['Abdomen', 'Erect'] },
+      { title: 'Abdomen Supine', desc: 'Flat view of abdominal gas patterns and organs', badgeText: 'SUPINE', tags: ['Abdomen', 'Supine'] },
+      { title: 'Abdomen Decubitus / Lateral', desc: 'Oblique or side-lying view for fluid or free air', badgeText: 'DECUB', tags: ['Abdomen', 'Lateral'] }
+    ]
+  },
+  {
+    name: 'Dental',
+    desc: 'Orthopantomogram (OPG), IOPA, bitewing, and dental radiographic imaging',
+    iconBg: 'bg-emerald-50 dark:bg-emerald-950/50',
+    iconColor: 'text-emerald-600 dark:text-emerald-400',
+    badgeIcon: CatIcons.IconChestXRay,
+    menuIcon: CatIcons.IconChestXRay,
+    tests: [
+      { title: 'Intraoral X-ray (IOPA)', desc: 'Periapical view of individual teeth roots and crown', badgeText: 'IOPA', tags: ['Dental', 'IOPA'] },
+      { title: 'Bitewing', desc: 'Detection of interproximal cavities and bone loss', badgeText: 'BITE', tags: ['Dental', 'Bitewing'] },
+      { title: 'Occlusal X-ray', desc: 'View of upper/lower jaw floor for impacted teeth or stones', badgeText: 'OCCL', tags: ['Dental', 'Occlusal'] },
+      { title: 'OPG (Orthopantomogram)', desc: 'Panoramic x-ray showing all teeth, jawbones and sinuses', badgeText: 'OPG', tags: ['Dental', 'OPG'] },
+      { title: 'Cephalometric X-ray', desc: 'Side view of face used in orthodontic treatment planning', badgeText: 'CEPH', tags: ['Dental', 'Cephalometric'] }
+    ]
+  },
+  {
+    name: 'Special X-ray Studies',
+    desc: 'Contrast-based radiographic studies like mammogram, barium meal, and HSG',
+    iconBg: 'bg-teal-50 dark:bg-teal-950/50',
+    iconColor: 'text-teal-600 dark:text-teal-400',
+    badgeIcon: CatIcons.IconChestXRay,
+    menuIcon: CatIcons.IconChestXRay,
+    tests: [
+      { title: 'Mammogram (Breast X-ray)', desc: 'Low-dose screening for breast calcifications or masses', badgeText: 'MAMMO', tags: ['Mammogram', 'Breast'] },
+      { title: 'Barium Swallow', desc: 'Esophagus assessment using barium contrast liquid', badgeText: 'SWAL', tags: ['Barium', 'Swallow'] },
+      { title: 'Barium Meal Follow Through', desc: 'Stomach and small bowel contrast study', badgeText: 'BMFT', tags: ['Barium', 'BMFT'] },
+      { title: 'Barium Enema', desc: 'Large intestine contrast radiography', badgeText: 'ENEMA', tags: ['Barium', 'Enema'] },
+      { title: 'HSG (Hysterosalpingogram)', desc: 'Contrast study of uterus and fallopian tubes', badgeText: 'HSG', tags: ['HSG', 'Uterus'] },
+      { title: 'IVP (Intravenous Pyelogram)', desc: 'Contrast tracking of urinary tract excretion', badgeText: 'IVP', tags: ['IVP', 'Urinary'] },
+      { title: 'Bronchogram', desc: 'Radiography of bronchial tree with contrast agent', badgeText: 'BRONCH', tags: ['Bronchogram', 'Lungs'] },
+      { title: 'MCU (Micturating Cystourethrogram)', desc: 'Study of bladder filling and voiding', badgeText: 'MCU', tags: ['MCU', 'Bladder'] }
+    ]
+  }
+];
+
+const USG_SUBCATEGORIES: SubCategoryItem[] = [
+  {
+    name: 'General Abdomen',
+    desc: 'Ultrasound evaluation of abdominal organs and surrounding structures.',
+    iconBg: 'bg-emerald-50 dark:bg-emerald-950/50',
+    iconColor: 'text-emerald-600 dark:text-emerald-400',
+    badgeIcon: CatIcons.IconUltrasoundProbe,
+    menuIcon: CatIcons.IconUltrasoundProbe,
+    tests: [
+      { title: 'Liver Ultrasound', desc: 'Assessment of liver size, parenchyma and focal lesions.', badgeText: 'LIVER', tags: ['USG', 'Liver', 'Abdomen'] },
+      { title: 'Gallbladder Ultrasound', desc: 'Evaluation of gallbladder for stones, sludge and wall abnormalities.', badgeText: 'GB', tags: ['USG', 'Gallbladder', 'Abdomen'] },
+      { title: 'Pancreas Ultrasound', desc: 'Assessment of pancreas for size, shape and structural changes.', badgeText: 'PANCR', tags: ['USG', 'Pancreas', 'Abdomen'] },
+      { title: 'Spleen Ultrasound', desc: 'Evaluation of spleen for size, echotexture and lesions.', badgeText: 'SPLEEN', tags: ['USG', 'Spleen', 'Abdomen'] },
+      { title: 'Kidneys Ultrasound', desc: 'Assessment of kidney size, parenchyma, stones and hydronephrosis.', badgeText: 'KIDNEY', tags: ['USG', 'Kidneys', 'Abdomen'] },
+      { title: 'Urinary Bladder Ultrasound', desc: 'Evaluation of urinary bladder for wall thickness, stones and residual urine.', badgeText: 'BLAD', tags: ['USG', 'Bladder', 'Abdomen'] },
+      { title: 'Biliary System Ultrasound', desc: 'Assessment of CBD and intrahepatic biliary radicles.', badgeText: 'BILI', tags: ['USG', 'Biliary', 'Abdomen'] },
+      { title: 'Aorta & IVC Ultrasound', desc: 'Evaluation of abdominal aorta and inferior vena cava.', badgeText: 'AORTA', tags: ['USG', 'Aorta', 'Abdomen'] },
+      { title: 'Retroperitoneal Ultrasound', desc: 'Assessment of retroperitoneal structures and organs.', badgeText: 'RETRO', tags: ['USG', 'Retroperitoneal', 'Abdomen'] },
+      { title: 'Ascites & Fluid Assessment', desc: 'Detection and assessment of free fluid in peritoneal cavity.', badgeText: 'FLUID', tags: ['USG', 'Ascites', 'Abdomen'] }
+    ]
+  },
+  {
+    name: 'Obstetrics & Gynecology',
+    desc: 'Ultrasound evaluation for pregnancy, fetal well-being and female pelvic health.',
+    iconBg: 'bg-rose-50 dark:bg-rose-950/50',
+    iconColor: 'text-rose-600 dark:text-rose-400',
+    badgeIcon: CatIcons.IconUltrasoundProbe,
+    menuIcon: CatIcons.IconUltrasoundProbe,
+    tests: [
+      { title: 'Early Pregnancy Scan (≤ 12 Weeks)', desc: 'Confirmation of intrauterine pregnancy, gestational age and viability.', badgeText: 'EARLY', tags: ['USG', 'Pregnancy', 'Obstetrics'] },
+      { title: 'NT Scan (11–13⁺⁶ Weeks)', desc: 'Nuchal translucency assessment and first trimester anomaly screening.', badgeText: 'NT', tags: ['USG', 'NT Scan', 'Obstetrics'] },
+      { title: 'Anomaly Scan (18–24 Weeks)', desc: 'Detailed fetal anomaly assessment and structural evaluation.', badgeText: 'ANOM', tags: ['USG', 'Anomaly', 'Obstetrics'] },
+      { title: 'Growth Scan (28–36 Weeks)', desc: 'Monitoring fetal growth, estimated weight and well-being.', badgeText: 'GROWTH', tags: ['USG', 'Growth', 'Obstetrics'] },
+      { title: 'Doppler Study', desc: 'Uterine, umbilical and middle cerebral artery Doppler assessment.', badgeText: 'DOPP', tags: ['USG', 'Doppler', 'Obstetrics'] },
+      { title: 'Third Trimester Scan (> 36 Weeks)', desc: 'Fetal well-being, amniotic fluid, placenta and presentation assessment.', badgeText: 'THIRD', tags: ['USG', 'Third Trimester', 'Obstetrics'] },
+      { title: 'Pelvic Ultrasound (Transabdominal)', desc: 'Evaluation of uterus, ovaries and adnexa via transabdominal approach.', badgeText: 'PELV-A', tags: ['USG', 'Pelvic', 'Gynecology'] },
+      { title: 'Pelvic Ultrasound (Transvaginal)', desc: 'Detailed evaluation of uterus, ovaries and endometrium via transvaginal approach.', badgeText: 'PELV-V', tags: ['USG', 'TVS', 'Gynecology'] },
+      { title: 'Follicular Study (For Ovulation)', desc: 'Monitoring follicular growth and ovulation assessment.', badgeText: 'FOLL', tags: ['USG', 'Follicular', 'Gynecology'] },
+      { title: 'Infertility Evaluation', desc: 'Assessment of uterine and ovarian causes of infertility.', badgeText: 'INFERT', tags: ['USG', 'Infertility', 'Gynecology'] },
+      { title: 'PCOS Evaluation', desc: 'Evaluation of polycystic ovaries and associated pelvic findings.', badgeText: 'PCOS', tags: ['USG', 'PCOS', 'Gynecology'] },
+      { title: 'Placenta Evaluation', desc: 'Assessment of placental location, maturity and abnormalities.', badgeText: 'PLAC', tags: ['USG', 'Placenta', 'Obstetrics'] }
+    ]
+  },
+  {
+    name: 'Small Parts',
+    desc: 'High-resolution ultrasound for superficial organs and soft tissue structures.',
+    iconBg: 'bg-emerald-50 dark:bg-emerald-950/50',
+    iconColor: 'text-emerald-600 dark:text-emerald-400',
+    badgeIcon: CatIcons.IconUltrasoundProbe,
+    menuIcon: CatIcons.IconUltrasoundProbe,
+    tests: [
+      { title: 'Thyroid Ultrasound', desc: 'Evaluation of thyroid gland for nodules, enlargement and other abnormalities.', badgeText: 'THYR', tags: ['USG', 'Thyroid', 'Small Parts'] },
+      { title: 'Neck Ultrasound', desc: 'Assessment of cervical lymph nodes, cysts and masses.', badgeText: 'NECK', tags: ['USG', 'Neck', 'Small Parts'] },
+      { title: 'Breast Ultrasound', desc: 'Evaluation of breast lumps, cysts, fibroadenoma and other lesions.', badgeText: 'BREAST', tags: ['USG', 'Breast', 'Small Parts'] },
+      { title: 'Scrotal Ultrasound', desc: 'Assessment of testes, epididymis, varicocele, hydrocele and scrotal masses.', badgeText: 'SCROTAL', tags: ['USG', 'Scrotal', 'Small Parts'] },
+      { title: 'Prostate Ultrasound (TVS)', desc: 'Evaluation of prostate size, volume and abnormalities (Transrectal).', badgeText: 'PROST', tags: ['USG', 'Prostate', 'Small Parts'] },
+      { title: 'Parotid Ultrasound', desc: 'Assessment of parotid gland for stones, cysts and masses.', badgeText: 'PAROT', tags: ['USG', 'Parotid', 'Small Parts'] },
+      { title: 'Salivary Gland Ultrasound', desc: 'Evaluation of submandibular and sublingual glands for swellings and stones.', badgeText: 'SALIV', tags: ['USG', 'Salivary', 'Small Parts'] },
+      { title: 'Soft Tissue Ultrasound', desc: 'Evaluation of soft tissue lumps, cysts, abscesses and collections.', badgeText: 'SOFT', tags: ['USG', 'Soft Tissue', 'Small Parts'] },
+      { title: 'Hernia Ultrasound', desc: 'Detection and assessment of inguinal, umbilical and ventral hernias.', badgeText: 'HERNIA', tags: ['USG', 'Hernia', 'Small Parts'] },
+      { title: 'Lump / Mass Ultrasound', desc: 'Characterization of superficial lumps and masses for benign or malignant nature.', badgeText: 'LUMP', tags: ['USG', 'Lump', 'Small Parts'] }
+    ]
+  },
+  {
+    name: 'Vascular Studies',
+    desc: 'Ultrasound evaluation of blood vessels and circulatory system.',
+    iconBg: 'bg-red-50 dark:bg-red-950/50',
+    iconColor: 'text-red-600 dark:text-red-400',
+    badgeIcon: CatIcons.IconUltrasoundProbe,
+    menuIcon: CatIcons.IconUltrasoundProbe,
+    tests: [
+      { title: 'Carotid Doppler', desc: 'Evaluation of carotid arteries for stenosis, plaque and blood flow.', badgeText: 'CAROT', tags: ['USG', 'Doppler', 'Vascular'] },
+      { title: 'Venous Doppler – Upper Limb', desc: 'Assessment of venous flow, DVT, reflux and obstruction in upper limb.', badgeText: 'V-UPP', tags: ['USG', 'Venous', 'Vascular'] },
+      { title: 'Venous Doppler – Lower Limb', desc: 'Assessment of venous flow, DVT, reflux and obstruction in lower limb.', badgeText: 'V-LOW', tags: ['USG', 'Venous', 'Vascular'] },
+      { title: 'Renal Doppler', desc: 'Evaluation of renal artery stenosis and renal vascularity.', badgeText: 'RENAL', tags: ['USG', 'Doppler', 'Vascular'] },
+      { title: 'Mesenteric Doppler', desc: 'Assessment of mesenteric arteries for stenosis and blood flow.', badgeText: 'MESEN', tags: ['USG', 'Doppler', 'Vascular'] },
+      { title: 'Aortic Doppler', desc: 'Evaluation of abdominal aorta for aneurysm and blood flow.', badgeText: 'AORTA', tags: ['USG', 'Doppler', 'Vascular'] },
+      { title: 'Peripheral Arterial Doppler', desc: 'Assessment of peripheral arterial disease and limb ischemia.', badgeText: 'ART-P', tags: ['USG', 'Doppler', 'Vascular'] },
+      { title: 'Arterial Doppler – Upper Limb', desc: 'Evaluation of arterial flow and blockage in upper limb.', badgeText: 'A-UPP', tags: ['USG', 'Arterial', 'Vascular'] },
+      { title: 'Arteriovenous Fistula Doppler', desc: 'Assessment of AV fistula maturity, flow volume and patency.', badgeText: 'AVF', tags: ['USG', 'Fistula', 'Vascular'] },
+      { title: 'Portal & Hepatic Doppler', desc: 'Evaluation of portal vein, hepatic veins and liver vascular flow.', badgeText: 'PORTAL', tags: ['USG', 'Doppler', 'Vascular'] }
+    ]
+  },
+  {
+    name: 'Cardiac',
+    desc: 'Ultrasound evaluation of the heart and related structures.',
+    iconBg: 'bg-pink-50 dark:bg-pink-950/50',
+    iconColor: 'text-pink-600 dark:text-pink-400',
+    badgeIcon: CatIcons.IconUltrasoundProbe,
+    menuIcon: CatIcons.IconUltrasoundProbe,
+    tests: [
+      { title: 'Echocardiography (Adult)', desc: 'Assessment of cardiac chambers, valves, wall motion and ejection fraction.', badgeText: 'ECHO-A', tags: ['USG', 'ECHO', 'Cardiac'] },
+      { title: 'Echocardiography (Pediatric)', desc: 'Evaluation of congenital heart diseases and cardiac function in children.', badgeText: 'ECHO-P', tags: ['USG', 'ECHO', 'Cardiac'] },
+      { title: 'Doppler Echocardiography', desc: 'Assessment of blood flow across heart valves and chambers.', badgeText: 'D-ECHO', tags: ['USG', 'Doppler', 'Cardiac'] },
+      { title: 'Valve Assessment', desc: 'Evaluation of valvular stenosis, regurgitation and structural abnormalities.', badgeText: 'VALVE', tags: ['USG', 'Valve', 'Cardiac'] },
+      { title: 'Pericardial Effusion Study', desc: 'Detection and assessment of fluid around the pericardium.', badgeText: 'EFFUS', tags: ['USG', 'Pericardial', 'Cardiac'] },
+      { title: 'Stress Echocardiography', desc: 'Evaluation of heart function under stress (exercise or dobutamine).', badgeText: 'STRESS', tags: ['USG', 'Stress', 'Cardiac'] },
+      { title: 'Congenital Heart Disease Assessment', desc: 'Detailed evaluation of structural heart defects and anomalies.', badgeText: 'CHD', tags: ['USG', 'Congenital', 'Cardiac'] },
+      { title: 'Transesophageal Echocardiography (TEE)', desc: 'Detailed imaging of heart structures using esophageal probe.', badgeText: 'TEE', tags: ['USG', 'TEE', 'Cardiac'] },
+      { title: 'Cardiac Function Assessment', desc: 'Measurement of systolic and diastolic function parameters.', badgeText: 'FUNC', tags: ['USG', 'Function', 'Cardiac'] },
+      { title: 'Pulmonary Hypertension Assessment', desc: 'Estimation of pulmonary artery pressure and right heart function.', badgeText: 'PHTN', tags: ['USG', 'Hypertension', 'Cardiac'] }
+    ]
+  },
+  {
+    name: 'Musculoskeletal',
+    desc: 'Ultrasound evaluation of muscles, tendons, joints and related structures.',
+    iconBg: 'bg-amber-50 dark:bg-amber-950/50',
+    iconColor: 'text-amber-600 dark:text-amber-400',
+    badgeIcon: CatIcons.IconUltrasoundProbe,
+    menuIcon: CatIcons.IconUltrasoundProbe,
+    tests: [
+      { title: 'Shoulder Joint', desc: 'Evaluation of rotator cuff tears, tendinitis, bursitis and joint effusion.', badgeText: 'SHOUL', tags: ['USG', 'Shoulder', 'Joint'] },
+      { title: 'Elbow Joint', desc: 'Assessment of tendons, ligaments, bursitis and joint effusion.', badgeText: 'ELBOW', tags: ['USG', 'Elbow', 'Joint'] },
+      { title: 'Wrist & Hand', desc: 'Evaluation of tendons, carpal tunnel, ganglion and soft tissue lesions.', badgeText: 'WRIST', tags: ['USG', 'Wrist', 'Joint'] },
+      { title: 'Hip Joint', desc: 'Assessment of joint effusion, synovitis, tendon pathology and soft tissue structures.', badgeText: 'HIP', tags: ['USG', 'Hip', 'Joint'] },
+      { title: 'Knee Joint', desc: 'Evaluation of meniscus, ligaments, tendons, bursitis and joint effusion.', badgeText: 'KNEE', tags: ['USG', 'Knee', 'Joint'] },
+      { title: 'Ankle & Foot', desc: 'Assessment of tendons, plantar fasciitis, ligament injuries and soft tissue abnormalities.', badgeText: 'ANKLE', tags: ['USG', 'Ankle', 'Joint'] },
+      { title: 'Muscle Injury', desc: 'Evaluation of muscle strains, tears, hematoma and myositis.', badgeText: 'MUSC', tags: ['USG', 'Muscle', 'Injury'] },
+      { title: 'Tendon Evaluation', desc: 'Assessment of tendonitis, partial or complete tears and thickness.', badgeText: 'TEND', tags: ['USG', 'Tendon', 'Joint'] },
+      { title: 'Ligament Injury', desc: 'Evaluation of ligament sprains, partial tears and joint instability.', badgeText: 'LIGAM', tags: ['USG', 'Ligament', 'Injury'] },
+      { title: 'Soft Tissue Mass', desc: 'Detection and assessment of soft tissue lumps, cysts and tumors.', badgeText: 'MASS', tags: ['USG', 'Soft Tissue', 'Joint'] }
+    ]
+  },
+  {
+    name: 'Pediatric',
+    desc: 'Ultrasound evaluation for pediatric organs and conditions.',
+    iconBg: 'bg-blue-50 dark:bg-blue-950/50',
+    iconColor: 'text-blue-600 dark:text-blue-400',
+    badgeIcon: CatIcons.IconUltrasoundProbe,
+    menuIcon: CatIcons.IconUltrasoundProbe,
+    tests: [
+      { title: 'Pediatric Kidney (Renal)', desc: 'Evaluation of kidney size, structure, hydronephrosis and congenital anomalies.', badgeText: 'KIDN', tags: ['USG', 'Kidney', 'Pediatric'] },
+      { title: 'Pediatric Urinary Bladder', desc: 'Assessment of bladder wall, capacity and residual urine.', badgeText: 'BLAD', tags: ['USG', 'Bladder', 'Pediatric'] },
+      { title: 'Pediatric Liver', desc: 'Evaluation of liver size, texture, biliary system and focal lesions.', badgeText: 'LIVER', tags: ['USG', 'Liver', 'Pediatric'] },
+      { title: 'Pediatric Spleen', desc: 'Assessment of spleen size, structure and related abnormalities.', badgeText: 'SPLE', tags: ['USG', 'Spleen', 'Pediatric'] },
+      { title: 'Appendix', desc: 'Evaluation for appendicitis and other appendiceal pathologies.', badgeText: 'APPX', tags: ['USG', 'Appendix', 'Pediatric'] },
+      { title: 'Intestinal Ultrasound', desc: 'Assessment of bowel wall thickness and intestinal abnormalities.', badgeText: 'BOWEL', tags: ['USG', 'Bowel', 'Pediatric'] },
+      { title: 'Pyloric Stenosis', desc: 'Evaluation of pyloric muscle thickness and length in infants.', badgeText: 'PYLOR', tags: ['USG', 'Pyloric', 'Pediatric'] },
+      { title: 'Hip Joint (DDH Screening)', desc: 'Screening for developmental dysplasia of the hip in infants.', badgeText: 'HIP', tags: ['USG', 'Hip', 'Pediatric'] },
+      { title: 'Scrotal Ultrasound', desc: 'Evaluation of testes, epididymis, spermatic cord and scrotal pathologies.', badgeText: 'SCROT', tags: ['USG', 'Scrotal', 'Pediatric'] },
+      { title: 'Thyroid', desc: 'Assessment of thyroid size, structure and congenital abnormalities.', badgeText: 'THYR', tags: ['USG', 'Thyroid', 'Pediatric'] }
+    ]
+  },
+  {
+    name: 'Neonatal',
+    desc: 'Ultrasound evaluation for newborn and neonatal conditions.',
+    iconBg: 'bg-teal-50 dark:bg-teal-950/50',
+    iconColor: 'text-teal-600 dark:text-teal-400',
+    badgeIcon: CatIcons.IconUltrasoundProbe,
+    menuIcon: CatIcons.IconUltrasoundProbe,
+    tests: [
+      { title: 'Neonatal Cranial Ultrasound', desc: 'Assessment of brain structures for hemorrhage, ventriculomegaly and other anomalies.', badgeText: 'CRAN', tags: ['USG', 'Cranial', 'Neonatal'] },
+      { title: 'Neonatal Cardiac Ultrasound', desc: 'Evaluation of congenital heart defects and cardiac function in newborns.', badgeText: 'CARD', tags: ['USG', 'Cardiac', 'Neonatal'] },
+      { title: 'Neonatal Lung Ultrasound', desc: 'Assessment of lung aeration, respiratory distress and related conditions.', badgeText: 'LUNG', tags: ['USG', 'Lung', 'Neonatal'] },
+      { title: 'Neonatal Abdominal Ultrasound', desc: 'Evaluation of abdominal organs, bowel obstruction and NEC screening.', badgeText: 'ABDOM', tags: ['USG', 'Abdominal', 'Neonatal'] },
+      { title: 'Neonatal Renal Ultrasound', desc: 'Assessment of kidney size, structure and urinary tract anomalies.', badgeText: 'RENAL', tags: ['USG', 'Renal', 'Neonatal'] },
+      { title: 'Neonatal Spine Ultrasound', desc: 'Screening for spinal canal anomalies and tethered cord.', badgeText: 'SPINE', tags: ['USG', 'Spine', 'Neonatal'] },
+      { title: 'Hip Ultrasound (Neonatal DDH Screening)', desc: 'Screening for developmental dysplasia of the hip in newborns.', badgeText: 'HIP', tags: ['USG', 'Hip', 'Neonatal'] },
+      { title: 'Neck Ultrasound (Thyroid)', desc: 'Evaluation of congenital thyroid abnormalities and masses.', badgeText: 'NECK', tags: ['USG', 'Neck', 'Neonatal'] },
+      { title: 'Soft Tissue Ultrasound', desc: 'Assessment of superficial lumps, cysts and soft tissue abnormalities.', badgeText: 'SOFT', tags: ['USG', 'Soft Tissue', 'Neonatal'] },
+      { title: 'Umbilical / Vascular Ultrasound', desc: 'Evaluation of umbilical vessels and related vascular abnormalities.', badgeText: 'UMBIL', tags: ['USG', 'Umbilical', 'Neonatal'] }
+    ]
+  },
+  {
+    name: 'Other Ultrasound',
+    desc: 'Miscellaneous ultrasound evaluations for various organs and specialized areas.',
+    iconBg: 'bg-slate-100 dark:bg-slate-800',
+    iconColor: 'text-slate-600 dark:text-slate-300',
+    badgeIcon: MoreHorizontal,
+    menuIcon: MoreHorizontal,
+    tests: [
+      { title: 'Ophthalmic Ultrasound', desc: 'Evaluation of eye structures including globe, retina and optic nerve.', badgeText: 'EYE', tags: ['USG', 'Ophthalmic', 'Other'] },
+      { title: 'Salivary Gland Ultrasound', desc: 'Assessment of parotid and submandibular glands for masses and inflammation.', badgeText: 'SALIV', tags: ['USG', 'Salivary', 'Other'] },
+      { title: 'Superficial Soft Tissue Ultrasound', desc: 'Evaluation of subcutaneous masses, cysts, lipomas and soft tissue lesions.', badgeText: 'SOFT', tags: ['USG', 'Soft Tissue', 'Other'] },
+      { title: 'Peripheral Nerve Ultrasound', desc: 'Assessment of nerve entrapment, injury and neuropathies.', badgeText: 'NERVE', tags: ['USG', 'Nerve', 'Other'] },
+      { title: 'Scrotal & Testicular Ultrasound', desc: 'Evaluation of testes, epididymis, scrotal masses and other scrotal pathologies.', badgeText: 'TESTIS', tags: ['USG', 'Scrotal', 'Other'] },
+      { title: 'Brachial Plexus Ultrasound', desc: 'Imaging of brachial plexus for traumatic injury and neuropathies.', badgeText: 'BRACH', tags: ['USG', 'Brachial', 'Other'] },
+      { title: 'Lymph Node Ultrasound', desc: 'Evaluation of superficial lymph nodes for size, structure and pathology.', badgeText: 'LYMPH', tags: ['USG', 'Lymph', 'Other'] },
+      { title: 'Breast Ultrasound', desc: 'Assessment of breast lumps, cysts, fibroadenomas and other abnormalities.', badgeText: 'BREAST', tags: ['USG', 'Breast', 'Other'] },
+      { title: 'Parathyroid Ultrasound', desc: 'Localization of parathyroid adenomas in cases of hyperparathyroidism.', badgeText: 'PTH', tags: ['USG', 'Parathyroid', 'Other'] },
+      { title: 'Guided Procedure Ultrasound', desc: 'Image-guided aspirations, biopsies, drainages and injections.', badgeText: 'GUIDE', tags: ['USG', 'Guided', 'Other'] }
+    ]
+  }
+];
+
 type CategoryBlueprint = {
   name: string;
   desc: string;
@@ -941,12 +1300,13 @@ function makeCategorySubcategories(catId: string): SubCategoryItem[] {
   return subcategories;
 }
 
-// Complete category data for every report type in the reference picker.
 function getCategorySubData(catId: string): SubCategoryItem[] {
   if (catId === 'blood') return BLOOD_TEST_SUBCATEGORIES;
   if (catId === 'pathology') return PATHOLOGY_SUBCATEGORIES;
   if (catId === 'stool') return STOOL_TEST_SUBCATEGORIES;
   if (catId === 'endoscopy') return ENDOSCOPY_SUBCATEGORIES;
+  if (catId === 'xray') return XRAY_SUBCATEGORIES;
+  if (catId === 'usg') return USG_SUBCATEGORIES;
 
   return makeCategorySubcategories(catId);
 }

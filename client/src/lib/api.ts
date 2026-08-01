@@ -1,4 +1,8 @@
-const BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const configuredBase = import.meta.env.VITE_API_URL?.replace(/\/$/, '');
+// Never make a deployed browser wait on a non-existent local server. The
+// production deployment must set VITE_API_URL to the API deployment URL.
+const BASE = configuredBase || (import.meta.env.PROD ? window.location.origin : 'http://localhost:5000');
+const REQUEST_TIMEOUT_MS = 12_000;
 
 export class ApiError extends Error {
   status: number;
@@ -20,8 +24,27 @@ async function parseRes(res: Response) {
   }
 }
 
+async function request(path: string, init: RequestInit = {}, signal?: AbortSignal): Promise<Response> {
+  const controller = new AbortController();
+  const timeout = window.setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+  const abort = () => controller.abort();
+  signal?.addEventListener('abort', abort, { once: true });
+
+  try {
+    return await fetch(`${BASE}${path}`, { ...init, credentials: 'include', signal: controller.signal });
+  } catch (error) {
+    if (controller.signal.aborted && !signal?.aborted) {
+      throw new ApiError('The server took too long to respond. Please try again.', 408);
+    }
+    throw error;
+  } finally {
+    window.clearTimeout(timeout);
+    signal?.removeEventListener('abort', abort);
+  }
+}
+
 export async function apiGet<T = any>(path: string, signal?: AbortSignal): Promise<T> {
-  const res = await fetch(`${BASE}${path}`, { credentials: 'include', signal });
+  const res = await request(path, {}, signal);
   const data = await parseRes(res);
   if (!res.ok) throw new ApiError(data?.message || `GET ${path} failed`, res.status, data);
   return data;
@@ -30,9 +53,8 @@ export async function apiGet<T = any>(path: string, signal?: AbortSignal): Promi
 export async function apiPost<T = any>(path: string, body?: any): Promise<T> {
   const headers: Record<string, string> = {};
   if (!(body instanceof FormData)) headers['content-type'] = 'application/json';
-  const res = await fetch(`${BASE}${path}`, {
+  const res = await request(path, {
     method: 'POST',
-    credentials: 'include',
     headers,
     body: body instanceof FormData ? body : body ? JSON.stringify(body) : undefined,
   });
@@ -42,9 +64,8 @@ export async function apiPost<T = any>(path: string, body?: any): Promise<T> {
 }
 
 export async function apiPatch<T = any>(path: string, body?: any): Promise<T> {
-  const res = await fetch(`${BASE}${path}`, {
+  const res = await request(path, {
     method: 'PATCH',
-    credentials: 'include',
     headers: { 'content-type': 'application/json' },
     body: body ? JSON.stringify(body) : undefined,
   });
@@ -54,9 +75,8 @@ export async function apiPatch<T = any>(path: string, body?: any): Promise<T> {
 }
 
 export async function apiPut<T = any>(path: string, body?: any): Promise<T> {
-  const res = await fetch(`${BASE}${path}`, {
+  const res = await request(path, {
     method: 'PUT',
-    credentials: 'include',
     headers: { 'content-type': 'application/json' },
     body: body ? JSON.stringify(body) : undefined,
   });
@@ -66,7 +86,7 @@ export async function apiPut<T = any>(path: string, body?: any): Promise<T> {
 }
 
 export async function apiDelete<T = any>(path: string): Promise<T> {
-  const res = await fetch(`${BASE}${path}`, { method: 'DELETE', credentials: 'include' });
+  const res = await request(path, { method: 'DELETE' });
   const data = await parseRes(res);
   if (!res.ok) throw new ApiError(data?.message || `DELETE ${path} failed`, res.status, data);
   return data;

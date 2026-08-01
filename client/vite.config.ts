@@ -13,8 +13,9 @@ export default defineConfig(() => {
           manualChunks(id) {
             if (id.includes('node_modules/')) {
               if (id.includes('lucide-react')) return 'vendor-icons';
-              if (id.includes('jspdf') || id.includes('html2canvas')) return 'vendor-pdf';
-              return 'vendor-core';
+              if (id.includes('motion')) return 'vendor-motion';
+              if (id.includes('better-auth')) return 'vendor-auth';
+              if (id.includes('react') || id.includes('scheduler')) return 'vendor-react';
             }
           },
         },

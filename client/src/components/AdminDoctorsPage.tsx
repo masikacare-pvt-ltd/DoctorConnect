@@ -43,6 +43,18 @@ export default function AdminDoctorsPage() {
   const [deleteTarget, setDeleteTarget] = useState<DoctorItem | null>(null);
   const [deleting, setDeleting] = useState(false);
 
+  useEffect(() => {
+    if (!selected) return;
+    const originalBodyOverflow = document.body.style.overflow;
+    const originalHtmlOverflow = document.documentElement.style.overflow;
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = originalBodyOverflow;
+      document.documentElement.style.overflow = originalHtmlOverflow;
+    };
+  }, [selected]);
+
   const fetchDoctors = useCallback(async () => {
     setLoading(true);
     try {
@@ -200,8 +212,8 @@ export default function AdminDoctorsPage() {
 
       {/* Detail Modal */}
       {selected && (
-        <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4" onClick={() => setSelected(null)}>
-          <div className="bg-white rounded-2xl max-w-md w-full max-h-[80vh] overflow-y-auto shadow-2xl" onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4 overscroll-contain" onClick={() => setSelected(null)}>
+          <div className="bg-white rounded-2xl max-w-md w-full max-h-[80vh] overflow-y-auto overscroll-contain shadow-2xl" onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between p-4 border-b border-slate-200">
               <h3 className="text-xs font-bold text-slate-900">Doctor Details</h3>
               <button onClick={() => setSelected(null)} className="text-slate-400 hover:text-slate-600"><X className="w-4 h-4" /></button>

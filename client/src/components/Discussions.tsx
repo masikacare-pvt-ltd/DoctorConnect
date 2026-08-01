@@ -34,6 +34,18 @@ export default function Discussions() {
   const [editDesc, setEditDesc] = useState('');
   const [sending, setSending] = useState(false);
 
+  useEffect(() => {
+    if (!showLikes) return;
+    const originalBodyOverflow = document.body.style.overflow;
+    const originalHtmlOverflow = document.documentElement.style.overflow;
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = originalBodyOverflow;
+      document.documentElement.style.overflow = originalHtmlOverflow;
+    };
+  }, [showLikes]);
+
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [showMention, setShowMention] = useState(false);
   const [mentionSearch, setMentionSearch] = useState('');
@@ -492,8 +504,8 @@ export default function Discussions() {
         </main>
 
       {showLikes && (
-        <div className="fixed inset-0 z-50 bg-black/30 flex items-center justify-center p-4" onClick={() => setShowLikes(false)}>
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-5 max-h-80 overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed inset-0 z-50 bg-black/30 flex items-center justify-center p-4 overscroll-contain" onClick={() => setShowLikes(false)}>
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-5 max-h-80 overflow-y-auto overscroll-contain" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-xs font-bold uppercase text-slate-400 tracking-wider">Liked by</h3>
               <button onClick={() => setShowLikes(false)} className="text-slate-400 hover:text-slate-700"><X className="w-4 h-4" /></button>

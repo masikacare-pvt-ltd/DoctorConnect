@@ -28,6 +28,18 @@ export default function AdminDashboard() {
   const [pendingDoctors, setPendingDoctors] = useState<PendingDoctor[]>([]);
   const [pendingLoading, setPendingLoading] = useState(false);
 
+  useEffect(() => {
+    if (!showPending) return;
+    const originalBodyOverflow = document.body.style.overflow;
+    const originalHtmlOverflow = document.documentElement.style.overflow;
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = originalBodyOverflow;
+      document.documentElement.style.overflow = originalHtmlOverflow;
+    };
+  }, [showPending]);
+
   const fetchStats = useCallback(async () => {
     try {
       const res = await adminGet('/stats');
@@ -157,8 +169,8 @@ export default function AdminDashboard() {
 
       {/* Pending Approvals Modal */}
       {showPending && (
-        <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4" onClick={() => setShowPending(false)}>
-          <div className="bg-white rounded-2xl max-w-lg w-full max-h-[80vh] overflow-y-auto shadow-2xl" onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4 overscroll-contain" onClick={() => setShowPending(false)}>
+          <div className="bg-white rounded-2xl max-w-lg w-full max-h-[80vh] overflow-y-auto overscroll-contain shadow-2xl" onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between p-4 border-b border-slate-200 sticky top-0 bg-white z-10">
               <h3 className="text-xs font-bold text-slate-900 flex items-center gap-2">
                 <Clock className="w-4 h-4 text-amber-500" />

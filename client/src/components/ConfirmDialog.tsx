@@ -1,3 +1,4 @@
+import React, { useEffect } from 'react';
 import { AlertTriangle, X } from 'lucide-react';
 
 interface ConfirmDialogProps {
@@ -12,10 +13,22 @@ interface ConfirmDialogProps {
 }
 
 export default function ConfirmDialog({ open, title, message, confirmLabel = 'Delete', confirmIcon: ConfirmIcon, onConfirm, onCancel, loading }: ConfirmDialogProps) {
+  useEffect(() => {
+    if (!open) return;
+    const originalBodyOverflow = document.body.style.overflow;
+    const originalHtmlOverflow = document.documentElement.style.overflow;
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = originalBodyOverflow;
+      document.documentElement.style.overflow = originalHtmlOverflow;
+    };
+  }, [open]);
+
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overscroll-contain">
       <div className="absolute inset-0 bg-black/40" onClick={onCancel} />
       <div className="relative bg-white rounded-xl shadow-xl w-full max-w-sm overflow-hidden">
         <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100">

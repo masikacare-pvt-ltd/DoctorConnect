@@ -68,17 +68,17 @@ describe('profileSchema', () => {
 
 describe('loginSchema', () => {
   it('validates email + password', () => {
-    expect(loginSchema.parse({ email: 'a@b.com', password: 'secret1' }).email).toBe('a@b.com');
-    expect(() => loginSchema.parse({ email: 'nope', password: 'secret1' })).toThrow(/valid email/);
-    expect(() => loginSchema.parse({ email: 'a@b.com', password: '123' })).toThrow(/6 characters/);
+    expect(loginSchema.parse({ email: 'a@b.com', password: 'Password1' }).email).toBe('a@b.com');
+    expect(() => loginSchema.parse({ email: 'nope', password: 'Password1' })).toThrow(/valid email/);
+    expect(() => loginSchema.parse({ email: 'a@b.com', password: '123' })).toThrow(/8 characters/);
   });
 });
 
 describe('signupSchema', () => {
   const base = {
     email: 'a@b.com',
-    password: 'secret1',
-    confirmPassword: 'secret1',
+    password: 'Secret123',
+    confirmPassword: 'Secret123',
     firstName: 'Ada',
     lastName: 'Lovelace',
     specializationId: 'neurology',

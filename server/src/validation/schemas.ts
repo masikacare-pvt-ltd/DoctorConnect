@@ -4,6 +4,7 @@ export const createCaseSchema = z.object({
   title: z.string().min(1, 'Title is required').max(200),
   description: z.string().min(1, 'Description is required').max(5000),
   specialization: z.string().optional(),
+  caseType: z.enum(['Normal', 'Abnormal', 'Special']).optional(),
   urgent: z.boolean().optional(),
   diseaseTags: z.array(z.string()).optional(),
   category: z.string().optional(),
@@ -28,7 +29,10 @@ export const completeProfileSchema = z.object({
 });
 
 export const avatarUploadSchema = z.object({
-  imageData: z.string().min(1, 'Image data is required'),
+  // base64 data URI — max ~5MB image = ~6.8MB base64 string ≈ 7_000_000 chars
+  imageData: z.string()
+    .min(1, 'Image data is required')
+    .max(7_000_000, 'Image is too large. Maximum size is 5MB.'),
 });
 
 export const toggleBookmarkSchema = z.object({

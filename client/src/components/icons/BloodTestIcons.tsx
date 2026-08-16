@@ -2,12 +2,37 @@ import { IconProps } from './IconFactories';
 
 // --- Hematology ---
 export const IconCBC = (props: IconProps) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={props.strokeWidth || 1.5} strokeLinecap="round" strokeLinejoin="round" {...props}>
-    <path d="M9 2v17.5A2.5 2.5 0 0 0 11.5 22h1a2.5 2.5 0 0 0 2.5-2.5V2" />
-    <path d="M8 2h8" />
-    <circle cx="12" cy="14" r="1" fill="currentColor" stroke="none" />
-    <circle cx="10.5" cy="17" r="1" fill="currentColor" stroke="none" />
-    <circle cx="13.5" cy="17" r="1" fill="currentColor" stroke="none" />
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={props.strokeWidth || 1.6} strokeLinecap="round" strokeLinejoin="round" {...props}>
+    {/* Test tube */}
+    <path d="M9 3h6v14a3 3 0 0 1-6 0V3Z" />
+    <line x1="9" y1="3" x2="15" y2="3" strokeWidth="2" />
+    {/* Blood drops inside tube */}
+    <circle cx="12" cy="13" r="1.2" fill="currentColor" stroke="none" />
+    <circle cx="10.5" cy="16" r="1" fill="currentColor" stroke="none" opacity="0.7" />
+    <circle cx="13.5" cy="16" r="1" fill="currentColor" stroke="none" opacity="0.7" />
+  </svg>
+);
+
+export const IconPCV = (props: IconProps) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={props.strokeWidth || 1.6} strokeLinecap="round" strokeLinejoin="round" {...props}>
+    {/* Test tube outline */}
+    <path d="M9 3h6v14a3 3 0 0 1-6 0V3Z" />
+    <line x1="9" y1="3" x2="15" y2="3" strokeWidth="2" />
+    {/* Filled bottom half (blood level) */}
+    <path d="M9 12h6v5a3 3 0 0 1-6 0v-5Z" fill="currentColor" opacity="0.25" stroke="none" />
+    {/* Level line */}
+    <line x1="9" y1="12" x2="15" y2="12" strokeWidth="1.5" />
+  </svg>
+);
+
+export const IconESR = (props: IconProps) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={props.strokeWidth || 1.6} strokeLinecap="round" strokeLinejoin="round" {...props}>
+    {/* Tall narrow ESR tube */}
+    <path d="M10 2h4v17a2 2 0 0 1-4 0V2Z" />
+    <line x1="10" y1="2" x2="14" y2="2" strokeWidth="2" />
+    {/* Blood settled at bottom */}
+    <path d="M10 14h4v5a2 2 0 0 1-4 0v-5Z" fill="currentColor" opacity="0.25" stroke="none" />
+    <line x1="10" y1="14" x2="14" y2="14" strokeWidth="1.5" />
   </svg>
 );
 

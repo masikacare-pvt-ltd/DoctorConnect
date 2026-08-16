@@ -28,7 +28,6 @@ router.get('/search', requireAuth, requireApproved, async (req: Request, res: Re
       data: users.map(u => ({
         id: u.id,
         name: u.profile?.displayName || u.name,
-        email: u.email,
         image: u.profile?.avatarUrl || u.image || null,
       })),
     });

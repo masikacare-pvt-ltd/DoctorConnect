@@ -12,7 +12,8 @@ interface RawComment {
 }
 
 export async function fetchComments(caseId: string): Promise<CaseComment[]> {
-  const { data } = await apiGet(`/api/comments?caseId=${caseId}`);
+  const res = await apiGet(`/api/comments?caseId=${caseId}`);
+  const data = res?.data ?? res;
   return (data || []).map((c: RawComment) => ({
     id: c.id,
     caseId: c.caseId,
@@ -27,7 +28,8 @@ export async function fetchComments(caseId: string): Promise<CaseComment[]> {
 
 export async function addComment(caseId: string, input: { text: string }): Promise<CaseComment | null> {
   try {
-    const { data } = await apiPost('/api/comments', { caseId, content: input.text });
+    const res = await apiPost('/api/comments', { caseId, content: input.text });
+    const data = res?.data ?? res;
     if (!data) return null;
     return {
       id: data.id,
@@ -45,7 +47,8 @@ export async function addComment(caseId: string, input: { text: string }): Promi
 }
 
 export async function fetchRecentComments(limit = 20): Promise<CaseComment[]> {
-  const { data } = await apiGet(`/api/comments/recent?limit=${limit}`);
+  const res = await apiGet(`/api/comments/recent?limit=${limit}`);
+  const data = res?.data ?? res;
   return (data || []).map((c: RawComment) => ({
     id: c.id,
     caseId: c.caseId,

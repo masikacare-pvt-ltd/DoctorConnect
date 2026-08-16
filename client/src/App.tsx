@@ -1,5 +1,6 @@
 import { Suspense, lazy } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Loader2 } from 'lucide-react';
 import { AuthProvider } from './hooks/useAuth';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { ToastProvider } from './contexts/ToastContext';
@@ -11,9 +12,11 @@ import SignupScreen from './components/SignupScreen';
 import ForgotPassword from './components/ForgotPassword';
 import PendingApproval from './components/PendingApproval';
 import AdminLogin from './components/AdminLogin';
+import NotFoundPage from './components/NotFoundPage';
 
 const ProfileCompleteLazy = lazy(() => import('./components/ProfileComplete'));
 const DashboardLazy = lazy(() => import('./components/Dashboard'));
+const AddReportPageLazy = lazy(() => import('./components/AddReportPage'));
 const DiscussionsLazy = lazy(() => import('./components/Discussions'));
 const CasesPageLazy = lazy(() => import('./components/CasesPage'));
 const ProfileScreenLazy = lazy(() => import('./components/ProfileScreen'));
@@ -22,6 +25,7 @@ const AdminCasesPageLazy = lazy(() => import('./components/AdminCasesPage'));
 const AdminCaseDetailPageLazy = lazy(() => import('./components/AdminCaseDetailPage'));
 const AdminDoctorsPageLazy = lazy(() => import('./components/AdminDoctorsPage'));
 const AdminRecycleBinLazy = lazy(() => import('./components/AdminRecycleBin'));
+const AdminReportsPageLazy = lazy(() => import('./components/AdminReportsPage'));
 
 export default function App() {
   return (
@@ -30,7 +34,11 @@ export default function App() {
         <ToastProvider>
           <BrowserRouter>
               <ErrorBoundary>
-              <Suspense fallback={null}>
+              <Suspense fallback={
+                <div className="min-h-screen bg-gradient-to-br from-slate-50 to-indigo-50 flex items-center justify-center">
+                  <Loader2 className="w-8 h-8 text-indigo-600 animate-spin" />
+                </div>
+              }>
                 <Routes>
               <Route
                 path="/"
@@ -80,14 +88,8 @@ export default function App() {
                   </ProfileRoute>
                 }
               />
-              <Route
-                path="/dashboard"
-                element={
-                  <ProtectedRoute>
-                    <DashboardLazy />
-                  </ProtectedRoute>
-                }
-              />
+              <Route path="/dashboard" element={<ProtectedRoute><DashboardLazy /></ProtectedRoute>} />
+              <Route path="/add-report" element={<ProtectedRoute><AddReportPageLazy /></ProtectedRoute>} />
               <Route
                 path="/admin"
                 element={
@@ -129,6 +131,14 @@ export default function App() {
                 }
               />
               <Route
+                path="/admin/reports"
+                element={
+                  <AdminRoute>
+                    <AdminReportsPageLazy />
+                  </AdminRoute>
+                }
+              />
+              <Route
                 path="/case/:caseId"
                 element={
                   <ProtectedRoute>
@@ -152,7 +162,7 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
-              <Route path="*" element={<Navigate to="/" replace />} />
+              <Route path="*" element={<NotFoundPage />} />
               </Routes>
               </Suspense>
             </ErrorBoundary>

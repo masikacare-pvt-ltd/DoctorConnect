@@ -9,7 +9,14 @@ export interface AuthenticatedRequest extends Request {
 
 export const requireAuth = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const session = await auth.api.getSession({ headers: req.headers as any });
+    // Build a Web API Headers object from Express request headers
+    const headers = new Headers();
+    for (const [key, val] of Object.entries(req.headers)) {
+      if (typeof val === 'string') headers.set(key, val);
+      else if (Array.isArray(val)) headers.set(key, val.join(', '));
+    }
+    
+    const session = await auth.api.getSession({ headers });
     if (!session?.user) {
       return res.status(401).json({ status: 'error', message: 'Unauthorized' });
     }
@@ -24,7 +31,8 @@ export const requireAuth = async (req: Request, res: Response, next: NextFunctio
     (req as AuthenticatedRequest).user = dbUser as any;
     (req as AuthenticatedRequest).session = session.session as any;
     next();
-  } catch {
+  } catch (e) {
+    console.error('[requireAuth] Session check failed:', e);
     res.status(401).json({ status: 'error', message: 'Unauthorized' });
   }
 };

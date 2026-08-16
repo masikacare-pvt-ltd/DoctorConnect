@@ -227,13 +227,13 @@ export default function LandingPage() {
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <span className="text-sm font-bold text-slate-900">+ MedConnect</span>
-            <span className="text-[10px] text-slate-400">© 2026. All rights reserved.</span>
+            <span className="text-[10px] text-slate-400">© {new Date().getFullYear()}. All rights reserved.</span>
           </div>
           <div className="flex gap-6 text-slate-400">
-            <a href="#features" className="hover:text-slate-600">Privacy Policy</a>
-            <a href="#features" className="hover:text-slate-600">Terms of Service</a>
-            <a href="#features" className="hover:text-slate-600">HIPAA Clause</a>
-            <a href="#features" className="hover:text-slate-600">Support</a>
+            <a href="/privacy" className="hover:text-slate-600">Privacy Policy</a>
+            <a href="/terms" className="hover:text-slate-600">Terms of Service</a>
+            <a href="/hipaa" className="hover:text-slate-600">HIPAA Clause</a>
+            <a href="mailto:support@medconnect.app" className="hover:text-slate-600">Support</a>
           </div>
         </div>
       </footer>

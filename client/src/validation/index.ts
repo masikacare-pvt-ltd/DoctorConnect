@@ -4,6 +4,7 @@ export const caseSchema = z.object({
   title: z.string().trim().min(4, 'Title must be at least 4 characters').max(120),
   description: z.string().trim().min(10, 'Description must be at least 10 characters').max(2000),
   specializationId: z.string().min(1, 'Select a specialization'),
+  caseType: z.enum(['Normal', 'Abnormal', 'Special']).default('Normal'),
   diseaseTags: z.array(z.string().trim().min(1).max(30)).max(12).default([]),
   urgent: z.boolean().default(false),
   caseQuote: z.string().trim().max(280).optional().default(''),
@@ -35,15 +36,18 @@ export type ProfileInput = z.infer<typeof profileSchema>;
 
 export const loginSchema = z.object({
   email: z.string().trim().email('Enter a valid email'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
+  password: z.string().min(8, 'Password must be at least 8 characters'),
 });
 
 export type LoginInput = z.infer<typeof loginSchema>;
 
 export const signupSchema = z.object({
   email: z.string().trim().email('Enter a valid email'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
-  confirmPassword: z.string().min(6),
+  password: z.string()
+    .min(8, 'Password must be at least 8 characters')
+    .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
+    .regex(/[0-9]/, 'Password must contain at least one number'),
+  confirmPassword: z.string().min(8),
   firstName: z.string().trim().min(1, 'First name is required').max(50),
   lastName: z.string().trim().min(1, 'Last name is required').max(50),
   countryCode: z.string().trim().max(10).default('+1'),

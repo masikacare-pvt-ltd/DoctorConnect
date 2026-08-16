@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+﻿import React, { useState, useRef, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
   Search, Bell, UploadCloud, Plus, X, ChevronDown, ChevronRight, Send,
   FileText, Tag, User as UserIcon, Sparkles
@@ -13,10 +13,11 @@ import { validateImageFile } from '../utils/image';
 import { getAvatarUrl } from '../utils/avatar';
 import AppShell from './AppShell';
 import VoiceInputButton from './VoiceInputButton';
-import SelectReportModal, { ReportSelection } from './SelectReportModal';
+import { ReportSelection } from './AddReportPage';
 
 export default function Dashboard() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { profile } = useAuth();
   const { toast } = useToast();
 
@@ -35,7 +36,6 @@ export default function Dashboard() {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
   const [isUploading, setIsUploading] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -57,7 +57,6 @@ export default function Dashboard() {
   // Recommendation field & Report Modal
   const [futureRecommendations, setFutureRecommendations] = useState('');
   const [selectedReportType, setSelectedReportType] = useState<string>('General Case Summary');
-  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
 
   useEffect(() => {
     if (specializations.length && !specializationId) setSpecializationId(specializations[0].id);
@@ -70,6 +69,16 @@ export default function Dashboard() {
 
   useEffect(() => () => previews.forEach((p) => URL.revokeObjectURL(p)), [previews]);
 
+  // Handle report selection passed back from AddReportPage via location state
+  useEffect(() => {
+    if (location.state?.reportSelection) {
+      handleReportSelect(location.state.reportSelection);
+      // Clear the state so it doesn't re-trigger on re-render
+      window.history.replaceState({}, '', location.pathname);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const handleReportSelect = (selection: ReportSelection) => {
     setMainCategory(selection.mainCategory);
     setSubCategory(selection.subCategory);
@@ -78,7 +87,7 @@ export default function Dashboard() {
       const combined = Array.from(new Set([...diseaseTags, ...selection.tags]));
       setDiseaseTags(combined);
     }
-    toast(`Selected ${selection.mainCategory} → ${selection.testItem}`, 'success');
+    toast(`Selected ${selection.mainCategory} â†’ ${selection.testItem}`, 'success');
   };
 
   const handleAddTag = (e?: React.FormEvent) => {
@@ -161,18 +170,18 @@ export default function Dashboard() {
 
     setIsUploading(true);
     try {
-      const activeUser = profile || { firstName: 'Arjun', lastName: 'Verma', designation: 'Cardiologist', avatarUrl: '' };
       const { caseId, error } = await caseApi.createCase(
         {
           title: description.split('.')[0].slice(0, 80) || 'Clinical Case',
           description: fullDescription,
           specializationId: specializationId || specializations[0]?.id || '',
+          caseType,
           diseaseTags,
           urgent,
           caseQuote: '',
         },
         selectedFiles,
-        activeUser as any,
+        profile as any,
       );
       if (error) toast(error, 'error');
       else {
@@ -184,12 +193,11 @@ export default function Dashboard() {
       toast(err?.message || 'Failed to submit case.', 'error');
     } finally {
       setIsUploading(false);
-      setUploadProgress(0);
     }
   };
 
-  const activeUser = profile || { firstName: 'Arjun', lastName: 'Verma', designation: 'Cardiologist', avatarUrl: '' };
-  const doctorFullName = `Dr. ${activeUser.firstName || 'Arjun'} ${activeUser.lastName || 'Verma'}`.trim();
+  const activeUser = profile;
+  const doctorFullName = profile ? `Dr. ${profile.firstName || ''} ${profile.lastName || ''}`.trim() : '';
 
   return (
     <AppShell>
@@ -221,6 +229,7 @@ export default function Dashboard() {
         {/* User profile dropdown matching reference header */}
         <div className="flex items-center gap-3 shrink-0">
           <button
+            aria-label={unreadCount > 0 ? `Notifications (${unreadCount} unread)` : 'Notifications'}
             onClick={() => {
               if (unreadCount) { notifications.filter((n) => !n.read).forEach((n) => markRead(n.id)); }
               toast(unreadCount ? 'Notifications marked as read.' : 'No new notifications.', 'info');
@@ -228,15 +237,19 @@ export default function Dashboard() {
             className="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl transition-all relative"
           >
             <Bell className="w-5 h-5" />
-            {unreadCount > 0 && <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full border border-white" />}
+            {unreadCount > 0 && <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full border border-white" aria-hidden="true" />}
           </button>
 
           <div
+            role="button"
+            tabIndex={0}
+            aria-label="Go to profile"
             onClick={() => navigate('/profile')}
+            onKeyDown={(e) => e.key === 'Enter' && navigate('/profile')}
             className="flex items-center gap-3 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/60 p-1.5 rounded-full transition-colors"
           >
             <div className="w-10 h-10 rounded-full bg-slate-900 dark:bg-slate-700 text-white flex items-center justify-center overflow-hidden border border-slate-200 dark:border-slate-700 shadow-sm shrink-0">
-              {activeUser.avatarUrl ? (
+              {activeUser?.avatarUrl ? (
                 <img
                   src={getAvatarUrl(activeUser)}
                   alt="Profile Avatar"
@@ -249,10 +262,10 @@ export default function Dashboard() {
             </div>
             <div className="text-left hidden sm:block">
               <div className="flex items-center gap-1.5">
-                <span className="text-xs font-bold text-[#0B132B] dark:text-slate-100">{doctorFullName}</span>
+                <span className="text-xs font-bold text-[#0B132B] dark:text-slate-100">{doctorFullName || 'Doctor'}</span>
                 <ChevronDown className="w-3.5 h-3.5 text-slate-500" />
               </div>
-              <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium block">{activeUser.designation || 'Cardiologist'}</span>
+              <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium block">{activeUser?.designation || ''}</span>
             </div>
           </div>
         </div>
@@ -263,7 +276,7 @@ export default function Dashboard() {
         {/* Welcome Greeting */}
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-[#0B132B] dark:text-white flex items-center gap-2 font-sans">
-            Good morning, Doctor! <span className="text-2xl">👋</span>
+            {(() => { const h = new Date().getHours(); return h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening'; })()}, Doctor!
           </h1>
           <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">
             Share clinical cases with fellow doctors.
@@ -294,23 +307,19 @@ export default function Dashboard() {
                 : 'border-slate-200/90 dark:border-slate-700 hover:border-slate-400 hover:bg-slate-50/50'
             }`}
             id="drag-drop-zone"
+            role="button"
+            tabIndex={0}
+            aria-label="Upload clinical images — click or drag and drop"
+            onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") handleTriggerUpload(); }}
           >
             {isUploading ? (
-              <div className="w-full max-w-xs py-2 space-y-2">
-                <div className="flex items-center justify-between text-xs font-semibold text-slate-700">
-                  <span className="flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse" />
-                    Uploading files…
-                  </span>
-                  <span className="font-mono">{uploadProgress}%</span>
-                </div>
-                <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                  <div className="h-full bg-blue-600 transition-all duration-150 rounded-full" style={{ width: `${uploadProgress}%` }} />
-                </div>
+              <div className="w-full max-w-xs py-3 flex flex-col items-center gap-2">
+                <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+                <span className="text-xs font-semibold text-slate-600 dark:text-slate-300">Submitting caseâ€¦</span>
               </div>
             ) : uploadError ? (
               <div className="py-1 text-center space-y-1">
-                <span className="block text-xs font-semibold text-rose-600">⚠️ {uploadError}</span>
+                <span className="block text-xs font-semibold text-rose-600">âš ï¸ {uploadError}</span>
                 <button
                   type="button"
                   onClick={(e) => { e.stopPropagation(); handleTriggerUpload(); }}
@@ -348,7 +357,7 @@ export default function Dashboard() {
                     Click to upload <span className="font-normal text-slate-500">or drag and drop</span>
                   </span>
                   <span className="block text-[11px] text-slate-400 mt-1">
-                    JPG, PNG, DICOM files up to 20MB
+                    JPG, PNG, DICOM files up to 15MB
                   </span>
                 </div>
               </>
@@ -560,7 +569,7 @@ export default function Dashboard() {
             </div>
             <button
               type="button"
-              onClick={() => setIsReportModalOpen(true)}
+              onClick={() => navigate('/add-report')}
               className="bg-[#0B132B] hover:bg-slate-900 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-bold rounded-xl px-5 py-2.5 text-xs flex items-center gap-2 transition-all shadow-sm active:scale-95 shrink-0"
             >
               Select Report Type
@@ -581,7 +590,7 @@ export default function Dashboard() {
                   type="text"
                   value={mainCategory}
                   onChange={(e) => setMainCategory(e.target.value)}
-                  onClick={() => setIsReportModalOpen(true)}
+                  onClick={() => navigate('/add-report')}
                   placeholder="Select main category"
                   className="w-full pr-8 px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900/10 transition-all cursor-pointer"
                 />
@@ -600,7 +609,7 @@ export default function Dashboard() {
                   type="text"
                   value={subCategory}
                   onChange={(e) => setSubCategory(e.target.value)}
-                  onClick={() => { if (!subCategory) setIsReportModalOpen(true); }}
+                  onClick={() => { if (!subCategory) navigate('/add-report'); }}
                   placeholder="Select subcategory"
                   className="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900/10 transition-all"
                 />
@@ -703,13 +712,6 @@ export default function Dashboard() {
           </div>
         </form>
       </main>
-
-      {/* Full screen / Modal Add Report flow matching exact UI reference */}
-      <SelectReportModal
-        isOpen={isReportModalOpen}
-        onClose={() => setIsReportModalOpen(false)}
-        onSelect={handleReportSelect}
-      />
     </AppShell>
   );
 }

@@ -76,8 +76,14 @@ async function mapProfile(raw: RawProfile): Promise<Profile> {
   };
 }
 
+// All profile API responses have shape: { status: 'success', data: {...} }
+// apiGet/apiPost/apiPatch return the full body, so we need to unwrap .data
+function unwrap(res: any) {
+  return res?.data ?? res;
+}
+
 export async function completeProfile(input: ProfileInput & { gender?: string }): Promise<Profile> {
-  const { data } = await apiPost('/api/profile/complete', {
+  const res = await apiPost('/api/profile/complete', {
     firstName: input.firstName,
     lastName: input.lastName,
     designation: input.designation,
@@ -89,11 +95,11 @@ export async function completeProfile(input: ProfileInput & { gender?: string })
     bio: input.bio,
     gender: input.gender || 'male',
   });
-  return mapProfile(data);
+  return mapProfile(unwrap(res));
 }
 
 export async function updateProfile(input: ProfileInput & { gender?: string }): Promise<Profile> {
-  const { data } = await apiPatch('/api/profile', {
+  const res = await apiPatch('/api/profile', {
     firstName: input.firstName,
     lastName: input.lastName,
     designation: input.designation,
@@ -105,19 +111,20 @@ export async function updateProfile(input: ProfileInput & { gender?: string }): 
     bio: input.bio,
     gender: input.gender,
   });
-  return mapProfile(data);
+  return mapProfile(unwrap(res));
 }
 
 export async function uploadAvatar(imageData: string): Promise<Profile> {
-  const { data } = await apiPost('/api/profile/avatar', { imageData });
-  return mapProfile(data);
+  const res = await apiPost('/api/profile/avatar', { imageData });
+  return mapProfile(unwrap(res));
 }
 
 export async function fetchProfile(): Promise<Profile | null> {
   try {
-    const { data } = await apiGet('/api/profile/me');
-    if (!data) return null;
-    return mapProfile(data);
+    const res = await apiGet('/api/profile/me');
+    const raw = unwrap(res);
+    if (!raw) return null;
+    return mapProfile(raw);
   } catch {
     return null;
   }

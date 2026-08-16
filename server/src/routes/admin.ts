@@ -21,7 +21,7 @@ function getAuthorAvatar(author: any): string {
 router.get('/doctors', async (req: Request, res: Response) => {
   try {
     const page = parseInt(req.query.page as string) || 1;
-    const limit = parseInt(req.query.limit as string) || 50;
+    const limit = Math.min(parseInt(req.query.limit as string) || 20, 100);
     const search = (req.query.search as string) || '';
     const status = (req.query.status as string) || '';
     const sortBy = (req.query.sortBy as string) || 'createdAt';

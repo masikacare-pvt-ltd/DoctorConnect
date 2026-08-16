@@ -3,11 +3,20 @@ import { prisma } from '../config/prisma';
 import { requireAuth, requireApproved, AuthenticatedRequest } from '../middlewares/auth';
 import { validate } from '../middlewares/validate';
 import { addCommentSchema } from '../validation/schemas';
+import { getDefaultAvatar } from '../utils/avatar';
 
 const router = Router();
 
+function getCommentAuthorAvatar(author: any): string {
+  if (author.profile?.avatarData) return author.profile.avatarData;
+  if (author.profile?.avatarUrl) return author.profile.avatarUrl;
+  if (author.image) return author.image;
+  return getDefaultAvatar(author.profile?.gender);
+}
+
 // GET /api/comments/recent - recent comments across all cases
-router.get('/recent', async (req: Request, res: Response) => {
+// Auth required: comments contain clinical content (PHI risk if public)
+router.get('/recent', requireAuth, requireApproved, async (req: Request, res: Response) => {
   try {
     const limit = Math.min(parseInt(req.query.limit as string) || 20, 50);
     const comments = await prisma.comment.findMany({
@@ -24,7 +33,7 @@ router.get('/recent', async (req: Request, res: Response) => {
         content: c.content,
         authorId: c.authorId,
         authorName: c.author.profile?.displayName || c.author.name,
-        authorAvatar: c.author.profile?.avatarUrl || c.author.image || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(c.author.name)}`,
+        authorAvatar: getCommentAuthorAvatar(c.author),
         createdAt: c.createdAt,
       })),
     });
@@ -34,7 +43,8 @@ router.get('/recent', async (req: Request, res: Response) => {
 });
 
 // GET /api/comments?caseId=xxx
-router.get('/', async (req: Request, res: Response) => {
+// Auth required: clinical case discussions are not public
+router.get('/', requireAuth, requireApproved, async (req: Request, res: Response) => {
   try {
     const { caseId } = req.query;
     if (!caseId) return res.status(400).json({ status: 'error', message: 'caseId required' });
@@ -53,7 +63,7 @@ router.get('/', async (req: Request, res: Response) => {
         content: c.content,
         authorId: c.authorId,
         authorName: c.author.profile?.displayName || c.author.name,
-        authorAvatar: c.author.profile?.avatarUrl || c.author.image || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(c.author.name)}`,
+        authorAvatar: getCommentAuthorAvatar(c.author),
         createdAt: c.createdAt,
       })),
     });
@@ -93,29 +103,36 @@ router.post('/', requireAuth, requireApproved, validate(addCommentSchema), async
       });
     }
 
-    // Parse @mentions and notify mentioned users
-    const allUsers = await prisma.user.findMany({
-      where: { id: { not: user.id } },
-      include: { profile: true },
-    });
-    const mentionedUserIds: string[] = [];
-    for (const mu of allUsers) {
-      const name = mu.profile?.displayName || mu.name;
-      const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      if (new RegExp(`@${escaped}(?:\\s|$|[.,!?;])`).test(content)) {
-        mentionedUserIds.push(mu.id);
-      }
-    }
-    if (mentionedUserIds.length > 0) {
-      await prisma.notification.createMany({
-        data: mentionedUserIds.map(uid => ({
-          userId: uid,
-          type: 'mention',
-          text: `${user.name} mentioned you in a comment`,
-          caseId,
-          fromName: user.name,
-        })),
+    // Parse @mentions and notify mentioned users.
+    // Extract @DisplayName tokens from the comment, then look up only those specific users.
+    // This avoids loading the entire user table on every comment post.
+    const mentionTokens = [...content.matchAll(/@([\w\s.'-]{1,60})(?=\s|$|[.,!?;])/g)]
+      .map((m: RegExpMatchArray) => m[1].trim())
+      .filter((t: string) => t.length > 0);
+
+    if (mentionTokens.length > 0) {
+      // Look up only the users whose display names appear as @mentions
+      const mentionedUsers = await prisma.user.findMany({
+        where: {
+          id: { not: user.id },
+          profile: {
+            displayName: { in: mentionTokens, mode: 'insensitive' },
+          },
+        },
+        select: { id: true },
       });
+
+      if (mentionedUsers.length > 0) {
+        await prisma.notification.createMany({
+          data: mentionedUsers.map(mu => ({
+            userId: mu.id,
+            type: 'mention',
+            text: `${user.name} mentioned you in a comment`,
+            caseId,
+            fromName: user.name,
+          })),
+        });
+      }
     }
 
     res.status(201).json({
@@ -126,7 +143,7 @@ router.post('/', requireAuth, requireApproved, validate(addCommentSchema), async
         content: comment.content,
         authorId: comment.authorId,
         authorName: comment.author.profile?.displayName || comment.author.name,
-        authorAvatar: comment.author.profile?.avatarUrl || comment.author.image || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(comment.author.name)}`,
+        authorAvatar: getCommentAuthorAvatar(comment.author),
         createdAt: comment.createdAt,
       },
     });

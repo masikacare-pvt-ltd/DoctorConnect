@@ -15,5 +15,21 @@ firebase-applet-config.json
 firebase-blueprint.json
 assets/.aistudio/
 
+# Firebase legacy files (project migrated to PostgreSQL + Express)
+firebase.json
+firestore.rules
+firestore.indexes.json
+storage.rules
+.firebaserc
+functions/
+
+# Root package-lock (no root package.json — use client/ and server/ separately)
+package-lock.json
+
 # TypeScript build cache
 tsconfig.tsbuildinfo
+server/tsconfig.tsbuildinfo
+
+# Local dev scripts with hardcoded paths
+start-client.cmd
+start-server.cmd

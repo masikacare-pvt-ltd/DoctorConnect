@@ -95,7 +95,7 @@ export default function SignupScreen() {
             <p className="text-slate-400 text-sm leading-relaxed">Join a global network of medical professionals. Streamline your patient care with MedConnect's clinical precision tools.</p>
           </div>
         </div>
-        <div className="flex justify-between items-center text-[10px] text-slate-500 font-mono relative z-10 pt-8 md:pt-0"><span>ESTABLISHED 2026</span><span>MEDICAL EXCELLENCE</span></div>
+        <div className="flex justify-between items-center text-[10px] text-slate-500 font-mono relative z-10 pt-8 md:pt-0"><span>© {new Date().getFullYear()} MEDCONNECT</span><span>MEDICAL EXCELLENCE</span></div>
       </div>
 
       <div className="md:w-7/12 flex items-center justify-center p-6 md:p-12 overflow-y-auto">
@@ -198,7 +198,7 @@ export default function SignupScreen() {
             <div className="pt-2">
               <label className="flex items-start gap-2.5 cursor-pointer">
                 <input type="checkbox" checked={agreeTerms} onChange={(e) => { setAgreeTerms(e.target.checked); if (errors.agreeTerms) setErrors({ ...errors, agreeTerms: '' }); }} className="mt-1 rounded text-indigo-600 focus:ring-indigo-400" id="signup-terms-checkbox" />
-                <span className="text-xs text-slate-400 select-none leading-normal">I agree to the <span className="text-slate-800 font-semibold hover:underline">Terms of Service</span> and <span className="text-slate-800 font-semibold hover:underline">Privacy Policy</span>.</span>
+                <span className="text-xs text-slate-400 select-none leading-normal">I agree to the <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-slate-800 font-semibold hover:underline">Terms of Service</a> and <a href="/privacy" target="_blank" rel="noopener noreferrer" className="text-slate-800 font-semibold hover:underline">Privacy Policy</a>.</span>
               </label>
               {errors.agreeTerms && <p className="text-[10px] text-rose-500 mt-1">{errors.agreeTerms}</p>}
             </div>

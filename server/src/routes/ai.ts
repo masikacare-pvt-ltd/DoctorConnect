@@ -1,9 +1,29 @@
 import { Router, Request, Response } from 'express';
 import Groq from 'groq-sdk';
+import rateLimit from 'express-rate-limit';
 import { prisma } from '../config/prisma';
 import { requireAuth, requireApproved, AuthenticatedRequest } from '../middlewares/auth';
 
 const router = Router();
+
+// Tight rate limit for AI generation — each call costs real money (GROQ API tokens).
+// 5 requests per hour per user ID (or IP fallback) prevents abuse.
+const aiGenerateRateLimit = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+  // Key by user ID when authenticated — avoids IPv6 complexity entirely.
+  // Falls back to IP only when no user is present (shouldn't happen on auth-protected routes).
+  skip: () => false,
+  keyGenerator: (req) => {
+    const user = (req as any).user;
+    return user?.id ?? 'anonymous';
+  },
+  validate: { xForwardedForHeader: false },
+  message: { status: 'error', message: 'AI analysis limit reached. You can generate up to 5 reports per hour.' },
+});
+
 let groq: Groq | null = null;
 function getGroq(): Groq {
   if (!groq) {
@@ -12,7 +32,6 @@ function getGroq(): Groq {
   }
   return groq;
 }
-
 const TEXT_MODEL = process.env.GROQ_MODEL || 'llama-3.3-70b-versatile';
 const VISION_MODEL = process.env.GROQ_VISION_MODEL || 'llama-3.2-90b-vision-preview';
 
@@ -151,7 +170,7 @@ async function callGroqVision(textPrompt: string, images: { mimeType: string; da
 }
 
 // POST /api/ai/generate - generate AI analysis for a case
-router.post('/generate', requireAuth, requireApproved, async (req: Request, res: Response) => {
+router.post('/generate', requireAuth, requireApproved, aiGenerateRateLimit, async (req: Request, res: Response) => {
   const user = (req as AuthenticatedRequest).user;
   try {
     const { caseId } = req.body;

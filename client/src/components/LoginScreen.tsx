@@ -16,26 +16,14 @@ export default function LoginScreen() {
   const [isLoading, setIsLoading] = useState(false);
   const [loginDone, setLoginDone] = useState(false);
 
-  // Wait for session to update after login, then navigate.
-  // Use a timeout fallback in case the session takes too long (cross-domain cookie delay).
+  // Wait for auth + profile to fully load after login, then navigate once.
   useEffect(() => {
     if (!loginDone) return;
+    if (loading) return; // wait until both session and profile are resolved
 
-    // Navigate immediately if already authenticated
-    if (!loading && isAuthenticated) {
+    if (isAuthenticated) {
       navigate(isProfileComplete ? '/dashboard' : '/complete-profile', { replace: true });
-      return;
     }
-
-    // Fallback: if loading takes more than 3s after login, force navigate anyway
-    const timer = setTimeout(() => {
-      if (isAuthenticated) {
-        navigate(isProfileComplete ? '/dashboard' : '/complete-profile', { replace: true });
-      }
-      // Do NOT do window.location.href — causes redirect loops
-    }, 3000);
-
-    return () => clearTimeout(timer);
   }, [loginDone, loading, isAuthenticated, isProfileComplete, navigate]);
 
   const handleLocalSubmit = async (e: React.FormEvent) => {
@@ -138,7 +126,7 @@ export default function LoginScreen() {
             </svg>
           </div>
         </div>
-        <div className="text-[10px] text-slate-300 font-mono">ESTABLISHED 2026 • CLINICAL EXCELLENCE</div>
+        <div className="text-[10px] text-slate-300 font-mono">© {new Date().getFullYear()} MEDCONNECT • CLINICAL EXCELLENCE</div>
       </div>
 
       <div className="md:w-1/2 flex items-center justify-center p-6 md:p-12 bg-slate-50">

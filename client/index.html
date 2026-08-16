@@ -3,44 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>MedConnect</title>
-    <script>
-      (function() {
-        try {
-          let target = window;
-          let desc = Object.getOwnPropertyDescriptor(window, 'fetch');
-          if (!desc) {
-            target = Window.prototype;
-            desc = Object.getOwnPropertyDescriptor(Window.prototype, 'fetch');
-          }
-          if (!desc) {
-            target = globalThis;
-            desc = Object.getOwnPropertyDescriptor(globalThis, 'fetch');
-          }
-          
-          if (desc && (!desc.writable || !desc.set)) {
-            const originalFetch = desc.get ? desc.get.call(window) : target.fetch;
-            let customFetch = originalFetch;
-            Object.defineProperty(target, 'fetch', {
-              get() {
-                return customFetch;
-              },
-              set(val) {
-                customFetch = val;
-              },
-              configurable: true,
-              enumerable: true
-            });
-          }
-        } catch (err) {
-          console.warn('Bypass fetch getter warning:', err);
-        }
-      })();
-    </script>
+    <title>MedConnect – Clinical Case Collaboration Platform</title>
+    <meta name="description" content="MedConnect is a secure platform for licensed medical professionals to share clinical cases, discuss diagnoses, and collaborate on patient care." />
+    <meta property="og:title" content="MedConnect – Clinical Case Collaboration" />
+    <meta property="og:description" content="Secure clinical case sharing for verified doctors." />
+    <meta property="og:type" content="website" />
+    <meta name="robots" content="noindex, nofollow" />
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
-

@@ -2,13 +2,13 @@ import { apiPost, apiGet, apiDelete } from '../lib/api';
 import type { AiAnalysisResult } from '../types/ai';
 
 export async function requestCaseAnalysis(caseId: string): Promise<AiAnalysisResult> {
-  const { data } = await apiPost('/api/ai/generate', { caseId });
-  return data as AiAnalysisResult;
+  const res = await apiPost('/api/ai/generate', { caseId });
+  return (res?.data ?? res) as AiAnalysisResult;
 }
 
 export async function fetchAiReport(caseId: string): Promise<AiAnalysisResult | null> {
-  const { data } = await apiGet(`/api/ai/report/${caseId}`);
-  return data;
+  const res = await apiGet(`/api/ai/report/${caseId}`);
+  return res?.data ?? res;
 }
 
 export async function deleteAiReport(caseId: string): Promise<void> {

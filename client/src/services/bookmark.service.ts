@@ -2,7 +2,8 @@ import { apiGet, apiPost } from '../lib/api';
 import type { Bookmark } from '../types/domain';
 
 export async function fetchBookmarks(): Promise<Bookmark[]> {
-  const { data } = await apiGet('/api/bookmarks');
+  const res = await apiGet('/api/bookmarks');
+  const data = res?.data ?? res;
   return (data || []).map((b: Bookmark) => ({
     caseId: b.caseId,
     caseTitle: b.caseTitle || '',

@@ -2,13 +2,14 @@ import { apiGet, apiPatch } from '../lib/api';
 import type { AppNotification } from '../types/domain';
 
 export async function fetchNotifications(): Promise<AppNotification[]> {
-  const { data } = await apiGet('/api/notifications');
+  const res = await apiGet('/api/notifications');
+  const data = res?.data ?? res;
   return (data || []).map((n: AppNotification) => ({
     id: n.id,
     userId: n.userId,
     type: n.type || 'system',
     caseId: n.caseId || null,
-    fromUid: n.fromUid || null,
+    fromUid: (n as any).fromUid || null,
     fromName: n.fromName || null,
     text: n.text || '',
     read: n.read || false,

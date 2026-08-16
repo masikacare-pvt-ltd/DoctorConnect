@@ -1,14 +1,12 @@
-import { Router } from 'express';
+import { Router, Request, Response } from 'express';
 import { prisma } from '../config/prisma';
 import { requireAuth, requireApproved, AuthenticatedRequest } from '../middlewares/auth';
 import { validate } from '../middlewares/validate';
 import { getDefaultAvatar } from '../utils/avatar';
 import { asString } from '../utils/query';
 import { createCaseSchema } from '../validation/schemas';
-import { Request, Response } from 'express';
 
 const router = Router();
-const viewedCases = new Set<string>();
 
 async function generateCaseNumber(): Promise<string> {
   const today = new Date();
@@ -16,21 +14,35 @@ async function generateCaseNumber(): Promise<string> {
   const m = String(today.getMonth() + 1).padStart(2, '0');
   const d = String(today.getDate()).padStart(2, '0');
   const dateStr = `${y}${m}${d}`;
+  const prefix = `MC-${dateStr}-`;
 
-  const lastCase = await prisma.clinicalCase.findFirst({
-    where: { caseNumber: { startsWith: `MC-${dateStr}-` } },
-    orderBy: { caseNumber: 'desc' },
-    select: { caseNumber: true },
-  });
+  // Use a PostgreSQL advisory lock keyed on today's date to prevent
+  // concurrent requests generating the same sequence number.
+  // pg_try_advisory_xact_lock acquires for the duration of the transaction.
+  const lockKey = parseInt(dateStr, 10); // e.g. 20250101
 
-  let nextSeq = 1;
-  if (lastCase?.caseNumber) {
+  const result = await prisma.$transaction(async (tx) => {
+    // Acquire an exclusive advisory lock for today's date — blocks other
+    // concurrent case creations until this transaction completes.
+    await tx.$executeRaw`SELECT pg_advisory_xact_lock(${lockKey})`;
+
+    const lastCase = await tx.clinicalCase.findFirst({
+      where: { caseNumber: { startsWith: prefix } },
+      orderBy: { caseNumber: 'desc' },
+      select: { caseNumber: true },
+    });
+
+    let nextSeq = 1;
+    if (lastCase?.caseNumber) {
       const parts = lastCase.caseNumber.split('-');
       const lastSeq = parseInt(parts[2] || '0', 10);
-    if (!isNaN(lastSeq)) nextSeq = lastSeq + 1;
-  }
+      if (!isNaN(lastSeq)) nextSeq = lastSeq + 1;
+    }
 
-  return `MC-${dateStr}-${String(nextSeq).padStart(4, '0')}`;
+    return `${prefix}${String(nextSeq).padStart(4, '0')}`;
+  });
+
+  return result;
 }
 
 function getAuthorAvatar(author: any): string {
@@ -84,6 +96,7 @@ router.get('/', async (req: Request, res: Response) => {
       authorName: c.author.profile?.displayName || c.author.name,
       authorAvatar: getAuthorAvatar(c.author),
       specialization: c.specialization,
+      caseType: c.caseType,
       urgent: c.urgent,
       diseaseTags: c.diseaseTags,
       status: c.status,
@@ -116,9 +129,25 @@ router.get('/:id', async (req: Request, res: Response) => {
     if (!c) return res.status(404).json({ status: 'error', message: 'Case not found' });
 
     const user = (req as AuthenticatedRequest).user;
-    const viewKey = user ? `${user.id}:${c.id}` : `anon:${req.ip}:${c.id}`;
-    if (!viewedCases.has(viewKey)) {
-      viewedCases.add(viewKey);
+    // DB-backed view deduplication: one view per user per case per day.
+    // Anonymous requests are not deduplicated (no user ID available without auth).
+    if (user) {
+      const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+      const viewAction = `view:${user.id}:${c.id}:${today}`;
+      const alreadyViewed = await prisma.activityLog.findFirst({
+        where: { userId: user.id, action: viewAction },
+        select: { id: true },
+      });
+      if (!alreadyViewed) {
+        await Promise.all([
+          prisma.activityLog.create({
+            data: { userId: user.id, action: viewAction, entityType: 'case', entityId: c.id },
+          }).catch(() => {}),
+          prisma.clinicalCase.update({ where: { id: c.id }, data: { viewsCount: { increment: 1 } } }),
+        ]);
+      }
+    } else {
+      // Unauthenticated access — increment view count without deduplication
       await prisma.clinicalCase.update({ where: { id: c.id }, data: { viewsCount: { increment: 1 } } });
     }
 
@@ -133,12 +162,13 @@ router.get('/:id', async (req: Request, res: Response) => {
         authorName: c.author.profile?.displayName || c.author.name,
         authorAvatar: getAuthorAvatar(c.author),
         specialization: c.specialization,
+        caseType: c.caseType,
         urgent: c.urgent,
         diseaseTags: c.diseaseTags,
         status: c.status,
         images: c.images.map(i => ({ ...i, downloadURL: i.imageData || i.secureUrl, thumbnailURL: i.imageData || i.secureUrl })),
         viewsCount: c.viewsCount + 1,
-        commentsCount: c._count.comments,
+        commentsCount: c._count.comments,  // always use live count, not cached field
         likesCount: c._count.likes,
         aiReport: c.aiReport ? (() => {
           const p = (typeof c.aiReport!.findings === 'object' ? c.aiReport!.findings : {}) as any;
@@ -173,7 +203,7 @@ router.get('/:id', async (req: Request, res: Response) => {
 router.post('/', requireAuth, requireApproved, validate(createCaseSchema), async (req: Request, res: Response) => {
   const user = (req as AuthenticatedRequest).user;
   try {
-    const { title, description, specialization, urgent, diseaseTags } = req.body;
+    const { title, description, specialization, caseType, urgent, diseaseTags } = req.body;
 
     const newCase = await prisma.clinicalCase.create({
       data: {
@@ -182,6 +212,7 @@ router.post('/', requireAuth, requireApproved, validate(createCaseSchema), async
         description,
         authorId: user.id,
         specialization: specialization || 'General Medicine',
+        caseType: caseType || 'Normal',
         urgent: urgent || false,
         diseaseTags: diseaseTags || [],
       },

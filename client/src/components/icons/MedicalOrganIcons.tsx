@@ -218,3 +218,43 @@ export const IconColon = (props: IconProps) => (
     <path d="M5 14h14" opacity="0.5" />
   </svg>
 );
+
+// --- Skin / Dermatology ---
+export const IconSkin = (props: IconProps) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={props.strokeWidth || 1.5} strokeLinecap="round" strokeLinejoin="round" {...props}>
+    <rect x="3" y="3" width="18" height="18" rx="4" />
+    <path d="M7 12c1-2 3-3 5-3s4 1 5 3" opacity="0.6" />
+    <circle cx="9" cy="9" r="1" fill="currentColor" />
+    <circle cx="15" cy="9" r="1" fill="currentColor" />
+    <path d="M9 16s1 2 3 2 3-2 3-2" />
+  </svg>
+);
+
+// --- Bone Marrow ---
+export const IconBoneMarrow = (props: IconProps) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={props.strokeWidth || 1.5} strokeLinecap="round" strokeLinejoin="round" {...props}>
+    <path d="M8 3c-1.5 2-2 4-2 6 0 2.5 1 4.5 2 5.5V21h8v-6.5c1-1 2-3 2-5.5 0-2-.5-4-2-6" />
+    <path d="M8 9h8M8 13h8" opacity="0.5" />
+    <circle cx="12" cy="6" r="2" fill="currentColor" opacity="0.3" />
+  </svg>
+);
+
+// --- Prostate Gland ---
+export const IconProstate = (props: IconProps) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={props.strokeWidth || 1.5} strokeLinecap="round" strokeLinejoin="round" {...props}>
+    <ellipse cx="12" cy="10" rx="7" ry="5" />
+    <path d="M12 15v6" />
+    <path d="M9 18h6" opacity="0.6" />
+    <circle cx="12" cy="10" r="2.5" fill="currentColor" opacity="0.25" />
+  </svg>
+);
+
+// --- Fluid Drop (Body Fluid Cytology) ---
+export const IconFluidDrop = (props: IconProps) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={props.strokeWidth || 1.5} strokeLinecap="round" strokeLinejoin="round" {...props}>
+    <path d="M12 3c-4.5 4.5-7 8-7 12 0 3.8 3.1 7 7 7s7-3.2 7-7c0-4-2.5-7.5-7-12Z" />
+    <path d="M9 14c0 1.7 1.3 3 3 3" opacity="0.6" strokeWidth="2" />
+    <circle cx="16" cy="7" r="1" fill="currentColor" opacity="0.7" />
+    <circle cx="18" cy="11" r="0.8" fill="currentColor" opacity="0.5" />
+  </svg>
+);

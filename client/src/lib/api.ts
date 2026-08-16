@@ -103,6 +103,7 @@ export function casesToClient(raw: any): import('../types/domain').ClinicalCase 
     specializationId: raw.specialization,
     category: raw.specialization,
     description: raw.description,
+    caseType: raw.caseType || 'Normal',
     urgent: raw.urgent,
     diseaseTags: raw.diseaseTags || [],
     caseQuote: '',

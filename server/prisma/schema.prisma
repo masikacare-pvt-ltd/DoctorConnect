@@ -134,6 +134,7 @@ model ClinicalCase {
   authorId       String
   author         User     @relation(fields: [authorId], references: [id])
   specialization String   @default("General Medicine")
+  caseType       String   @default("Normal")
   urgent         Boolean  @default(false)
   diseaseTags    String[] @default([])
   status         String   @default("open")

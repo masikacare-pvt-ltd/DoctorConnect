@@ -53,6 +53,7 @@ export interface ClinicalCase {
   specializationId: string;
   category: string;
   description: string;
+  caseType: 'Normal' | 'Abnormal' | 'Special';
   urgent: boolean;
   diseaseTags: string[];
   caseQuote: string;

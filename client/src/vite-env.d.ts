@@ -1,7 +1,7 @@
 /// <reference types="vite/client" />
 
 interface ImportMetaEnv {
-  readonly VITE_EMULATOR_HOST?: string;
+  readonly VITE_API_URL: string;
 }
 
 interface ImportMeta {

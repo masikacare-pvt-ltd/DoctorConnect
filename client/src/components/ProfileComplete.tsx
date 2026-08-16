@@ -63,10 +63,9 @@ export default function ProfileComplete() {
         gender: 'male',
       });
       toast('Profile completed! Welcome to MedConnect.', 'success');
-      setTimeout(() => navigate('/dashboard'), 300);
+      navigate('/dashboard');
     } catch (error: any) {
       toast(error?.message || 'Could not save profile.', 'error');
-    } finally {
       setIsLoading(false);
     }
   };

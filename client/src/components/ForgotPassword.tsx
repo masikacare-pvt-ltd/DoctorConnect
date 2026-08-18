@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Mail, ArrowLeft, ShieldCheck } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
@@ -51,11 +51,11 @@ export default function ForgotPassword() {
               <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Email</label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400"><Mail className="w-4 h-4" /></div>
-                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="doctor@medconnect.org" className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:outline-none focus:ring-4 focus:ring-slate-100 transition-all" id="forgot-email-input" />
+                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="professional@medconnect.org" className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:outline-none focus:ring-4 focus:ring-slate-100 transition-all" id="forgot-email-input" />
               </div>
             </div>
             <button type="submit" disabled={isLoading} className={`w-full py-3.5 rounded-xl text-sm font-bold shadow-md transition-all ${isLoading ? 'bg-slate-400 text-slate-100' : 'bg-black hover:bg-slate-900 text-white'}`}>
-              {isLoading ? 'Sending…' : 'Send Reset Link'}
+              {isLoading ? 'Sendingâ€¦' : 'Send Reset Link'}
             </button>
           </form>
         )}

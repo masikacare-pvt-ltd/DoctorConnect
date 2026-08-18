@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+﻿import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { Activity, ShieldCheck, Stethoscope, Users, Image as ImageIcon, MessageSquare, ArrowRight, BookOpen, FileText } from 'lucide-react';
 
@@ -91,7 +91,7 @@ export default function LandingPage() {
           {/* Tagline Badge */}
           <div className="inline-flex items-center gap-1.5 px-3.5 py-1 bg-white border border-slate-200 rounded-full text-slate-600 text-xs font-semibold shadow-sm">
             <Activity className="w-3.5 h-3.5 text-indigo-600 animate-pulse" />
-            Empowering Clinical Case Collaboration
+            Empowering Medical Professional Collaboration
           </div>
 
           {/* Heading */}
@@ -101,7 +101,7 @@ export default function LandingPage() {
 
           {/* Subheading */}
           <p className="text-lg text-slate-500 max-w-2xl mx-auto font-normal leading-relaxed">
-            MedConnect enables verified physicians, specialists, and residents to securely share anamneses, discuss diagnostic challenges, and consult in real-time.
+            MedConnect enables verified medical professionals, specialists, and residents to securely share anamneses, discuss diagnostic challenges, and consult in real-time.
           </p>
 
           {/* CTA Buttons */}
@@ -119,7 +119,7 @@ export default function LandingPage() {
                className="w-full sm:w-auto px-8 py-4 bg-white text-slate-700 hover:text-slate-900 border border-slate-200 hover:border-slate-300 rounded-xl text-base font-bold shadow-sm hover:shadow-md active:scale-[0.98] transition-all"
                id="hero-login-btn"
              >
-               Login to Doctor Portal
+               Login to Medical Professional Portal
              </button>
            </div>
         </motion.div>
@@ -210,7 +210,7 @@ export default function LandingPage() {
           Elevate Your Diagnostic Precision
         </h2>
         <p className="text-sm text-slate-500 max-w-lg mx-auto">
-          Create your verified doctor profile in seconds. Connect with peers, share expertise, and review medical developments.
+          Create your verified medical professional profile in seconds. Connect with peers, share expertise, and review medical developments.
         </p>
         <button
           onClick={onGetStarted}
@@ -227,7 +227,7 @@ export default function LandingPage() {
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <span className="text-sm font-bold text-slate-900">+ MedConnect</span>
-            <span className="text-[10px] text-slate-400">© {new Date().getFullYear()}. All rights reserved.</span>
+            <span className="text-[10px] text-slate-400">&copy; {new Date().getFullYear()}. All rights reserved.</span>
           </div>
           <div className="flex gap-6 text-slate-400">
             <a href="/privacy" className="hover:text-slate-600">Privacy Policy</a>

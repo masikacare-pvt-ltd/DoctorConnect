@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+﻿import { useState, useEffect, useCallback } from 'react';
 import { Users, Search, X, Check, Ban, Trash2 } from 'lucide-react';
 import { useToast } from '../contexts/ToastContext';
 import { adminGet, adminPatch, adminDelete } from '../lib/adminApi';
@@ -65,7 +65,7 @@ export default function AdminDoctorsPage() {
       setDoctors(res.data);
       setTotal(res.total);
     } catch (e: any) {
-      toast(e?.message || 'Failed to load doctors', 'error');
+      toast(e?.message || 'Failed to load medical professionals', 'error');
     } finally {
       setLoading(false);
     }
@@ -76,7 +76,7 @@ export default function AdminDoctorsPage() {
   const handleApprove = async (id: string) => {
     try {
       await adminPatch(`/doctors/${id}/approve`);
-      toast('Doctor approved', 'info');
+      toast('Medical Professional approved', 'info');
       fetchDoctors();
     } catch (e: any) {
       toast(e?.message || 'Failed to approve', 'error');
@@ -86,7 +86,7 @@ export default function AdminDoctorsPage() {
   const handleReject = async (id: string) => {
     try {
       await adminPatch(`/doctors/${id}/reject`);
-      toast('Doctor rejected', 'info');
+      toast('Medical Professional rejected', 'info');
       fetchDoctors();
       setSelected(null);
     } catch (e: any) {
@@ -99,12 +99,12 @@ export default function AdminDoctorsPage() {
     setDeleting(true);
     try {
       await adminDelete(`/users/${deleteTarget.id}`);
-      toast('Doctor deleted', 'success');
+      toast('Medical Professional deleted', 'success');
       setDoctors(prev => prev.filter(d => d.id !== deleteTarget.id));
       setTotal(prev => prev - 1);
       setSelected(null);
     } catch (e: any) {
-      toast(e.message || 'Failed to delete doctor', 'error');
+      toast(e.message || 'Failed to delete medical professional', 'error');
     } finally {
       setDeleting(false);
       setDeleteTarget(null);
@@ -125,7 +125,7 @@ export default function AdminDoctorsPage() {
         <div className="p-4 md:p-6">
           <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
             <div className="px-4 py-3 border-b border-slate-100 flex flex-wrap items-center justify-between gap-2">
-              <h2 className="text-xs font-bold text-slate-900">Doctor Management</h2>
+              <h2 className="text-xs font-bold text-slate-900">Medical Professional Management</h2>
               <div className="flex gap-1.5 flex-wrap">
                 {['', 'pending', 'approved', 'rejected'].map((s) => (
                   <button key={s} onClick={() => { setStatusFilter(s); setPage(1); }} className={`px-2.5 py-1 rounded-md text-[9px] font-bold uppercase tracking-wider transition-all ${statusFilter === s ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}>{s || 'All'}</button>
@@ -142,7 +142,7 @@ export default function AdminDoctorsPage() {
               <table className="w-full text-xs">
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-200">
-                    <th className="text-left px-4 py-3 font-bold text-slate-400 uppercase tracking-wider">Doctor</th>
+                    <th className="text-left px-4 py-3 font-bold text-slate-400 uppercase tracking-wider">Medical Professional</th>
                     <th className="text-left px-4 py-3 font-bold text-slate-400 uppercase tracking-wider hidden md:table-cell">Email</th>
                     <th className="text-left px-4 py-3 font-bold text-slate-400 uppercase tracking-wider">Status</th>
                     <th className="text-left px-4 py-3 font-bold text-slate-400 uppercase tracking-wider hidden lg:table-cell">Joined</th>
@@ -215,7 +215,7 @@ export default function AdminDoctorsPage() {
         <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4 overscroll-contain" onClick={() => setSelected(null)}>
           <div className="bg-white rounded-2xl max-w-md w-full max-h-[80vh] overflow-y-auto overscroll-contain shadow-2xl" onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between p-4 border-b border-slate-200">
-              <h3 className="text-xs font-bold text-slate-900">Doctor Details</h3>
+              <h3 className="text-xs font-bold text-slate-900">Medical Professional Details</h3>
               <button onClick={() => setSelected(null)} className="text-slate-400 hover:text-slate-600"><X className="w-4 h-4" /></button>
             </div>
             <div className="p-4 space-y-3">
@@ -250,7 +250,7 @@ export default function AdminDoctorsPage() {
           </div>
         </div>
       )}
-      <ConfirmDialog open={!!deleteTarget} title="Delete Doctor" message={`Are you sure you want to delete "${deleteTarget?.name || ''}"? This will permanently remove the user and all associated data.`} loading={deleting} onConfirm={handleDelete} onCancel={() => setDeleteTarget(null)} />
+      <ConfirmDialog open={!!deleteTarget} title="Delete Medical Professional" message={`Are you sure you want to delete "${deleteTarget?.name || ''}"? This will permanently remove the user and all associated data.`} loading={deleting} onConfirm={handleDelete} onCancel={() => setDeleteTarget(null)} />
     </AdminLayout>
   );
 }

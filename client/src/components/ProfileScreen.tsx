@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import { Bell, ShieldCheck, Mail, Save, Camera, Eye, EyeOff, Lock } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { useToast } from '../contexts/ToastContext';
@@ -64,7 +64,7 @@ export default function ProfileScreen() {
     }
   }, [profile]);
 
-  const activeUser = profile || { firstName: 'Doctor', lastName: '', designation: '', avatarUrl: '', avatarData: '', gender: 'male', email: '' };
+  const activeUser = profile || { firstName: 'Medical Professional', lastName: '', designation: '', avatarUrl: '', avatarData: '', gender: 'male', email: '' };
   const doctorFullName = `Dr. ${activeUser.firstName} ${activeUser.lastName}`.trim();
 
   const avatarSrc = getAvatarUrl(activeUser);
@@ -150,7 +150,7 @@ export default function ProfileScreen() {
               </button>
               <input ref={fileInputRef} type="file" accept="image/*" onChange={handleAvatarChange} className="hidden" />
             </div>
-            {uploadingAvatar && <p className="text-[10px] text-blue-600 mt-1">Uploading avatar…</p>}
+            {uploadingAvatar && <p className="text-[10px] text-blue-600 mt-1">Uploading avatarâ€¦</p>}
             <h2 className="text-lg font-bold text-slate-900 dark:text-white font-display mt-3">{doctorFullName}</h2>
             <p className="text-xs text-slate-400">{activeUser.designation || 'Physician'}</p>
             <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-100 dark:border-emerald-900 rounded-full text-emerald-600 dark:text-emerald-400 text-[10px] font-bold mt-3">

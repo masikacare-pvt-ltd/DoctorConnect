@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Briefcase, ShieldCheck, ArrowRight, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
@@ -58,7 +58,7 @@ export default function SignupScreen() {
         countryIso,
         mobile: mobile.trim(),
       });
-      toast('Account successfully created! Complete your profile…', 'success');
+      toast('Account successfully created! Complete your profileâ€¦', 'success');
       navigate('/complete-profile', {
         state: {
           firstName: firstName.trim(),
@@ -85,7 +85,7 @@ export default function SignupScreen() {
     <div className="min-h-screen bg-slate-50 flex flex-col md:flex-row" id="signup-container">
       <div className="md:w-5/12 bg-slate-950 text-white p-8 md:p-12 flex flex-col justify-between relative overflow-hidden">
         <div className="absolute inset-0 opacity-5 bg-[radial-gradient(#38bdf8_1px,transparent_1px)] [background-size:24px_24px]" />
-        <Link to="/" className="absolute top-6 left-6 text-xs font-semibold text-slate-400 hover:text-white flex items-center gap-1 bg-white/5 hover:bg-white/10 px-3 py-1.5 rounded-full transition-all">← Back</Link>
+        <Link to="/" className="absolute top-6 left-6 text-xs font-semibold text-slate-400 hover:text-white flex items-center gap-1 bg-white/5 hover:bg-white/10 px-3 py-1.5 rounded-full transition-all">â† Back</Link>
         <div className="my-auto space-y-8 pt-12 md:pt-0 relative z-10">
           <div className="w-16 h-16 bg-white/10 border border-white/20 rounded-2xl flex items-center justify-center shadow-lg">
             <div className="relative"><Briefcase className="w-8 h-8 text-white stroke-[1.5]" /><div className="absolute inset-0 flex items-center justify-center pt-1.5"><span className="text-white text-xs font-extrabold">+</span></div></div>
@@ -95,16 +95,16 @@ export default function SignupScreen() {
             <p className="text-slate-400 text-sm leading-relaxed">Join a global network of medical professionals. Streamline your patient care with MedConnect's clinical precision tools.</p>
           </div>
         </div>
-        <div className="flex justify-between items-center text-[10px] text-slate-500 font-mono relative z-10 pt-8 md:pt-0"><span>© {new Date().getFullYear()} MEDCONNECT</span><span>MEDICAL EXCELLENCE</span></div>
+        <div className="flex justify-between items-center text-[10px] text-slate-500 font-mono relative z-10 pt-8 md:pt-0"><span>&copy; {new Date().getFullYear()} MEDCONNECT</span><span>MEDICAL EXCELLENCE</span></div>
       </div>
 
       <div className="md:w-7/12 flex items-center justify-center p-6 md:p-12 overflow-y-auto">
         <div className="w-full max-w-2xl bg-white rounded-2xl border border-slate-100 p-8 md:p-10 shadow-xl shadow-slate-100/40">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-50 border border-slate-200 rounded-full text-slate-600 text-[10px] font-bold tracking-wider uppercase mb-4 shadow-sm">
-            <ShieldCheck className="w-3.5 h-3.5 text-slate-700" /> Medical Verification Required
+            <ShieldCheck className="w-3.5 h-3.5 text-slate-700" /> Professional Verification Required
           </div>
           <div className="mb-6">
-            <h2 className="text-2xl font-bold tracking-tight text-slate-900 font-display">Create Doctor Account</h2>
+            <h2 className="text-2xl font-bold tracking-tight text-slate-900 font-display">Create Medical Professional Account</h2>
             <p className="text-slate-400 text-xs mt-0.5">Join MedConnect.</p>
           </div>
 
@@ -154,7 +154,7 @@ export default function SignupScreen() {
                     type={showPassword ? 'text' : 'password'}
                     value={password}
                     onChange={(e) => { setPassword(e.target.value); if (errors.password) setErrors({ ...errors, password: '' }); }}
-                    placeholder="••••••••"
+                    placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
                     className={`w-full px-4 py-2.5 pr-10 bg-white border ${errors.password ? 'border-rose-400' : 'border-slate-200'} rounded-lg text-sm focus:outline-none focus:ring-4 focus:ring-slate-100 transition-all`}
                     id="signup-password"
                   />
@@ -178,7 +178,7 @@ export default function SignupScreen() {
                     type={showConfirmPassword ? 'text' : 'password'}
                     value={confirmPassword}
                     onChange={(e) => { setConfirmPassword(e.target.value); if (errors.confirmPassword) setErrors({ ...errors, confirmPassword: '' }); }}
-                    placeholder="••••••••"
+                    placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
                     className={`w-full px-4 py-2.5 pr-10 bg-white border ${errors.confirmPassword ? 'border-rose-400' : 'border-slate-200'} rounded-lg text-sm focus:outline-none focus:ring-4 focus:ring-slate-100 transition-all`}
                     id="signup-confirm-password"
                   />

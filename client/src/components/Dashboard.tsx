@@ -212,7 +212,7 @@ export default function Dashboard() {
             type="text"
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
-            placeholder="Search clinical cases, doctors, or tags..."
+            placeholder="Search clinical cases, medical professionals, or tags..."
             className="w-full pl-10 pr-8 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900/10 dark:focus:ring-slate-400/20 transition-all shadow-2xs"
             id="header-search-input"
           />
@@ -262,7 +262,7 @@ export default function Dashboard() {
             </div>
             <div className="text-left hidden sm:block">
               <div className="flex items-center gap-1.5">
-                <span className="text-xs font-bold text-[#0B132B] dark:text-slate-100">{doctorFullName || 'Doctor'}</span>
+                <span className="text-xs font-bold text-[#0B132B] dark:text-slate-100">{doctorFullName || 'Medical Professional'}</span>
                 <ChevronDown className="w-3.5 h-3.5 text-slate-500" />
               </div>
               <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium block">{activeUser?.designation || ''}</span>
@@ -276,10 +276,10 @@ export default function Dashboard() {
         {/* Welcome Greeting */}
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-[#0B132B] dark:text-white flex items-center gap-2 font-sans">
-            {(() => { const h = new Date().getHours(); return h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening'; })()}, Doctor!
+            {(() => { const h = new Date().getHours(); return h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening'; })()}, Medical Professional!
           </h1>
           <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">
-            Share clinical cases with fellow doctors.
+            Share clinical cases with fellow medical professionals.
           </p>
         </div>
 
@@ -687,7 +687,7 @@ export default function Dashboard() {
                 className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
               />
               <span className="text-xs text-slate-700 dark:text-slate-300 font-normal">
-                Urgently feedback needed from the doctor
+                Urgently feedback needed from the medical professional
               </span>
             </label>
 

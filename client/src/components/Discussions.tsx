@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback, useEffect } from 'react';
+﻿import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { jsPDF } from 'jspdf';
@@ -137,7 +137,7 @@ export default function Discussions() {
     return () => document.removeEventListener('mousedown', handleClick);
   }, [showMention]);
 
-  const activeUser = profile || { firstName: 'Doctor', lastName: '', designation: '', avatarUrl: '' };
+  const activeUser = profile || { firstName: 'Medical Professional', lastName: '', designation: '', avatarUrl: '' };
   const currentUserId = user?.id;
   const isAuthor = clinicalCase?.authorUid === currentUserId;
 
@@ -266,7 +266,7 @@ export default function Discussions() {
                     <img src={clinicalCase.authorAvatar} alt="author" referrerPolicy="no-referrer" className="w-9 h-9 rounded-full border border-slate-200" />
                     <div>
                       <span className="block text-sm font-bold text-slate-900">{clinicalCase.authorName}</span>
-                      <span className="block text-[10px] text-slate-400">{clinicalCase.category} • {formatRelativeTime(clinicalCase.createdAt)}</span>
+                      <span className="block text-[10px] text-slate-400">{clinicalCase.category} â€¢ {formatRelativeTime(clinicalCase.createdAt)}</span>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
@@ -495,7 +495,7 @@ export default function Discussions() {
                       </div>
                     </motion.div>
                   )}
-                  <textarea ref={textareaRef} value={commentText} onChange={handleCommentChange} onKeyDown={handleCommentKeyDown} rows={1} placeholder="Share your clinical opinion... Use @ to mention a doctor" className="w-full p-3 bg-slate-50 border border-slate-200 focus:border-indigo-500 rounded-xl text-xs focus:bg-white focus:outline-none transition-all resize-none" />
+                  <textarea ref={textareaRef} value={commentText} onChange={handleCommentChange} onKeyDown={handleCommentKeyDown} rows={1} placeholder="Share your clinical opinion... Use @ to mention a medical professional" className="w-full p-3 bg-slate-50 border border-slate-200 focus:border-indigo-500 rounded-xl text-xs focus:bg-white focus:outline-none transition-all resize-none" />
                 </div>
                 <button type="submit" disabled={sending} className="px-4 py-3 bg-black hover:bg-slate-900 disabled:bg-slate-400 text-white rounded-xl text-xs font-bold shadow-md active:scale-95 transition-all flex items-center gap-1.5 h-full min-h-[42px]">{sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}</button>
               </form>

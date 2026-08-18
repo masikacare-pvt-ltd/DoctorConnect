@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock, Shield, AlertCircle } from 'lucide-react';
 
@@ -59,14 +59,14 @@ export default function LoginScreen() {
     <div className="min-h-screen bg-slate-50 flex flex-col md:flex-row" id="login-container">
       <div className="md:w-1/2 bg-white border-b md:border-b-0 md:border-r border-slate-200 p-8 flex flex-col justify-between items-center text-center relative overflow-hidden">
         <Link to="/" className="absolute top-6 left-6 text-xs font-semibold text-slate-400 hover:text-slate-900 flex items-center gap-1 bg-slate-50 hover:bg-slate-100 px-3 py-1.5 rounded-full transition-all">
-          ← Back to Site
+          â† Back to Site
         </Link>
         <div className="my-auto space-y-6 pt-12 md:pt-0">
           <div className="w-14 h-14 bg-black rounded-xl flex items-center justify-center shadow-lg mx-auto mb-4 active:scale-95 transition-all" onClick={() => navigate('/')}>
             <span className="text-white text-3xl font-bold">+</span>
           </div>
           <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight font-display text-slate-950">MedConnect</h1>
-          <p className="text-slate-400 text-sm max-w-xs mx-auto leading-relaxed">Professional Doctor Collaboration Platform</p>
+          <p className="text-slate-400 text-sm max-w-xs mx-auto leading-relaxed">Professional Medical Collaboration Platform</p>
           <div className="pt-4 max-w-sm mx-auto">
             <svg viewBox="0 0 600 400" className="w-full h-auto max-w-sm mx-auto" fill="none" xmlns="http://www.w3.org/2000/svg">
               <rect x="10" y="10" width="580" height="380" rx="16" fill="#F1F5F9" />
@@ -126,7 +126,7 @@ export default function LoginScreen() {
             </svg>
           </div>
         </div>
-        <div className="text-[10px] text-slate-300 font-mono">© {new Date().getFullYear()} MEDCONNECT • CLINICAL EXCELLENCE</div>
+        <div className="text-[10px] text-slate-300 font-mono">&copy; {new Date().getFullYear()} MEDCONNECT &bull; CLINICAL EXCELLENCE</div>
       </div>
 
       <div className="md:w-1/2 flex items-center justify-center p-6 md:p-12 bg-slate-50">
@@ -145,7 +145,7 @@ export default function LoginScreen() {
                   type="text"
                   value={email}
                   onChange={(e) => { setEmail(e.target.value); if (errors.email) setErrors({ ...errors, email: undefined }); }}
-                  placeholder="doctor@medconnect.org"
+                  placeholder="professional@medconnect.org"
                   className={`w-full pl-10 pr-4 py-3 bg-slate-50 border ${errors.email ? 'border-rose-400 focus:ring-rose-200' : 'border-slate-200 focus:ring-slate-100'} rounded-xl text-sm focus:bg-white focus:outline-none focus:ring-4 transition-all`}
                   id="login-email-input"
                 />
@@ -164,7 +164,7 @@ export default function LoginScreen() {
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => { setPassword(e.target.value); if (errors.password) setErrors({ ...errors, password: undefined }); }}
-                  placeholder="••••••••"
+                  placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
                   className={`w-full pl-10 pr-10 py-3 bg-slate-50 border ${errors.password ? 'border-rose-400 focus:ring-rose-200' : 'border-slate-200 focus:ring-slate-100'} rounded-xl text-sm focus:bg-white focus:outline-none focus:ring-4 transition-all`}
                   id="login-password-input"
                 />
@@ -186,7 +186,7 @@ export default function LoginScreen() {
           </div>
 
           <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-center gap-1.5 text-[10px] text-slate-400">
-            <Shield className="w-3 h-3 text-emerald-500" /> Secure login for verified doctors only.
+            <Shield className="w-3 h-3 text-emerald-500" /> Secure login for verified medical professionals only.
           </div>
           <div className="mt-3 text-center">
             <button onClick={() => navigate('/admin/login')} className="text-[10px] font-semibold text-slate-400 hover:text-blue-600 transition-colors">Admin Login</button>

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+﻿import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Users, Clock, CheckCircle, FileText, Trash2, ArrowRight, X, Check, Ban } from 'lucide-react';
 import { useToast } from '../contexts/ToastContext';
@@ -66,7 +66,7 @@ export default function AdminDashboard() {
   const handleApprove = async (id: string) => {
     try {
       await adminPatch(`/doctors/${id}/approve`);
-      toast('Doctor approved', 'info');
+      toast('Medical Professional approved', 'info');
       setPendingDoctors(prev => prev.filter(d => d.id !== id));
       fetchStats();
     } catch (e: any) {
@@ -77,7 +77,7 @@ export default function AdminDashboard() {
   const handleReject = async (id: string) => {
     try {
       await adminPatch(`/doctors/${id}/reject`);
-      toast('Doctor rejected', 'info');
+      toast('Medical Professional rejected', 'info');
       setPendingDoctors(prev => prev.filter(d => d.id !== id));
       fetchStats();
     } catch (e: any) {
@@ -86,9 +86,9 @@ export default function AdminDashboard() {
   };
 
   const statCards = stats ? [
-    { label: 'Total Doctors', value: stats.totalDoctors, icon: Users, color: 'text-indigo-600 bg-indigo-50', onClick: () => navigate('/admin/doctors') },
+    { label: 'Total Medical Professionals', value: stats.totalDoctors, icon: Users, color: 'text-indigo-600 bg-indigo-50', onClick: () => navigate('/admin/doctors') },
     { label: 'Pending Approvals', value: stats.pendingApprovals, icon: Clock, color: 'text-amber-600 bg-amber-50', onClick: openPending },
-    { label: 'Approved Doctors', value: stats.approvedDoctors, icon: CheckCircle, color: 'text-emerald-600 bg-emerald-50', onClick: () => navigate('/admin/doctors') },
+    { label: 'Approved Medical Professionals', value: stats.approvedDoctors, icon: CheckCircle, color: 'text-emerald-600 bg-emerald-50', onClick: () => navigate('/admin/doctors') },
     { label: 'Total Cases', value: stats.totalCases, icon: FileText, color: 'text-sky-600 bg-sky-50', onClick: () => navigate('/admin/cases') },
     { label: 'Recycle Bin', value: stats.recycleBinCount, icon: Trash2, color: 'text-rose-600 bg-rose-50', onClick: () => navigate('/admin/recycle-bin') },
   ] : [];

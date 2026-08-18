@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { LayoutDashboard, Users, FileText, Trash2, LogOut, ClipboardList } from 'lucide-react';
 import { useToast } from '../contexts/ToastContext';
@@ -6,7 +6,7 @@ import { clearAdminToken } from '../lib/adminApi';
 
 const navItems = [
   { label: 'Dashboard', icon: LayoutDashboard, path: '/admin' },
-  { label: 'Doctors', icon: Users, path: '/admin/doctors' },
+  { label: 'Medical Professionals', icon: Users, path: '/admin/doctors' },
   { label: 'Cases', icon: FileText, path: '/admin/cases' },
   { label: 'AI Reports', icon: ClipboardList, path: '/admin/reports' },
 ];

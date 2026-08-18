@@ -165,6 +165,8 @@ export default function LoginScreen() {
                   value={password}
                   onChange={(e) => { setPassword(e.target.value); if (errors.password) setErrors({ ...errors, password: undefined }); }}
                   placeholder="••••••••"
+                  className={`w-full pl-10 pr-10 py-3 bg-slate-50 border ${errors.password ? 'border-rose-400 focus:ring-rose-200' : 'border-slate-200 focus:ring-slate-100'} rounded-xl text-sm focus:bg-white focus:outline-none focus:ring-4 transition-all`}
+                  id="login-password-input"
                 />
                 <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 transition-colors">
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}

@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock, Shield, AlertCircle } from 'lucide-react';
 
@@ -126,7 +126,7 @@ export default function LoginScreen() {
             </svg>
           </div>
         </div>
-        <div className="text-[10px] text-slate-300 font-mono">&copy; {new Date().getFullYear()} MEDCONNECT &bull; CLINICAL EXCELLENCE</div>
+        <div className="text-[10px] text-slate-300 font-mono">Â© {new Date().getFullYear()} MEDCONNECT â€¢ CLINICAL EXCELLENCE</div>
       </div>
 
       <div className="md:w-1/2 flex items-center justify-center p-6 md:p-12 bg-slate-50">

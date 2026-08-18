@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Briefcase, ShieldCheck, ArrowRight, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
@@ -95,7 +95,7 @@ export default function SignupScreen() {
             <p className="text-slate-400 text-sm leading-relaxed">Join a global network of medical professionals. Streamline your patient care with MedConnect's clinical precision tools.</p>
           </div>
         </div>
-        <div className="flex justify-between items-center text-[10px] text-slate-500 font-mono relative z-10 pt-8 md:pt-0"><span>&copy; {new Date().getFullYear()} MEDCONNECT</span><span>MEDICAL EXCELLENCE</span></div>
+        <div className="flex justify-between items-center text-[10px] text-slate-500 font-mono relative z-10 pt-8 md:pt-0"><span>Â© {new Date().getFullYear()} MEDCONNECT</span><span>MEDICAL EXCELLENCE</span></div>
       </div>
 
       <div className="md:w-7/12 flex items-center justify-center p-6 md:p-12 overflow-y-auto">

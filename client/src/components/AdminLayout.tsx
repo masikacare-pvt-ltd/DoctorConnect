@@ -1,4 +1,4 @@
-ï»¿import React from 'react';
+import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { LayoutDashboard, Users, FileText, Trash2, LogOut, ClipboardList } from 'lucide-react';
 import { useToast } from '../contexts/ToastContext';

@@ -58,7 +58,7 @@ export default function SignupScreen() {
         countryIso,
         mobile: mobile.trim(),
       });
-      toast('Account successfully created! Complete your profileâ€¦', 'success');
+      toast('Account successfully created! Complete your profile…', 'success');
       navigate('/complete-profile', {
         state: {
           firstName: firstName.trim(),
@@ -95,7 +95,7 @@ export default function SignupScreen() {
             <p className="text-slate-400 text-sm leading-relaxed">Join a global network of medical professionals. Streamline your patient care with MedConnect's clinical precision tools.</p>
           </div>
         </div>
-        <div className="flex justify-between items-center text-[10px] text-slate-500 font-mono relative z-10 pt-8 md:pt-0"><span>Â© {new Date().getFullYear()} MEDCONNECT</span><span>MEDICAL EXCELLENCE</span></div>
+        <div className="flex justify-between items-center text-[10px] text-slate-500 font-mono relative z-10 pt-8 md:pt-0"><span>© {new Date().getFullYear()} MEDCONNECT</span><span>MEDICAL EXCELLENCE</span></div>
       </div>
 
       <div className="md:w-7/12 flex items-center justify-center p-6 md:p-12 overflow-y-auto">
@@ -154,7 +154,7 @@ export default function SignupScreen() {
                     type={showPassword ? 'text' : 'password'}
                     value={password}
                     onChange={(e) => { setPassword(e.target.value); if (errors.password) setErrors({ ...errors, password: '' }); }}
-                    placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
+                    placeholder="••••••••"
                     className={`w-full px-4 py-2.5 pr-10 bg-white border ${errors.password ? 'border-rose-400' : 'border-slate-200'} rounded-lg text-sm focus:outline-none focus:ring-4 focus:ring-slate-100 transition-all`}
                     id="signup-password"
                   />
@@ -178,7 +178,7 @@ export default function SignupScreen() {
                     type={showConfirmPassword ? 'text' : 'password'}
                     value={confirmPassword}
                     onChange={(e) => { setConfirmPassword(e.target.value); if (errors.confirmPassword) setErrors({ ...errors, confirmPassword: '' }); }}
-                    placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
+                    placeholder="••••••••"
                     className={`w-full px-4 py-2.5 pr-10 bg-white border ${errors.confirmPassword ? 'border-rose-400' : 'border-slate-200'} rounded-lg text-sm focus:outline-none focus:ring-4 focus:ring-slate-100 transition-all`}
                     id="signup-confirm-password"
                   />

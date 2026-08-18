@@ -315,7 +315,7 @@ export default function Dashboard() {
             {isUploading ? (
               <div className="w-full max-w-xs py-3 flex flex-col items-center gap-2">
                 <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
-                <span className="text-xs font-semibold text-slate-600 dark:text-slate-300">Submitting caseâ€¦</span>
+                <span className="text-xs font-semibold text-slate-600 dark:text-slate-300">Submitting case…</span>
               </div>
             ) : uploadError ? (
               <div className="py-1 text-center space-y-1">

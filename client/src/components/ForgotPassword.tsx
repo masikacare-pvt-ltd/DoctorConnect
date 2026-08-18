@@ -1,4 +1,4 @@
-ï»¿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Mail, ArrowLeft, ShieldCheck } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
@@ -55,7 +55,7 @@ export default function ForgotPassword() {
               </div>
             </div>
             <button type="submit" disabled={isLoading} className={`w-full py-3.5 rounded-xl text-sm font-bold shadow-md transition-all ${isLoading ? 'bg-slate-400 text-slate-100' : 'bg-black hover:bg-slate-900 text-white'}`}>
-              {isLoading ? 'SendingÃ¢â‚¬Â¦' : 'Send Reset Link'}
+              {isLoading ? 'Sending…' : 'Send Reset Link'}
             </button>
           </form>
         )}

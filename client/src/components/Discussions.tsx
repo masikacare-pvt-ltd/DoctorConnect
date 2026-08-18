@@ -1,4 +1,4 @@
-ï»¿import React, { useState, useRef, useCallback, useEffect } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { jsPDF } from 'jspdf';
@@ -266,7 +266,7 @@ export default function Discussions() {
                     <img src={clinicalCase.authorAvatar} alt="author" referrerPolicy="no-referrer" className="w-9 h-9 rounded-full border border-slate-200" />
                     <div>
                       <span className="block text-sm font-bold text-slate-900">{clinicalCase.authorName}</span>
-                      <span className="block text-[10px] text-slate-400">{clinicalCase.category} Ã¢â‚¬Â¢ {formatRelativeTime(clinicalCase.createdAt)}</span>
+                      <span className="block text-[10px] text-slate-400">{clinicalCase.category} · {formatRelativeTime(clinicalCase.createdAt)}</span>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
